@@ -1,0 +1,166 @@
+/* Estilos generales para el cuerpo */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Contenedor principal del formulario de login */
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Estilos para el contenedor del logo */
+.logo-container {
+    /* Establece el contenedor como un punto de referencia para los elementos con posicionamiento absoluto */
+    position: relative; 
+    width: 235px; /* Ajusta el ancho según el tamaño deseado */
+    height: 250px; /* Ajusta la altura según el tamaño deseado */
+    margin: 0 auto 30px auto; /* Centrar horizontalmente y añadir margen inferior */
+}
+
+/* Estilos para la imagen de fondo (velocímetro) */
+.logo-background {
+    /* Posicionamiento absoluto para superponerla */
+    position: absolute;
+    top: 50%; /* Centrar verticalmente */
+    left: 50%; /* Centrar horizontalmente */
+    transform: translate(-75%, -50%); /* Ajuste fino para centrarla perfectamente */
+    width: 100%; /* O el tamaño que necesites, por ejemplo, 120px */
+    max-width:min(50vw, 300px); /* Ajusta este valor si es necesario */
+    height: auto;
+    z-index: 1; /* Valor bajo, para que esté en la parte de atrás */
+}
+
+/* Estilos para la imagen de primer plano (logo RMPAY) */
+.logo-foreground {
+    position: absolute;
+    /* Mueve el punto de referencia de la imagen al centro del contenedor */
+    top: 50%; 
+    left: 50%; 
+    
+    /* * Ajusta la posición de la imagen.
+     * Mueve el logo hacia abajo un 25% y hacia la derecha un 25% desde el centro.
+     * El valor de -50% en `translate` sigue siendo necesario para centrar la imagen por su propio tamaño.
+     */
+    transform: translate(-25%, 25%); 
+    
+    width: 90%; 
+    max-width:min(50vw, 300px);
+    height: auto;
+    z-index: 2;
+}
+.text-foreground {
+    position: absolute;
+    /* Mueve el punto de referencia de la imagen al centro del contenedor */
+    top: 70%; 
+    left: 50%; 
+    
+    /* * Ajusta la posición de la imagen.
+     * Mueve el logo hacia abajo un 25% y hacia la derecha un 25% desde el centro.
+     * El valor de -50% en `translate` sigue siendo necesario para centrar la imagen por su propio tamaño.
+     */
+    transform: translate(-25%,170%); 
+    
+    width: 90%; 
+    max-width:min(50vw, 250px);
+    height: auto;
+    z-index: 2;
+}
+/* Estilos para la línea horizontal */
+.title-line {
+    display: inline-block; /* Permite que el span tenga ancho y alto */
+    width: 20px; /* Ajusta este valor para controlar la longitud de la línea */
+    height: 2px; /* Ajusta este valor para controlar el grosor de la línea */
+    background-color: #333; /* El color de la línea, ajusta a tu gusto */
+    vertical-align: middle; /* Alinea la línea verticalmente con el texto */
+    margin: 0 5px; /* Espacio entre la línea y el texto */
+}
+
+/* Opcional: Estilo para el título DASHBOARD para alinear todo */
+.dashboard-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    /* ... otros estilos ... */
+}
+/* Título */
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+/* Grupo de formulario (input + label/placeholder) */
+.form-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Campos de entrada de texto y contraseña */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+/* Efecto hover/focus en los inputs */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Botón de login */
+.login-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+/* Efecto hover en el botón */
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+/* Efecto de clic en el botón */
+.login-button:active {
+    transform: scale(0.99);
+}
+/* Contenedor del formulario de login */
+.form-login-container {
+    /* Define un ancho fijo para el contenedor del formulario */
+    width: 300px; /* Ajusta este valor para que coincida con el ancho de los inputs */
+    
+    /* Centra el contenedor horizontalmente usando márgenes automáticos */
+    margin-left: auto;
+    margin-right: auto;
+    
+    /* Agrega un margen superior si es necesario para separarlo del título */
+    margin-top: 20px; 
+}

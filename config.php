@@ -465,18 +465,28 @@ function logError($message, $level = 'ERROR') {
  * @return mixed Datos limpios
  */
 function sanitizeInput($data) {
+    // Paso 1: Si la entrada es un arreglo, aplica la función a cada elemento de forma recursiva.
     if (is_array($data)) {
         return array_map('sanitizeInput', $data);
     }
     
+    // Paso 2: **VALIDACIÓN CRÍTICA**
+    // Si la entrada no es una cadena de texto (después de que ya no es un arreglo),
+    // no la procesamos. Esto previene el error de tipo.
+    if (!is_string($data)) {
+        return ''; // Devuelve una cadena vacía o maneja el error de otra forma
+    }
+    
+    // Paso 3: **Solo si es una cadena, aplicamos las funciones de saneamiento.**
     // Eliminar espacios en blanco al inicio y final
     $data = trim($data);
     
-    // Eliminar barras invertidas
+    // Eliminar barras invertidas. stripslashes() solo funciona en cadenas.
     $data = stripslashes($data);
     
-    // Convertir caracteres especiales a entidades HTML
-    $data = htmlspecialchars($data);
+    // Convertir caracteres especiales a entidades HTML.
+    // Usamos ENT_QUOTES para manejar comillas simples y dobles.
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     
     return $data;
 }

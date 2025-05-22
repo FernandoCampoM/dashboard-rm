@@ -97,7 +97,7 @@ function loadClientsData() {
   if (categoryFilter) queryParams += `&Category=${encodeURIComponent(categoryFilter)}`;
   if (cityFilter) queryParams += `&City=${encodeURIComponent(cityFilter)}`;
 
-  const apiUrl = `api_proxy.php?endpoint=Clientes${queryParams}`;
+  const apiUrl = `api_proxy.php?endpoint=Clients${queryParams}`;
   console.log("URL de API:", apiUrl);
 
   // Usar un timeout para evitar solicitudes colgadas
