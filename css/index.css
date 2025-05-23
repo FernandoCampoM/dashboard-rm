@@ -109,6 +109,9 @@
             background-repeat: no-repeat;
             border-bottom: none;
         }
+        .blue-highlight {
+            color: #006ED3;
+        }
         .cardp {
     background-color: #f8f9fa; /* Un blanco más claro que el predeterminado */
     width: 100%;

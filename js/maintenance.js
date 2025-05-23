@@ -17,7 +17,7 @@ function safeToLocaleString(value) {
 
 // Function to toggle loading state
 function toggleLoading(isLoading) {
-  console.log("Loading state:", isLoading ? "ON" : "OFF")
+  
   const loadingOverlay = document.getElementById("loadingOverlay")
   if (loadingOverlay) {
     loadingOverlay.style.display = isLoading ? "flex" : "none"
@@ -26,7 +26,7 @@ function toggleLoading(isLoading) {
 
 // Enhanced function to show toast notifications with console logging
 function showToast(title, message, type) {
-  console.log(`${type.toUpperCase()}: ${title} - ${message}`)
+  
   // Si estás usando una biblioteca de toast, implementa esto aquí
   // De lo contrario, puedes usar alert por ahora
   alert(`${title}: ${message}`)
@@ -56,9 +56,9 @@ function extractApiData(data) {
 
 // Debug function to log API responses
 function logApiResponse(endpoint, data) {
-  console.log(`API Response from ${endpoint}:`, data)
+  
   const extractedData = extractApiData(data)
-  console.log(`Extracted data from ${endpoint}:`, extractedData)
+  
   if (!extractedData || extractedData.length === 0) {
     console.warn(`Warning: Empty data extracted from ${endpoint}`)
   }
@@ -67,9 +67,9 @@ function logApiResponse(endpoint, data) {
 
 // Function to load products from the API with enhanced debugging
 function loadProducts() {
-  console.log("loadProducts called")
-  console.log("Current departments:", productDepartments.length)
-  console.log("Current categories:", productCategories.length)
+  
+  
+  
 
   // Always reload departments and categories to ensure we have the latest data
   loadProductDepartments(() => {
@@ -81,7 +81,7 @@ function loadProducts() {
 
 // Function that actually loads the product data
 function loadProductsData() {
-  console.log("loadProductsData called")
+  
   toggleLoading(true)
 
   // Obtener valores de filtros
@@ -113,7 +113,7 @@ function loadProductsData() {
   if (categoryFilter) queryParams += `&Category=${encodeURIComponent(categoryFilter)}`
 
   const apiUrl = `api_proxy.php?endpoint=GetAllProducts${queryParams}`
-  console.log("API URL:", apiUrl)
+  
 
   // Use a timeout to prevent hanging requests
   const timeoutId = setTimeout(() => {
@@ -124,7 +124,7 @@ function loadProductsData() {
   fetch(apiUrl)
     .then((response) => {
       clearTimeout(timeoutId) // Clear the timeout
-      console.log("API Response status:", response.status)
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`)
       }
@@ -134,21 +134,21 @@ function loadProductsData() {
       const products = logApiResponse("GetAllProducts", data)
 
       if (products && products.length > 0) {
-        console.log(`Processing ${products.length} products`)
+        
 
         // Preparar datos para la tabla
         const tableData = products.map((product) => {
           // Log each product for debugging
-          console.log("Processing product:", product)
+          
 
           // Buscar el nombre del departamento
           const department = productDepartments.find((d) => d.DepartmentID === product.Department)
-          console.log("Found department:", department)
+          
           const departmentName = department ? department.DepartmentName : product.Department
 
           // Buscar el nombre de la categoría
           const category = productCategories.find((c) => c.CategoryID === product.Category)
-          console.log("Found category:", category)
+          
           const categoryName = category ? category.CategoryName : product.Category
 
           // Crear botones de acción
@@ -171,7 +171,7 @@ function loadProductsData() {
           ]
         })
 
-        console.log("Table data prepared:", tableData.length, "rows")
+        
 
         try {
           // Check if table element exists
@@ -182,7 +182,7 @@ function loadProductsData() {
             return
           }
 
-          console.log("Table element found, initializing DataTable")
+          
 
           // Check if jQuery is available
           if (typeof jQuery === "undefined") {
@@ -217,10 +217,10 @@ function loadProductsData() {
 
           // Inicializar o actualizar la tabla
           if ($.fn.DataTable.isDataTable("#productsMaintenanceTable")) {
-            console.log("Updating existing DataTable")
+            
             $("#productsMaintenanceTable").DataTable().clear().rows.add(tableData).draw()
           } else {
-            console.log("Creating new DataTable")
+            
             productsMaintenanceTable = $("#productsMaintenanceTable").DataTable({
               data: tableData,
               columns: columns,
@@ -245,21 +245,21 @@ function loadProductsData() {
 
             // Añadir eventos a los botones de acción - only add once
             $(document).off("click", ".edit-product").on("click", ".edit-product", function () {
-              console.log("Edit button clicked")
+              
               const productCode = $(this).data("id")
-              console.log("Product code to edit:", productCode)
+              
               editProduct(productCode)
             })
 
             $(document).off("click", ".delete-product").on("click", ".delete-product", function () {
-              console.log("Delete button clicked")
+              
               const productCode = $(this).data("id")
-              console.log("Product code to delete:", productCode)
+              
               deleteProduct(productCode)
             })
           }
 
-          console.log("DataTable initialization complete")
+          
         } catch (error) {
           console.error("Error initializing DataTable:", error)
           showToast("Error", "Error al inicializar la tabla de productos: " + error.message, "error")
@@ -281,7 +281,7 @@ function loadProductsData() {
 
 // Function to load product departments
 function loadProductDepartments(callback) {
-  console.log("loadProductDepartments called")
+  
   toggleLoading(true)
 
   // Use a timeout to prevent hanging requests
@@ -291,12 +291,12 @@ function loadProductDepartments(callback) {
   }, 30000) // 30 seconds timeout
 
   const apiUrl = "api_proxy.php?endpoint=InventoryDepartments&Short=yes"
-  console.log("Department API URL:", apiUrl)
+  
 
   fetch(apiUrl)
     .then((response) => {
       clearTimeout(timeoutId) // Clear the timeout
-      console.log("Department API Response status:", response.status)
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`)
       }
@@ -307,7 +307,7 @@ function loadProductDepartments(callback) {
 
       if (departments && departments.length > 0) {
         productDepartments = departments
-        console.log(`Loaded ${departments.length} departments`)
+        
 
         // Llenar el select de departamentos para filtros
         const filterSelect = document.getElementById("productDepartmentFilter")
@@ -315,7 +315,7 @@ function loadProductDepartments(callback) {
           filterSelect.innerHTML = '<option value="">Todos los departamentos</option>'
 
           departments.forEach((department) => {
-            console.log("Adding department to filter:", department)
+            
             const filterOption = document.createElement("option")
             filterOption.value = department.DepartmentID
             filterOption.textContent = department.DepartmentName
@@ -369,7 +369,7 @@ function loadProductDepartments(callback) {
 
 // Function to load product categories
 function loadProductCategories(callback) {
-  console.log("loadProductCategories called")
+  
   toggleLoading(true)
 
   // Use a timeout to prevent hanging requests
@@ -379,12 +379,12 @@ function loadProductCategories(callback) {
   }, 30000) // 30 seconds timeout
 
   const apiUrl = "api_proxy.php?endpoint=InventoryCategories&Short=yes"
-  console.log("Category API URL:", apiUrl)
+  
 
   fetch(apiUrl)
     .then((response) => {
       clearTimeout(timeoutId) // Clear the timeout
-      console.log("Category API Response status:", response.status)
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`)
       }
@@ -395,7 +395,7 @@ function loadProductCategories(callback) {
 
       if (categories && categories.length > 0) {
         productCategories = categories
-        console.log(`Loaded ${categories.length} categories`)
+        
 
         // Llenar el select de categorías para filtros
         const filterSelect = document.getElementById("productCategoryFilter")
@@ -403,7 +403,7 @@ function loadProductCategories(callback) {
           filterSelect.innerHTML = '<option value="">Todas las categorías</option>'
 
           categories.forEach((category) => {
-            console.log("Adding category to filter:", category)
+            
             const filterOption = document.createElement("option")
             filterOption.value = category.CategoryID
             filterOption.textContent = category.CategoryName
@@ -457,7 +457,7 @@ function loadProductCategories(callback) {
 
 // Function to edit a product
 function editProduct(productCode) {
-  console.log("editProduct called with:", productCode)
+  
 
   // Validate product code
   if (!productCode) {
@@ -470,7 +470,7 @@ function editProduct(productCode) {
   toggleLoading(true)
 
   // First, try to find the product in the existing table data
-  console.log("Attempting to find product in existing table data...")
+  
   let foundProduct = null
 
   // Check if jQuery and DataTables are available
@@ -479,12 +479,12 @@ function editProduct(productCode) {
     if (table) {
       // Get all data from the table
       const tableData = table.data().toArray()
-      console.log("Table data:", tableData)
+      
 
       // Find the row with matching product code
       const productRow = tableData.find((row) => row[0] === productCode)
       if (productRow) {
-        console.log("Found product in table data:", productRow)
+        
 
         // Create a product object from the row data
         foundProduct = {
@@ -499,7 +499,7 @@ function editProduct(productCode) {
           Active: productRow[8].includes("Activo") ? "1" : "0",
         }
 
-        console.log("Created product object from table data:", foundProduct)
+        
         populateProductForm(foundProduct)
         return
       } else {
@@ -516,7 +516,7 @@ function editProduct(productCode) {
     `api_proxy.php?endpoint=GetAllProducts&ItemCode=${encodeURIComponent(productCode)}`,
   ]
 
-  console.log("Will try these API endpoints:", apiEndpoints)
+  
 
   // Try each endpoint in sequence
   tryNextEndpoint(0)
@@ -530,22 +530,22 @@ function editProduct(productCode) {
     }
 
     const apiUrl = apiEndpoints[index]
-    console.log(`Trying API endpoint ${index + 1}/${apiEndpoints.length}: ${apiUrl}`)
+    
 
     fetch(apiUrl)
       .then((response) => {
-        console.log(`API Response status for endpoint ${index + 1}:`, response.status)
+        
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
         return response.json()
       })
       .then((data) => {
-        console.log(`Raw API response for endpoint ${index + 1}:`, data)
+        
 
         // If data is false or empty, try the next endpoint
         if (!data || (typeof data === "object" && Object.keys(data).length === 0)) {
-          console.log(`Endpoint ${index + 1} returned empty data, trying next endpoint...`)
+          
           tryNextEndpoint(index + 1)
           return
         }
@@ -554,7 +554,7 @@ function editProduct(productCode) {
         const product = extractProductFromResponse(data, productCode)
 
         if (product) {
-          console.log("Successfully extracted product data:", product)
+          
           populateProductForm(product)
         } else {
           console.log(`Couldn't extract product from endpoint ${index + 1}, trying next endpoint...`)
@@ -601,7 +601,7 @@ function editProduct(productCode) {
     // Reset the form
     document.getElementById("productForm").reset()
 
-    console.log("Populating form with product data:", product)
+    
 
     // Map the API field names to the form field IDs with fallbacks for different field names
     const fieldMappings = {
@@ -636,7 +636,7 @@ function editProduct(productCode) {
     }
 
     // Log all available fields for debugging
-    console.log("Available product fields:", Object.keys(product))
+    
 
     // Set form values based on mappings
     for (const [apiField, formField] of Object.entries(fieldMappings)) {
@@ -651,7 +651,7 @@ function editProduct(productCode) {
             activeValue === true ||
             activeValue === "true" ||
             activeValue === "S"
-          console.log(`Set ${formField} checkbox to ${formElement.checked} (value was ${activeValue})`)
+          
         } else {
           // Handle regular inputs
           formElement.value = product[apiField] || ""
@@ -675,7 +675,7 @@ function editProduct(productCode) {
 
 // Function to delete a product
 function deleteProduct(productCode) {
-  console.log("deleteProduct called with:", productCode)
+  
 
   if (confirm("¿Está seguro que desea eliminar este producto?")) {
     toggleLoading(true)
@@ -690,7 +690,7 @@ function deleteProduct(productCode) {
         return response.json()
       })
       .then((result) => {
-        console.log("Delete product result:", result)
+        
 
         if (result.success) {
           showToast("Éxito", "Producto eliminado correctamente", "success")
@@ -712,11 +712,11 @@ function deleteProduct(productCode) {
 // Function to save a product (create or update)
 function saveProduct(event) {
   event.preventDefault()
-  console.log("saveProduct called")
+  
 
   const productCode = document.getElementById("productCode").value
   const isNewProduct = !productCode
-  console.log("Product code:", productCode, "Is new:", isNewProduct)
+  
 
   // Collect form data
   const formData = new FormData(document.getElementById("productForm"))
@@ -731,7 +731,7 @@ function saveProduct(event) {
     productData.Active = document.getElementById("productActive").checked ? "1" : "0"
   }
 
-  console.log("Product data to save:", productData)
+  
 
   // Determine endpoint based on whether it's a new product or an update
   const endpoint = isNewProduct ? "CreateProduct" : "UpdateProduct"
@@ -752,7 +752,7 @@ function saveProduct(event) {
       return response.json()
     })
     .then((result) => {
-      console.log("Save product result:", result)
+      
 
       if (result.success) {
         showToast("Éxito", `Producto ${isNewProduct ? "creado" : "actualizado"} correctamente`, "success")
@@ -779,7 +779,7 @@ function saveProduct(event) {
 
 // Function to initialize the product maintenance section
 function initProductMaintenance() {
-  console.log("initProductMaintenance called")
+  
 
   // Load initial data - this will load departments, categories, and then products in sequence
   loadProducts()
@@ -797,7 +797,7 @@ function initProductMaintenance() {
     const searchBtn = document.getElementById("applyProductFilters")
     if (searchBtn) {
       searchBtn.addEventListener("click", () => {
-        console.log("Search button clicked, loading products...")
+        
         loadProducts()
       })
     }
@@ -872,24 +872,24 @@ function initProductMaintenance() {
 
 // Función para probar la conectividad con la API
 function testApiConnectivity() {
-  console.log("Testing API connectivity...")
+  
 
   // Test endpoints
   const endpoints = ["InventoryDepartments&Short=yes", "InventoryCategories&Short=yes", "GetAllProducts"]
 
   endpoints.forEach((endpoint) => {
-    console.log(`Testing endpoint: ${endpoint}`)
+    
 
     fetch(`api_proxy.php?endpoint=${endpoint}`)
       .then((response) => {
-        console.log(`Endpoint ${endpoint} status:`, response.status)
+        
         return response.text()
       })
       .then((text) => {
-        console.log(`Endpoint ${endpoint} response:`, text.substring(0, 200) + (text.length > 200 ? "..." : ""))
+         
         try {
           const json = JSON.parse(text)
-          console.log(`Endpoint ${endpoint} parsed JSON:`, json)
+          
         } catch (e) {
           console.error(`Endpoint ${endpoint} is not returning valid JSON:`, e)
         }
@@ -897,7 +897,8 @@ function testApiConnectivity() {
       .catch((error) => {
         console.error(`Endpoint ${endpoint} error:`, error)
       })
-  })
+  
+  }) // <-- Close forEach
 }
 
 // Verificar los campos del formulario de producto
@@ -1013,7 +1014,7 @@ function uploadProductImage(productCode) {
   formData.append("image", file)
   formData.append("productCode", productCode)
   
-  console.log(`Uploading image for product ${productCode}:`, file.name)
+  
   
   return fetch("api_proxy.php?endpoint=UploadProductImage", {
     method: "POST",
@@ -1024,7 +1025,7 @@ function uploadProductImage(productCode) {
       return response.json()
     })
     .then(result => {
-      console.log("Image upload result:", result)
+      
       if (result.success) {
         showToast("Éxito", "Imagen subida correctamente", "success")
         return result.imageUrl
@@ -1139,11 +1140,11 @@ function setupImagePreview() {
 
 // Initialize when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded event fired")
+  
 
   // Check if we're on the products maintenance page
   if (document.getElementById("productsMaintenanceTable")) {
-    console.log("Products maintenance table found, initializing...")
+    
     initProductMaintenance()
     setupImagePreview()
     handleDepartmentChange()
@@ -1176,4 +1177,3 @@ window.addEventListener("unhandledrejection", (event) => {
   showToast("Error", "Se produjo un error en una operación asíncrona. Consulte la consola para más detalles.", "error")
 })
 
-console.log("maintenance.js loaded")

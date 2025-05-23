@@ -300,7 +300,7 @@ $username = $_SESSION['Username'];
                 </div>
                 <div class="row">
                     <!-- Contenedor GRAFICAS-->
-                    <div class="col-md-6 col-lg-7" style="background-color: aqua;">
+                    <div class="col-md-6 col-lg-7" >
                         <!-- Overview Section -->
                         <section id="overview-section" class="dashboard-section active">
 
@@ -431,6 +431,37 @@ $username = $_SESSION['Username'];
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card dashboard-card-list">
+                                        <div class="card-header d-flex align-items-center ">
+                                            <div class="card-icon">
+                                                <i class="fas fa-pencil fa-2x"></i>
+                                            </div>
+                                            <h5 class="card-title mb-0">Inventario Bajo</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table id="lowInventoryTable" class="table table-hover table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Código</th>
+                                                            <th scope="col">Descripción</th>
+                                                            <th scope="col" class="text-end">Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="lowInventoryBody">
+                                                        <tr>
+                                                            <td>001</td>
+                                                            <td>Papas Fritas</td>
+                                                            <td class="text-end">10</td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-6 col-lg-6 mb-4">
                                     <div class="card dashboard-card-list">
                                         <div class="card-header">
@@ -518,11 +549,122 @@ $username = $_SESSION['Username'];
 
                     </div>
                     <!--- Contenedor ESTADISTICAS-->
-                    <div class="col-md-4 col-lg-5" style="background-color: orange;">
+                    <div class="col-md-4 col-lg-5" >
+                        <h4 class="mb-0"><i class="fas fa-chart-column me-2"></i> Estadisticas</h4>
                         <div class="row">
-                            <h1>Probando este contenedor</h1>
+                            <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Total de Transacciones</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col">
+                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Promedio de Venta Por Transacción</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
-
+<div class="row">
+                            <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Promedio de Productos por Venta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col">
+                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Promedio de Venta Por Hora</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Nomina</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col">
+                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+                                           
+                                            <h5 class="card-title mb-0">Ganancia Promedio por Factura</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">100</h3></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1449,7 +1591,6 @@ $username = $_SESSION['Username'];
             currentDateTo = formatDate(today);
             updateDateInputs(); // Actualiza los campos de fecha en el HTML
             loadAllData();
-            console.log('Filtro: Día | Desde:', currentDateFrom, 'Hasta:', currentDateTo); // Para depuración
             // Aquí puedes llamar a tu función principal para cargar los datos con estas fechas
             // Por ejemplo: loadYourActualDataFunction(currentDateFrom, currentDateTo);
         }
@@ -1470,7 +1611,6 @@ $username = $_SESSION['Username'];
             currentDateTo = formatDate(today); // La fecha de fin es siempre hoy
             updateDateInputs(); // Actualiza los campos de fecha en el HTML
             loadAllData();
-            console.log('Filtro: Semana | Desde:', currentDateFrom, 'Hasta:', currentDateTo); // Para depuración
             // Aquí puedes llamar a tu función principal para cargar los datos
             // Por ejemplo: loadYourActualDataFunction(currentDateFrom, currentDateTo);
         }
@@ -1486,7 +1626,6 @@ $username = $_SESSION['Username'];
             currentDateTo = formatDate(today); // La fecha de fin es siempre hoy
             updateDateInputs(); // Actualiza los campos de fecha en el HTML
             loadAllData();
-            console.log('Filtro: Mes | Desde:', currentDateFrom, 'Hasta:', currentDateTo); // Para depuración
             // Aquí puedes llamar a tu función principal para cargar los datos
             // Por ejemplo: loadYourActualDataFunction(currentDateFrom, currentDateTo);
         }
@@ -1494,7 +1633,6 @@ $username = $_SESSION['Username'];
 
         // Función mejorada para crear DataTables con estilo mejorado - versión corregida
         function createDataTable(tableId, data, columns, order = [[0, 'desc']]) {
-            console.log(`Creando DataTable para '${tableId}' con ${data.length} filas`);
 
             // Verificar que los datos son válidos
             if (!Array.isArray(data)) {
@@ -1518,7 +1656,6 @@ $username = $_SESSION['Username'];
 
                 // ENFOQUE RADICAL: Eliminar completamente la tabla existente
                 // y crear una nueva desde cero
-                console.log(`Eliminando tabla existente '${tableId}'`);
 
                 // 1. Crear una nueva tabla con el mismo ID
                 const newTable = document.createElement('table');
@@ -1547,11 +1684,6 @@ $username = $_SESSION['Username'];
                 // 3. Reemplazar la tabla antigua con la nueva
                 parentElement.innerHTML = ''; // Limpiar todo el contenido
                 parentElement.appendChild(newTable);
-
-                console.log(`Nueva tabla '${tableId}' creada y añadida al DOM`);
-
-                // 4. Inicializar DataTables con opciones mejoradas
-                console.log(`Inicializando DataTable para '${tableId}' con opciones mejoradas`);
 
                 // Usar jQuery para seleccionar la nueva tabla
                 const $newTable = $(`#${tableId}`);
@@ -1733,8 +1865,6 @@ $username = $_SESSION['Username'];
                                     };
                                 }
 
-                                // Log para depuración
-                                console.log('PDF generado con ' + colCount + ' columnas en orientación ' + doc.pageOrientation);
                             },
                             // Usar el método de abrir en una nueva ventana directamente
                             action: function (e, dt, button, config) {
@@ -1956,9 +2086,7 @@ $username = $_SESSION['Username'];
                         });
                     }
                 });
-
-                console.log(`DataTable para '${tableId}' inicializada correctamente con estilos mejorados`);
-                return dataTableInstance;
+return dataTableInstance;
 
             } catch (error) {
                 console.error(`Error al crear DataTable para '${tableId}':`, error);
@@ -2000,7 +2128,6 @@ $username = $_SESSION['Username'];
 
                         tableElement.appendChild(tbody);
 
-                        console.log(`Datos mostrados en formato HTML básico para '${tableId}'`);
                     }
                 } catch (fallbackError) {
                     console.error(`Error al mostrar datos básicos para '${tableId}':`, fallbackError);
@@ -2105,14 +2232,16 @@ $username = $_SESSION['Username'];
                     document.getElementById('municipalTax').textContent = formatCurrency(salesData.TotalCityTax);
                     document.getElementById('totalTax').textContent = formatCurrency(salesData.TotalStateTax + salesData.TotalCityTax);
                     document.getElementById('totalSales').textContent = formatCurrency(salesData.TotalSales);
-                    document.getElementById('transactionCount').textContent = formatNumber(salesData.TransactionCount);
-                    document.getElementById('avgTicket').textContent = formatCurrency(salesData.AverageTicketAmount);
+                    //document.getElementById('transactionCount').textContent = formatNumber(salesData.TransactionCount);
+                    
+                    //document.getElementById('avgTicket').textContent = formatCurrency(salesData.AverageTicketAmount);
+                   
                     document.getElementById('totalCost').textContent = formatCurrency(salesData.TotalCost);
                     //TODO: document.getElementById('soldItemsLabel').textContent = formatCurrency(salesData.);
 
              
 
-
+                    
                     // Calculate and display profit margin
                     const profitMargin = (salesData.TotalSales > 0) ? ((totalProfit / salesData.TotalSales) * 100) : 0;
                     document.getElementById('profitMargin').textContent = numeral(profitMargin / 100).format('0.0%');
@@ -2137,7 +2266,6 @@ $username = $_SESSION['Username'];
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
 
-                console.log(`Solicitando datos de ventas desde ${twoYearsAgo} hasta ${today}`);
                 const response = await fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`);
 
                 // Comprobar la respuesta HTTP
@@ -2146,7 +2274,6 @@ $username = $_SESSION['Username'];
                 }
 
                 const data = await response.json();
-                console.log('Datos de tendencia recibidos:', data);
 
                 if (data && data.length > 0) {
                     // Ordenar los datos por fecha para asegurar que están en orden cronológico
@@ -2167,8 +2294,6 @@ $username = $_SESSION['Username'];
                             // CORRECCIÓN: Calcular la ganancia real restando el costo de las ventas
                             const totalProfit = totalSales - totalCost;
 
-                            // Depuración para ver los valores
-                            console.log(`Mes: ${monthName}, Ventas: ${totalSales}, Costo: ${totalCost}, Ganancia: ${totalProfit}`);
 
                             return {
                                 date: date,
@@ -2180,7 +2305,6 @@ $username = $_SESSION['Username'];
                         })
                         .sort((a, b) => a.date.valueOf() - b.date.valueOf()); // Ordenar por fecha
 
-                    console.log('Datos formateados:', formattedData);
 
                     // Extraer los datos para la gráfica
                     const labels = formattedData.map(item => item.monthYear);
@@ -2372,19 +2496,12 @@ $username = $_SESSION['Username'];
                     if (data && data.length > 0) {
                         // Verificar la estructura del primer elemento
                         const firstItem = data[0];
-                        console.log('Estructura de datos de ventas mensuales:', firstItem);
 
-                        // Ver qué campos están disponibles
-                        console.log('Campos disponibles:', Object.keys(firstItem));
-
-                        // Verificar específicamente los campos de ventas y costos
-                        console.log('TotalSales:', firstItem.TotalSales);
-                        console.log('TotalCost:', firstItem.TotalCost);
 
                         // Verificar si hay otros campos que puedan contener información de costos
                         for (const key in firstItem) {
                             if (key.toLowerCase().includes('cost') || key.toLowerCase().includes('costo')) {
-                                console.log(`Campo de costo encontrado - ${key}:`, firstItem[key]);
+                               
                             }
                         }
 
@@ -2393,7 +2510,6 @@ $username = $_SESSION['Username'];
                             parseFloat(item.TotalSales) === parseFloat(item.TotalCost || 0)
                         );
 
-                        console.log('¿Todos los valores de ventas y costos son iguales?', allEqual);
 
                         // Si todos son iguales, puede ser un problema con la API
                         if (allEqual) {
@@ -2403,41 +2519,134 @@ $username = $_SESSION['Username'];
                 })
                 .catch(error => console.error('Error al depurar datos:', error));
         }
-        async function loadTopCategory(){
-            const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
-            let itemsPerPage = 5;
-                if (data && data.length > 0) {
-                    salesByCategoryBody= document.getElementById('salesByCategoryBody');
-                    salesByCategoryBody.innerHTML = ''; // Limpiar el cuerpo de la tabla
-                    
-                    data.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <tr>
-                            <td>${item.CategoryName || 'Sin Categoría'}</td>
-                            <td class="text-end">${formatCurrency(item.TotalSales || 0)}</td>
-                            <td class="text-end">${formatCurrency((item.TotalProfit) || 0)}</td>
-                            </tr>
-                        `;
-                        salesByCategoryBody.appendChild(row);
-                    });
-                }
-            $(document).ready(function () {
+        async function loadTopCategory() {
+    const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
+    const data = await response.json(); // 'data' es el array de objetos con tus categorías
+
+    // 1. Prepara los datos en el formato que DataTables espera
+    // DataTables espera un array de arrays o un array de objetos
+    // para cada fila. Si usas 'columns.data', espera array de objetos.
+    // Si tus columnas ya están definidas con 'data', puedes pasar 'data' directamente.
+
+    // Si tu tabla espera un array de arrays (columnas sin 'data' en definición):
+    // const formattedData = data.map(item => [
+    //     item.CategoryName || 'Sin Categoría',
+    //     formatCurrency(item.TotalSales || 0),
+    //     formatCurrency(item.TotalProfit || 0)
+    // ]);
+
+    // Si tus columnas de DataTables están definidas con 'data' (Ej: { data: 'CategoryName' }):
+    // Entonces puedes pasar 'data' directamente a DataTables.
+
+    if (data && data.length > 0) {
+        // Obtenemos la instancia de DataTables si ya existe
+        // o la inicializamos por primera vez.
+        let table = $('#salesByCategoryTable').DataTable();
+
+        // 2. Destruir la instancia existente si ya fue inicializada
+        // (La opción "destroy: true" en la inicialización lo haría si volvieras a llamar a .DataTable())
+        // Pero para ser más explícito y controlar la actualización de datos:
+        if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
+             table.destroy(); // Destruye la instancia anterior
+        }
+        
+        // 3. Reinicializar DataTables con los NUEVOS datos
+        $('#salesByCategoryTable').DataTable({
+            "data": data, // <-- Pasa tus datos directamente aquí
+            "pageLength": 5,
+            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
+            "searching": false,
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
+            },
+            "dom": '<"row"<"col-sm-12"tr>>' +
+                   '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                   '<"row"<"col-sm-12"p>>',
+            "destroy": true, // Importante: Destruye la instancia anterior si existe
+            "columns": [ // <-- ¡Esto es crucial! Define tus columnas y sus fuentes de datos
+                { "data": "CategoryName", "defaultContent": "Sin Categoría" },
+                { "data": "TotalSales", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" },
+                { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" }
+            ]
+        });
+    } else {
+        // Manejar el caso donde no hay datos
+        if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
+            $('#salesByCategoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
+        } else {
+            // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
             $('#salesByCategoryTable').DataTable({
-                "pageLength": 5, // Mostrar 10 elementos por página
-                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]], // Opciones de cuántos elementos mostrar
+                "data": [], // Inicializa con un array vacío
+                "pageLength": 5,
+                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
                 "searching": false,
                 "language": {
-                    "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json" // Idioma español
+                    "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
                 },
-                "dom": '<"row"<"col-sm-12"tr>>' +       // La tabla misma
-               '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' + // Selector e información
-               '<"row"<"col-sm-12"p>>',           // Paginación (¡aquí quitamos o reducimos el mt-3!)
-                "destroy": true
-            });
+                "dom": '<"row"<"col-sm-12"tr>>' +
+                       '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                       '<"row"<"col-sm-12"p>>',
+                "destroy": true,
+                 "columns": [
+                    { "data": "CategoryName", "defaultContent": "Sin Categoría" },
+                    { "data": "TotalSales", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" },
+                    { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" }
+                ]
             });
         }
+    }
+}
+async function loadLowInventory() {
+    const response = await fetch(`api_proxy.php?endpoint=LowLevelItems`); // El endpoint LowLevelItems parece no necesitar fechas en este caso
+    const data = await response.json(); // 'data' es el array de objetos con tus ítems de bajo inventario
+
+    if (data && data.length > 0) {
+        // Reinicializar DataTables con los NUEVOS datos
+        $('#lowInventoryTable').DataTable({
+            "data": data, // <-- Pasa tus datos directamente aquí
+            "pageLength": 5, // Mostrar 5 elementos por página
+            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]], // Opciones de cuántos elementos mostrar
+            "searching": false, // Puedes cambiar a true si quieres habilitar la búsqueda
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json" // Idioma español
+            },
+            "dom": '<"row"<"col-sm-12"tr>>' +       // La tabla misma
+                   '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' + // Selector e información
+                   '<"row"<"col-sm-12"p>>',          // Paginación
+            "destroy": true, // Importante: Destruye la instancia anterior si existe
+            "columns": [ // <-- Define tus columnas y sus fuentes de datos
+                { "data": "ProductCode", "defaultContent": "" },
+                { "data": "ProductName", "defaultContent": "" },
+                { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" } // Asegura que la cantidad se alinee a la derecha
+            ]
+        });
+    } else {
+        // Manejar el caso donde no hay datos
+        if ($.fn.DataTable.isDataTable('#lowInventoryTable')) {
+            $('#lowInventoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
+        } else {
+            // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
+            $('#lowInventoryTable').DataTable({
+                "data": [], // Inicializa con un array vacío
+                "pageLength": 5,
+                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
+                "searching": false,
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
+                },
+                "dom": '<"row"<"col-sm-12"tr>>' +
+                       '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                       '<"row"<"col-sm-12"p>>',
+                "destroy": true,
+                "columns": [
+                    { "data": "ProductCode", "defaultContent": "" },
+                    { "data": "ProductName", "defaultContent": "" },
+                    { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" }
+                ]
+            });
+        }
+    }
+}
         // Load all data
         async function loadAllData() {
             toggleLoading(true);
@@ -2447,6 +2656,7 @@ $username = $_SESSION['Username'];
                 await loadCompanyInfo();
                 await loadSalesTotals();
                 await loadTopCategory();
+                await loadLowInventory()
                 await loadMonthlySalesTrend();
                 await loadSalesByDepartment();
                 await loadSalesByHour();
@@ -2476,6 +2686,7 @@ $username = $_SESSION['Username'];
                 
                 await loadSalesTotals();
                 await loadTopCategory();
+                await loadLowInventory()
                 await loadMonthlySalesTrend();
                 await loadSalesByDepartment();
                 await loadSalesByHour();
@@ -2660,11 +2871,8 @@ $username = $_SESSION['Username'];
         // Load sales by hour
         async function loadSalesByHour() {
             try {
-                console.log('Solicitando datos de ventas por hora...');
                 const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
                 const data = await response.json();
-
-                console.log('Datos de ventas por hora recibidos:', data);
 
                 if (data && data.length > 0) {
                     // Preparar arrays para todas las horas (0-23)
@@ -2678,17 +2886,12 @@ $username = $_SESSION['Username'];
                         const hourField = item.hasOwnProperty('HourOfDay') ? 'HourOfDay' : 'Hour';
                         const hour = parseInt(item[hourField]);
 
-                        console.log(`Procesando hora ${hour}: ${item.TransactionCount} transacciones, $${item.TotalSales} en ventas`);
-
                         if (!isNaN(hour) && hour >= 0 && hour < 24) {
                             salesByHour[hour] = parseFloat(item.TotalSales) || 0;
                             transactionsByHour[hour] = parseInt(item.TransactionCount) || 0;
                         }
                     });
 
-                    console.log('Datos procesados para la gráfica:');
-                    console.log('Ventas por hora:', salesByHour);
-                    console.log('Transacciones por hora:', transactionsByHour);
 
                     // Destroy existing chart if it exists
                     if (charts.hourlyChart) {
@@ -2799,7 +3002,6 @@ $username = $_SESSION['Username'];
                 const data = await response.json();
 
                 if (data && data.length > 0) {
-                    console.log('Payment method data:', data); // Debug log
 
                     // Prepare data for the chart with CORRECT field names from API
                     let methods = [
@@ -2821,7 +3023,6 @@ $username = $_SESSION['Username'];
                     // Filter out zero values to avoid empty segments in the chart
                     methods = methods.filter(method => method.value > 0);
 
-                    console.log('Processed payment methods:', methods); // Debug log
 
                     // Prepare arrays for chart
                     const labels = methods.map(m => m.name);
@@ -2905,7 +3106,6 @@ $username = $_SESSION['Username'];
                 const data = await response.json();
 
                 if (data && data.length > 0) {
-                    console.log('Raw inventory data:', data); // Debug log
 
                     // Calculate total inventory value
                     let totalCostValue = 0;
@@ -3182,7 +3382,6 @@ $username = $_SESSION['Username'];
                 if (department) queryParams += `&Department=${encodeURIComponent(department)}`;
                 if (supplier) queryParams += `&Supplier=${encodeURIComponent(supplier)}`;
 
-                console.log('Fetching top products data...');
                 const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
                 const data = await response.json();
 
@@ -3225,7 +3424,6 @@ $username = $_SESSION['Username'];
                 }
 
                 if (data && Array.isArray(data) && data.length > 0) {
-                    console.log(`Procesando ${data.length} productos para la tabla...`);
                     // Update top products table
                     const tableData = data.map(item => [
                         item.ProductCode || '',
@@ -3254,7 +3452,6 @@ $username = $_SESSION['Username'];
                     ];
 
                     // Inicializar la tabla con manejo de errores
-                    console.log('Inicializando tabla de productos más vendidos...');
                     tables.topProductsTable = createDataTable('topProductsTable', tableData, topProductsColumns, [[5, 'desc']]);
 
                     if (!tables.topProductsTable) {
@@ -3575,7 +3772,6 @@ $username = $_SESSION['Username'];
                 optimizeKPICards();
 
                 // Log para confirmar que se ejecutó la optimización
-                console.log(`Dashboard layout optimizado. Modo ${isExpanded ? 'expandido' : 'normal'}`);
             }, 350); // 350ms para dar tiempo a que terminen las transiciones CSS
         }
 
@@ -3697,7 +3893,6 @@ $username = $_SESSION['Username'];
             if (mobileMenuToggle) {
                 mobileMenuToggle.addEventListener('click', function (e) {
                     e.preventDefault();
-                    console.log("Mobile menu toggle clicked");
 
                     // En móvil simplemente mostramos/ocultamos el sidebar
                     sidebar.classList.toggle('active');
@@ -3706,10 +3901,6 @@ $username = $_SESSION['Username'];
                     if (overlay) {
                         overlay.classList.toggle('active');
                     }
-
-                    // Para debugging
-                    console.log("Sidebar active:", sidebar.classList.contains('active'));
-                    console.log("Overlay active:", overlay.classList.contains('active'));
                 });
             }
 
@@ -3783,9 +3974,7 @@ $username = $_SESSION['Username'];
                             container: 'body'
                         });
                     });
-                    console.log('Tooltips inicializados - Sidebar contraído');
                 } else {
-                    console.log('Tooltips desactivados - Sidebar expandido');
                 }
             }
 

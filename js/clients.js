@@ -11,7 +11,6 @@ function formatCurrency(number) {
 
 // Función para mostrar notificaciones toast con registro en consola
 function showToast(title, message, type) {
-  console.log(`${type.toUpperCase()}: ${title} - ${message}`);
   // Si estás usando una biblioteca de toast, implementa aquí
   // De lo contrario, puedes usar alert por ahora
   alert(`${title}: ${message}`);
@@ -19,7 +18,6 @@ function showToast(title, message, type) {
 
 // Función para activar/desactivar estado de carga
 function toggleLoading(isLoading) {
-  console.log("Estado de carga:", isLoading ? "ACTIVADO" : "DESACTIVADO");
   const loadingOverlay = document.getElementById("loadingOverlay");
   if (loadingOverlay) {
     loadingOverlay.style.display = isLoading ? "flex" : "none";
@@ -50,9 +48,7 @@ function extractApiData(data) {
 
 // Función para registrar respuestas de la API
 function logApiResponse(endpoint, data) {
-  console.log(`Respuesta de API desde ${endpoint}:`, data);
   const extractedData = extractApiData(data);
-  console.log(`Datos extraídos de ${endpoint}:`, extractedData);
   if (!extractedData || extractedData.length === 0) {
     console.warn(`Advertencia: Datos vacíos extraídos de ${endpoint}`);
   }
@@ -61,7 +57,6 @@ function logApiResponse(endpoint, data) {
 
 // Función para cargar clientes desde la API
 function loadClients() {
-  console.log("loadClients llamado");
   
   // Cargar categorías primero para asegurar que las tenemos disponibles
   loadClientCategories(() => {
@@ -71,7 +66,6 @@ function loadClients() {
 
 // Función que realmente carga los datos de clientes
 function loadClientsData() {
-  console.log("loadClientsData llamado");
   toggleLoading(true);
 
   // Obtener valores de filtros
@@ -85,11 +79,7 @@ function loadClientsData() {
     ? document.getElementById("clientCityFilter").value
     : "";
 
-  console.log("Valores de filtros:", {
-    name: nameFilter,
-    category: categoryFilter,
-    city: cityFilter
-  });
+ 
 
   // Construir parámetros de consulta
   let queryParams = "";
@@ -98,7 +88,6 @@ function loadClientsData() {
   if (cityFilter) queryParams += `&City=${encodeURIComponent(cityFilter)}`;
 
   const apiUrl = `api_proxy.php?endpoint=Clients${queryParams}`;
-  console.log("URL de API:", apiUrl);
 
   // Usar un timeout para evitar solicitudes colgadas
   const timeoutId = setTimeout(() => {
@@ -109,7 +98,6 @@ function loadClientsData() {
   fetch(apiUrl)
     .then((response) => {
       clearTimeout(timeoutId); // Limpiar el timeout
-      console.log("Estado de respuesta de API:", response.status);
       if (!response.ok) {
         throw new Error(`¡Error HTTP! Estado: ${response.status}`);
       }
@@ -119,15 +107,12 @@ function loadClientsData() {
       const clients = logApiResponse("Clients", data);
 
       if (clients && clients.length > 0) {
-        console.log(`Procesando ${clients.length} clientes`);
 
         // Preparar datos para la tabla
         const tableData = clients.map((client) => {
-          console.log("Procesando cliente:", client);
 
           // Buscar el nombre de la categoría
           const category = clientCategories.find((c) => c.CategoryID === client.Category);
-          console.log("Categoría encontrada:", category);
           const categoryName = category ? category.CategoryName : client.Category;
 
           // Crear botones de acción
@@ -149,7 +134,6 @@ function loadClientsData() {
           ];
         });
 
-        console.log("Datos de tabla preparados:", tableData.length, "filas");
 
         try {
           // Verificar si existe el elemento de la tabla
@@ -160,7 +144,6 @@ function loadClientsData() {
             return;
           }
 
-          console.log("Elemento de tabla encontrado, inicializando DataTable");
 
           // Verificar si jQuery está disponible
           if (typeof jQuery === "undefined") {
@@ -194,10 +177,8 @@ function loadClientsData() {
 
           // Inicializar o actualizar la tabla
           if ($.fn.DataTable.isDataTable("#clientsTable")) {
-            console.log("Actualizando DataTable existente");
             $("#clientsTable").DataTable().clear().rows.add(tableData).draw();
           } else {
-            console.log("Creando nuevo DataTable");
             clientsTable = $("#clientsTable").DataTable({
               data: tableData,
               columns: columns,
@@ -222,21 +203,16 @@ function loadClientsData() {
 
             // Añadir eventos a los botones de acción - solo añadir una vez
             $(document).on("click", ".edit-client", function () {
-              console.log("Botón Editar cliqueado");
               const clientId = $(this).data("id");
-              console.log("ID de cliente a editar:", clientId);
               editClient(clientId);
             });
 
             $(document).on("click", ".delete-client", function () {
-              console.log("Botón Eliminar cliqueado");
               const clientId = $(this).data("id");
-              console.log("ID de cliente a eliminar:", clientId);
               deleteClient(clientId);
             });
           }
 
-          console.log("Inicialización de DataTable completa");
         } catch (error) {
           console.error("Error al inicializar DataTable:", error);
           showToast("Error", "Error al inicializar la tabla de clientes: " + error.message, "error");
@@ -258,7 +234,6 @@ function loadClientsData() {
 
 // Función para cargar categorías de clientes
 function loadClientCategories(callback) {
-  console.log("loadClientCategories llamado");
   toggleLoading(true);
 
   // Usar un timeout para evitar solicitudes colgadas
@@ -268,12 +243,10 @@ function loadClientCategories(callback) {
   }, 30000); // 30 segundos de timeout
 
   const apiUrl = "api_proxy.php?endpoint=ClientCategories";
-  console.log("URL de API de categorías:", apiUrl);
 
   fetch(apiUrl)
     .then((response) => {
       clearTimeout(timeoutId); // Limpiar el timeout
-      console.log("Estado de respuesta de API de categorías:", response.status);
       if (!response.ok) {
         throw new Error(`¡Error HTTP! Estado: ${response.status}`);
       }
@@ -284,7 +257,6 @@ function loadClientCategories(callback) {
 
       if (categories && categories.length > 0) {
         clientCategories = categories;
-        console.log(`Cargadas ${categories.length} categorías`);
 
         // Llenar el select de categorías para filtros
         const filterSelect = document.getElementById("clientCategoryFilter");
@@ -292,7 +264,6 @@ function loadClientCategories(callback) {
           filterSelect.innerHTML = '<option value="">Todas las categorías</option>';
 
           categories.forEach((category) => {
-            console.log("Añadiendo categoría al filtro:", category);
             const filterOption = document.createElement("option");
             filterOption.value = category.CategoryID;
             filterOption.textContent = category.CategoryName;
@@ -346,7 +317,6 @@ function loadClientCategories(callback) {
 
 // Función para editar un cliente
 function editClient(clientId) {
-  console.log("editClient llamado con:", clientId);
   
   // Validar ID de cliente
   if (!clientId) {
@@ -365,7 +335,6 @@ function editClient(clientId) {
     `api_proxy.php?endpoint=Clients&ClientID=${encodeURIComponent(clientId)}`
   ];
   
-  console.log("Se probarán estos endpoints de API:", apiEndpoints);
   
   // Probar cada endpoint en secuencia
   tryNextEndpoint(0);
@@ -379,22 +348,18 @@ function editClient(clientId) {
     }
     
     const apiUrl = apiEndpoints[index];
-    console.log(`Probando endpoint de API ${index + 1}/${apiEndpoints.length}: ${apiUrl}`);
     
     fetch(apiUrl)
       .then((response) => {
-        console.log(`Estado de respuesta de API para endpoint ${index + 1}:`, response.status);
         if (!response.ok) {
           throw new Error(`¡Error HTTP! Estado: ${response.status}`);
         }
         return response.json();
       })
       .then((data) => {
-        console.log(`Respuesta de API sin procesar para endpoint ${index + 1}:`, data);
         
         // Si data es false o vacío, probar el siguiente endpoint
         if (!data || (typeof data === "object" && Object.keys(data).length === 0)) {
-          console.log(`Endpoint ${index + 1} devolvió datos vacíos, probando siguiente endpoint...`);
           tryNextEndpoint(index + 1);
           return;
         }
@@ -403,16 +368,13 @@ function editClient(clientId) {
         const client = extractClientFromResponse(data, clientId);
         
         if (client) {
-          console.log("Datos de cliente extraídos exitosamente:", client);
           populateClientForm(client);
         } else {
-          console.log(`No se pudo extraer cliente del endpoint ${index + 1}, probando siguiente endpoint...`);
           tryNextEndpoint(index + 1);
         }
       })
       .catch((error) => {
         console.error(`Error con endpoint ${index + 1}:`, error);
-        console.log("Probando siguiente endpoint...");
         tryNextEndpoint(index + 1);
       });
   }
@@ -450,7 +412,6 @@ function editClient(clientId) {
     // Resetear el formulario
     document.getElementById("clientForm").reset();
     
-    console.log("Poblando formulario con datos del cliente:", client);
     
     // Mapear los nombres de campo de la API a los IDs de campo del formulario
     const fieldMappings = {
@@ -468,15 +429,12 @@ function editClient(clientId) {
       Active: "clientActive"
     };
     
-    // Registrar todos los campos disponibles para depuración
-    console.log("Campos de cliente disponibles:", Object.keys(client));
     
     // Establecer valores del formulario basados en los mapeos
     for (const [apiField, formField] of Object.entries(fieldMappings)) {
       const formElement = document.getElementById(formField);
       if (formElement && client[apiField] !== undefined) {
         formElement.value = client[apiField] || "";
-        console.log(`Establecido ${formField} a "${formElement.value}"`);
       }
     }
     
@@ -497,7 +455,6 @@ function editClient(clientId) {
 
 // Función para eliminar un cliente
 function deleteClient(clientId) {
-  console.log("deleteClient llamado con:", clientId);
   
   if (confirm("¿Está seguro que desea eliminar este cliente?")) {
     toggleLoading(true);
@@ -512,7 +469,6 @@ function deleteClient(clientId) {
         return response.json();
       })
       .then((result) => {
-        console.log("Resultado de eliminar cliente:", result);
         
         if (result.success) {
           showToast("Éxito", "Cliente eliminado correctamente", "success");
@@ -522,7 +478,6 @@ function deleteClient(clientId) {
         }
       })
       .catch((error) => {
-        console.error("Error eliminando cliente:", error);
         showToast("Error", "No se pudo eliminar el cliente: " + error.message, "error");
       })
       .finally(() => {
@@ -534,11 +489,9 @@ function deleteClient(clientId) {
 // Función para guardar un cliente (crear o actualizar)
 function saveClient(event) {
   event.preventDefault();
-  console.log("saveClient llamado");
   
   const clientId = document.getElementById("clientId").value;
   const isNewClient = !clientId;
-  console.log("ID de cliente:", clientId, "Es nuevo:", isNewClient);
   
   // Recopilar datos del formulario
   const clientData = {
@@ -556,7 +509,6 @@ function saveClient(event) {
     Active: document.getElementById("clientActive").value
   };
   
-  console.log("Datos de cliente a guardar:", clientData);
   
   // Determinar endpoint basado en si es un cliente nuevo o una actualización
   const endpoint = isNewClient ? "CreateClient" : "UpdateClient";
@@ -577,7 +529,6 @@ function saveClient(event) {
       return response.json();
     })
     .then((result) => {
-      console.log("Resultado de guardar cliente:", result);
       
       if (result.success) {
         showToast("Éxito", `Cliente ${isNewClient ? "creado" : "actualizado"} correctamente`, "success");
@@ -606,7 +557,6 @@ function saveClient(event) {
 
 // Función para inicializar la sección de mantenimiento de clientes
 function initClientMaintenance() {
-  console.log("initClientMaintenance llamado");
   
   // Cargar datos iniciales
   loadClients();
@@ -624,7 +574,6 @@ function initClientMaintenance() {
   const applyFiltersBtn = document.getElementById("applyClientFilters");
   if (applyFiltersBtn) {
     applyFiltersBtn.addEventListener("click", () => {
-      console.log("Botón de búsqueda cliqueado, cargando clientes...");
       loadClients();
     });
   }
@@ -632,7 +581,6 @@ function initClientMaintenance() {
   const resetFiltersBtn = document.getElementById("resetClientFilters");
   if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener("click", () => {
-      console.log("Botón de reseteo cliqueado, limpiando filtros...");
       // Si existe el formulario, limpiarlo
       if (filterForm) {
         filterForm.reset();
@@ -654,7 +602,6 @@ function initClientMaintenance() {
   const addClientBtn = document.getElementById("addClientBtn");
   if (addClientBtn) {
     addClientBtn.addEventListener("click", () => {
-      console.log("Botón agregar cliente cliqueado, mostrando formulario...");
       document.getElementById("clientForm").reset();
       document.getElementById("clientModalLabel").textContent = "Agregar Cliente";
       document.getElementById("clientId").value = ""; // Asegurarse de que el ID esté vacío para nuevos clientes
@@ -678,7 +625,6 @@ function initClientMaintenance() {
   const saveClientBtn = document.getElementById("saveClientBtn");
   if (saveClientBtn) {
     saveClientBtn.addEventListener("click", function() {
-      console.log("Botón guardar cliente cliqueado, enviando formulario...");
       const clientForm = document.getElementById("clientForm");
       if (clientForm) {
         // Crear un evento para disparar el submit del formulario
@@ -694,11 +640,9 @@ function initClientMaintenance() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Evento DOMContentLoaded disparado");
   
   // Verificar si estamos en la página de mantenimiento de clientes
   if (document.getElementById("clientsTable")) {
-    console.log("Tabla de clientes encontrada, inicializando...");
     initClientMaintenance();
   } else {
     console.log("Tabla de clientes no encontrada, omitiendo inicialización");
@@ -716,5 +660,3 @@ window.addEventListener("unhandledrejection", (event) => {
   console.error("Rechazo de promesa no manejado:", event.reason);
   showToast("Error", "Se produjo un error en una operación asíncrona. Consulte la consola para más detalles.", "error");
 });
-
-console.log("clients.js cargado");
