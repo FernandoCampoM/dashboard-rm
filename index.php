@@ -564,7 +564,7 @@ $username = $_SESSION['Username'];
                                                     <strong><h2 style="color: #006ED3;">|</h2></strong>
                                                 </div>
                                                 <div class="col">
-                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">100</h3></strong>
+                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">0</h3></strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -582,7 +582,7 @@ $username = $_SESSION['Username'];
                                                     <strong><h2 style="color: #006ED3;">|</h2></strong>
                                                 </div>
                                                 <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">100</h3></strong>
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">$0.00</h3></strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -602,7 +602,7 @@ $username = $_SESSION['Username'];
                                                     <strong><h2 style="color: #006ED3;">|</h2></strong>
                                                 </div>
                                                 <div class="col">
-                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">100</h3></strong>
+                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">0</h3></strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -620,28 +620,31 @@ $username = $_SESSION['Username'];
                                                     <strong><h2 style="color: #006ED3;">|</h2></strong>
                                                 </div>
                                                 <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">100</h3></strong>
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">$0.00</h3></strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Nomina</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
+                        <div class="row dashboard-section">
+                            <div class="col-md-6 col-lg-6   test ">
+                                    <div class="card dashboard-card">
+
+                                        <div class="card-body ">
+                                            <div class="d-flex  align-items-center mb-0">
+                                                <div class="card-icon ms-3">
+                                                    <i class="fas fa-dollar-sign fa-2x"></i>
                                                 </div>
-                                                <div class="col">
-                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">100</h3></strong>
-                                                </div>
+                                                <h5 class="card-title mb-0">Nomina</h5>
+                                            </div>
+                                            <div class="row m-0">
+                                                <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
+                                            </div>
+                                            <div class="row d-flex align-items-end mb-0">
+                                                <p class="col text-end me-0 mb-0" id="numEmployees">0</p>
+                                                <p class="col-6 text-start  mb-0" id="numEmployeesLabel">Empleados
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -658,12 +661,38 @@ $username = $_SESSION['Username'];
                                                     <strong><h2 style="color: #006ED3;">|</h2></strong>
                                                 </div>
                                                 <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">100</h3></strong>
+                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgProfitPerTransaction">$0</h3></strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 mb-4">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <h5 class="col-md-5 card-title mb-0">Ventas</h5>
+                                            <div class="col-md-6 d-flex justify-content-end btn-group me-2">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary active"
+                                                    id="dailySalesFilterDay">
+                                                    <i class="fas fa-calendar-day me-1"></i> DIA
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" id="dailySalesFilterWeek">
+                                                    <i class="fas fa-calendar-week me-1"></i> SEMANA
+                                                </button>
+                                            </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="dailySalesChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2232,10 +2261,7 @@ return dataTableInstance;
                     document.getElementById('municipalTax').textContent = formatCurrency(salesData.TotalCityTax);
                     document.getElementById('totalTax').textContent = formatCurrency(salesData.TotalStateTax + salesData.TotalCityTax);
                     document.getElementById('totalSales').textContent = formatCurrency(salesData.TotalSales);
-                    //document.getElementById('transactionCount').textContent = formatNumber(salesData.TransactionCount);
                     
-                    //document.getElementById('avgTicket').textContent = formatCurrency(salesData.AverageTicketAmount);
-                   
                     document.getElementById('totalCost').textContent = formatCurrency(salesData.TotalCost);
                     //TODO: document.getElementById('soldItemsLabel').textContent = formatCurrency(salesData.);
 
@@ -2245,7 +2271,12 @@ return dataTableInstance;
                     // Calculate and display profit margin
                     const profitMargin = (salesData.TotalSales > 0) ? ((totalProfit / salesData.TotalSales) * 100) : 0;
                     document.getElementById('profitMargin').textContent = numeral(profitMargin / 100).format('0.0%');
-
+                    
+                    //DATOS PARA LA SECCION DE ESTADISTICAS
+                    document.getElementById('totalTransactions').textContent = formatNumber(salesData.TransactionCount);
+                    
+                    document.getElementById('averageSalePerTransaction').textContent = formatCurrency(salesData.AverageTicketAmount);
+                    document.getElementById('avgProfitPerTransaction').textContent = formatCurrency(salesData.AverageProfitPerTransaction);
 
                 }
             } catch (error) {
@@ -2519,25 +2550,144 @@ return dataTableInstance;
                 })
                 .catch(error => console.error('Error al depurar datos:', error));
         }
+
+        async function loadSalesPerDayDataForChart() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+
+            // Calcula cuántos días retroceder para llegar al lunes de esta semana
+            // Si es domingo (0), retrocede 6 días para llegar al lunes anterior.
+            // Si es otro día, retrocede (día_actual - 1) días para llegar al lunes de la semana actual.
+            const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+            const lunes = new Date(today);
+            lunes.setDate(today.getDate() - diffToMonday);
+
+            // --- CAMBIOS PARA OBTENER EL ÚLTIMO DÍA DE LA SEMANA (DOMINGO) ---
+            const domingo = new Date(lunes); // Empieza desde el lunes de la semana
+            domingo.setDate(lunes.getDate() + 6); // Suma 6 días para llegar al domingo
+            const martes = new Date(lunes);
+            martes.setDate(lunes.getDate() + 1);
+            const miercoles = new Date(lunes);
+            miercoles.setDate(lunes.getDate() + 2);
+            const jueves = new Date(lunes);
+            jueves.setDate(lunes.getDate() + 3);
+            const viernes = new Date(lunes);
+            viernes.setDate(lunes.getDate() + 4);
+            const sabado = new Date(lunes);
+            sabado.setDate(lunes.getDate() + 5);
+            const responseLunes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(lunes)}&DateTo=${formatDate(lunes)}`);
+            const dataLunes = await responseLunes.json();
+            const responseMartes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(martes)}&DateTo=${formatDate(martes)}`);
+            const dataMartes = await responseMartes.json();
+            const responseMiercoles = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(miercoles)}&DateTo=${formatDate(miercoles)}`);
+            const dataMiercoles = await responseMiercoles.json();
+            const responseJueves = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(jueves)}&DateTo=${formatDate(jueves)}`);
+            const dataJueves = await responseJueves.json();
+            const responseViernes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(viernes)}&DateTo=${formatDate(viernes)}`);
+            const dataViernes = await responseViernes.json();
+            const responseSabado = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(sabado)}&DateTo=${formatDate(sabado)}`);
+            const dataSabado = await responseSabado.json();
+            const responseDomingo = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(domingo)}&DateTo=${formatDate(domingo)}`);
+            const dataDomingo = await responseDomingo.json();
+            if(charts.dailySalesChart) {
+                charts.dailySalesChart.destroy();
+            }
+            const salesDataForChart = [
+                dataLunes[0]?.TotalSales || 0,
+                dataMartes[0]?.TotalSales || 0,
+                dataMiercoles[0]?.TotalSales || 0,
+                dataJueves[0]?.TotalSales || 0,
+                dataViernes[0]?.TotalSales || 0,
+                dataSabado[0]?.TotalSales || 0,
+                dataDomingo[0]?.TotalSales || 0
+            ]; // Ejemplo de datos
+
+
+        const maxSales = Math.max(...salesDataForChart);
+
+        // 2. Encontrar el índice (posición) de ese valor máximo
+        const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
+
+        // 3. Definir tus colores base y el color para el valor máximo
+        const baseColor = '#D7ECFF'; // Color para la mayoría de las barras
+        const highlightColor = '#369FFF'; // Color para la barra más alta (ej. un rojo-naranja)
+
+        // Puedes tener más opciones de colores si quieres:
+        // const highlightColor = '#28a745'; // Un verde vibrante
+        // const highlightColor = '#dc3545'; // Un rojo de peligro
+
+
+        // 4. Crear el array de backgroundColors dinámicamente
+        const backgroundColors = salesDataForChart.map((sales, index) => {
+            return index === indexOfMaxSales ? highlightColor : baseColor;
+        });
+            //llenar el grafico de ventas por dia dailySalesChart
+            const dailySalesData = {
+                labels: [
+                    'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
+                ],
+                datasets: [{
+                    label: 'Ventas Diarias',
+                    data: salesDataForChart,
+                    backgroundColor: backgroundColors,
+                    borderColor: '#000000',
+                    borderWidth: 1,
+                    borderRborderRadius: 10
+                }]
+            };
+            charts.dailySalesChart = new Chart(document.getElementById('dailySalesChart'), {
+                type: 'bar',
+                data: dailySalesData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        async function calculateAvgSalesEstisticsPerHour() {
+            const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
+    const dataArray = await response.json();
+   
+
+    if (dataArray && dataArray.length !== 0) {
+         // Sumar todos los 'TotalSales'
+    const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
+
+    // Contar el número de ítems
+    const numberOfItems = dataArray.length;
+
+    // Calcular el promedio
+    const averageSalesPerHour = totalSalesSum / numberOfItems;
+
+
+        document.getElementById('avgSalesPerHour').textContent = formatCurrency(averageSalesPerHour);
+        // Sumar todos los 'TotalSales'
+    const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
+    const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
+
+    // Calcular el promedio
+    const avgProductsPerHour = totalItemsSold / totalTransactios;
+
+        document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerHour);
+    }
+    const response1 = await fetch(`api_proxy.php?endpoint=GetEmployees`);
+    const dataArray1 = await response1.json();
+    console.log("Empleados cargados:---------------");
+    console.log(dataArray1);
+    if (dataArray1 && dataArray1.length !== 0) {
+        document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
+    }
+}
+
         async function loadTopCategory() {
     const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
     const data = await response.json(); // 'data' es el array de objetos con tus categorías
 
-    // 1. Prepara los datos en el formato que DataTables espera
-    // DataTables espera un array de arrays o un array de objetos
-    // para cada fila. Si usas 'columns.data', espera array de objetos.
-    // Si tus columnas ya están definidas con 'data', puedes pasar 'data' directamente.
-
-    // Si tu tabla espera un array de arrays (columnas sin 'data' en definición):
-    // const formattedData = data.map(item => [
-    //     item.CategoryName || 'Sin Categoría',
-    //     formatCurrency(item.TotalSales || 0),
-    //     formatCurrency(item.TotalProfit || 0)
-    // ]);
-
-    // Si tus columnas de DataTables están definidas con 'data' (Ej: { data: 'CategoryName' }):
-    // Entonces puedes pasar 'data' directamente a DataTables.
-
+    
     if (data && data.length > 0) {
         // Obtenemos la instancia de DataTables si ya existe
         // o la inicializamos por primera vez.
@@ -2569,6 +2719,7 @@ return dataTableInstance;
                 { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" }
             ]
         });
+        
     } else {
         // Manejar el caso donde no hay datos
         if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
@@ -2657,6 +2808,8 @@ async function loadLowInventory() {
                 await loadSalesTotals();
                 await loadTopCategory();
                 await loadLowInventory()
+                await calculateAvgSalesEstisticsPerHour();
+                await loadSalesPerDayDataForChart();
                 await loadMonthlySalesTrend();
                 await loadSalesByDepartment();
                 await loadSalesByHour();
@@ -2687,6 +2840,8 @@ async function loadLowInventory() {
                 await loadSalesTotals();
                 await loadTopCategory();
                 await loadLowInventory()
+                await calculateAvgSalesEstisticsPerHour();
+                await loadSalesPerDayDataForChart();
                 await loadMonthlySalesTrend();
                 await loadSalesByDepartment();
                 await loadSalesByHour();

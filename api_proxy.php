@@ -38,7 +38,8 @@ $allowedGetEndpoints = [
     'GetClient',
     'GetClientDetails',
     'ClientCategories',
-    'GetProductImage'
+    'GetProductImage',
+    'GetEmployees'
 ];
 
 // Lista de endpoints permitidos para solicitudes POST
