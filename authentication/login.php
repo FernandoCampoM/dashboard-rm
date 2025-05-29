@@ -146,7 +146,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                     header("Location: ../index.php"); // Redirigir a la página principal del dashboard
                     exit();
-                    break;
                 case "Invalid":
                     $error_message = "Credenciales de inicio de sesión no válidas.";
                     break;

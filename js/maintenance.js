@@ -825,6 +825,7 @@ function initProductMaintenance() {
   const addProductBtn = document.getElementById("addProductBtn")
   if (addProductBtn) {
     addProductBtn.addEventListener("click", () => {
+      console.log("Add Product button clicked")
       document.getElementById("productForm").reset()
       document.getElementById("productFormTitle").textContent = "Agregar Producto"
       

@@ -164,11 +164,11 @@ $username = $_SESSION['Username'];
                             <a class="nav-link" href="#" id="maintenance-link" data-bs-toggle="collapse"
                                 data-bs-target="#maintenance-collapse" aria-expanded="false"
                                 aria-controls="maintenance-collapse" data-bs-toggle="tooltip" data-bs-placement="right"
-                                title="Mantenimiento">
+                                title="Mantenimiento" data-section="clients-section">
                                 <i class="fas fa-cogs"></i>
                                 <span>Mantenimiento</span>
                             </a>
-                            <div class="collapse" id="maintenance-collapse">
+                            <div class="collapse" id="maintenance-collapse" >
                                 <ul class="nav flex-column ms-3">
                                     <li class="nav-item">
                                         <a class="nav-link" href="#" id="clients-link" data-section="clients-section"
@@ -300,14 +300,14 @@ $username = $_SESSION['Username'];
                 </div>
                 <div class="row">
                     <!-- Contenedor GRAFICAS-->
-                    <div class="col-md-6 col-lg-7" >
+                    
                         <!-- Overview Section -->
-                        <section id="overview-section" class="dashboard-section active">
-
+                        <section id="overview-section" class="dashboard-section active row">
+                            <div class="col-md-6 col-lg-7" >         
                             <!-- KPI Cards -->
                             <div class="row" id="kpi-cards">
                                 <div class="col-md-6 col-lg-6   test ">
-                                    <div class="card dashboard-card ">
+                                    <div class="card dashboard-card-imgBackground ">
 
                                         <div class="card-body ">
                                             <div class="d-flex  align-items-center mb-0">
@@ -331,7 +331,7 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6   test ">
-                                    <div class="card dashboard-card ">
+                                    <div class="card dashboard-card-imgBackground ">
 
                                         <div class="card-body ">
                                             <div class="d-flex  align-items-center mb-0">
@@ -352,7 +352,7 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6   test ">
-                                    <div class="card dashboard-card ">
+                                    <div class="card dashboard-card-imgBackground ">
 
                                         <div class="card-body ">
                                             <div class="d-flex  align-items-center mb-0">
@@ -372,7 +372,7 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6   test ">
-                                    <div class="card dashboard-card ">
+                                    <div class="card dashboard-card-imgBackground ">
 
                                         <div class="card-body ">
                                             <div class="d-flex  align-items-center mb-0">
@@ -433,6 +433,18 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="col-md-6 col-lg-6 mb-4 col">
                                     <div class="card dashboard-card-list">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Ventas por Departamento</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="departmentSalesChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card dashboard-card-list">
                                         <div class="card-header d-flex align-items-center ">
                                             <div class="card-icon">
                                                 <i class="fas fa-pencil fa-2x"></i>
@@ -486,10 +498,10 @@ $username = $_SESSION['Username'];
                                             <div class="card-icon">
                                                 <i class="fas fa-boxes fa-2x"></i>
                                             </div>
-                                            <h5 class="card-title mb-0">Valor Inventario</h5>
+                                            <h5 class="card-title mb-0">Valor Inventariooo</h5>
                                         </div>
                                         <div class="card-body">
-                                            <h2 class="widget-value" id="inventoryValue">$0.00</h2>
+                                            <h2 class="widget-value" id="inventoryValue">$0.000</h2>
                                             <div class="d-flex align-items-center mt-2">
                                                 <span class="text-muted">Rotación</span>
                                                 <span class="ms-auto" id="inventoryTurnover">0x</span>
@@ -498,203 +510,194 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Charts Row -->
-                            <div class="row">
-                                <div class="col-lg-8 mb-4">
-                                    <div class="card dashboard-card">
-                                        <div class="card-header">
-                                            <h5 class="card-title mb-0">Tendencia de Ventas Mensuales</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-container">
-                                                <canvas id="monthlySalesChart"></canvas>
+                            </div>
+                            <!--- Contenedor ESTADISTICAS-->
+                            <div id="contEstadisticas" class="col-md-4 col-lg-5" >
+                                <h4 class="mb-0"><i class="fas fa-chart-column me-2"></i> Estadisticas</h4>
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-6 mb-4 col">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                    <h5 class="card-title mb-0">Total de Transacciones</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                        </div>
+                                                        <div class="col">
+                                                            <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">0</h3></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-6 col-lg-6 mb-4 col">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                    <h5 class="card-title mb-0">Promedio de Venta Por Transacción</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                        </div>
+                                                        <div class="col ">
+                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">$0.00</h3></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-6 mb-4 col">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                    <h5 class="card-title mb-0">Promedio de Productos por Venta</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                        </div>
+                                                        <div class="col">
+                                                            <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">0</h3></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 mb-4 col">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                    <h5 class="card-title mb-0">Promedio de Venta Por Hora</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                        </div>
+                                                        <div class="col ">
+                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">$0.00</h3></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-6   test ">
+                                            <div class="card dashboard-card">
+
+                                                <div class="card-body ">
+                                                    <div class="d-flex  align-items-center mb-0">
+                                                        <div class="card-icon ms-3">
+                                                            <i class="fas fa-dollar-sign fa-2x"></i>
+                                                        </div>
+                                                        <h5 class="card-title mb-0">Nomina</h5>
+                                                    </div>
+                                                    <div class="row m-0">
+                                                        <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
+                                                    </div>
+                                                    <div class="row d-flex align-items-end mb-0">
+                                                        <p class="col text-end me-0 mb-0" id="numEmployees">0</p>
+                                                        <p class="col-6 text-start  mb-0" id="numEmployeesLabel">Empleados
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 mb-4 col">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                    <h5 class="card-title mb-0">Ganancia Promedio por Factura</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
+                                                        </div>
+                                                        <div class="col ">
+                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="avgProfitPerTransaction">$0</h3></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 mb-4">
+                                            <div class="card ">
+                                                <div class="card-header">
+                                                    <h5 class="card-title mb-0">Ventas por Hora del Día</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="chart-container">
+                                                        <canvas id="hourlyChart"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 mb-4">
+                                            <div class="card ">
+                                                <div class="card-header">
+                                                    <div class="row">
+                                                        <h5 class="col-md-5 card-title mb-0">Ventas Por Semana</h5>
+                                                    <!-- <div class="col-md-6 d-flex justify-content-end btn-group me-2">
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary active"
+                                                            id="dailySalesFilterDay">
+                                                            <i class="fas fa-calendar-day me-1"></i> DIA
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="dailySalesFilterWeek">
+                                                            <i class="fas fa-calendar-week me-1"></i> SEMANA
+                                                        </button>
+                                                    </div> -->
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="chart-container">
+                                                        <canvas id="dailySalesChart"></canvas>
+                                                        
+                                                    </div>
+                                                    <p class="text-center">
+                                                            <span style="color: #369FFF; font-weight: bold;">■</span> Venta más alta
+                                                            <span style="color: #28a745; font-weight: bold; margin-left: 10px;">■</span>Venta de Hoy
+                                                        </p>
+                                                </div>
+                                            </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 mb-4">
-                                    <div class="card dashboard-card">
-                                        <div class="card-header">
-                                            <h5 class="card-title mb-0">Ventas por Departamento</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-container">
-                                                <canvas id="departmentSalesChart"></canvas>
+                                <div class="row">
+                                    <div class="col-12 mb-4">
+                                        <div class="card ">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">Tendencia de Ventas Mensuales (Últimos 2 Años)</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container" style="height: 400px;">
+                                                    <canvas id="salesTrendChart"></canvas>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
 
-                            <!-- Additional Charts Row -->
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card dashboard-card">
-                                        <div class="card-header">
-                                            <h5 class="card-title mb-0">Ventas por Hora del Día</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-container">
-                                                <canvas id="hourlyChart"></canvas>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    
-                                </div>
-                            </div>
+                        
                         </section>
 
-                    </div>
-                    <!--- Contenedor ESTADISTICAS-->
-                    <div class="col-md-4 col-lg-5" >
-                        <h4 class="mb-0"><i class="fas fa-chart-column me-2"></i> Estadisticas</h4>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Total de Transacciones</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                </div>
-                                                <div class="col">
-                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">0</h3></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Promedio de Venta Por Transacción</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                </div>
-                                                <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">$0.00</h3></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-<div class="row">
-                            <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Promedio de Productos por Venta</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                </div>
-                                                <div class="col">
-                                                     <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">0</h3></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Promedio de Venta Por Hora</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                </div>
-                                                <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">$0.00</h3></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                        <div class="row dashboard-section">
-                            <div class="col-md-6 col-lg-6   test ">
-                                    <div class="card dashboard-card">
-
-                                        <div class="card-body ">
-                                            <div class="d-flex  align-items-center mb-0">
-                                                <div class="card-icon ms-3">
-                                                    <i class="fas fa-dollar-sign fa-2x"></i>
-                                                </div>
-                                                <h5 class="card-title mb-0">Nomina</h5>
-                                            </div>
-                                            <div class="row m-0">
-                                                <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
-                                            </div>
-                                            <div class="row d-flex align-items-end mb-0">
-                                                <p class="col text-end me-0 mb-0" id="numEmployees">0</p>
-                                                <p class="col-6 text-start  mb-0" id="numEmployeesLabel">Empleados
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card ">
-                                        <div class="card-header d-flex align-items-center ">
-                                           
-                                            <h5 class="card-title mb-0">Ganancia Promedio por Factura</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                </div>
-                                                <div class="col ">
-                                                    <strong><h3 class="text-end" style="color: #006ED3;" id="avgProfitPerTransaction">$0</h3></strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 mb-4">
-                                    <div class="card ">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <h5 class="col-md-5 card-title mb-0">Ventas</h5>
-                                            <div class="col-md-6 d-flex justify-content-end btn-group me-2">
-                                                <button type="button" class="btn btn-sm btn-outline-secondary active"
-                                                    id="dailySalesFilterDay">
-                                                    <i class="fas fa-calendar-day me-1"></i> DIA
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" id="dailySalesFilterWeek">
-                                                    <i class="fas fa-calendar-week me-1"></i> SEMANA
-                                                </button>
-                                            </div>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-container">
-                                                <canvas id="dailySalesChart"></canvas>
-                                            </div>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
+                    
+                    
                 </div>
 
 
@@ -716,23 +719,6 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                     </div>
-
-                    <!-- Sales Trends -->
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="card dashboard-card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Tendencia de Ventas Mensuales (Últimos 2 Años)</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-container" style="height: 400px;">
-                                        <canvas id="salesTrendChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Sales Categories and Department Tables -->
                     <div class="row">
                         <div class="col-md-6 mb-4">
@@ -761,7 +747,7 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <div class="card dashboard-card">
+                            <div class="card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Ventas por Departamento</h5>
                                 </div>
@@ -2296,7 +2282,6 @@ return dataTableInstance;
                 // Solicitar datos de los últimos 2 años para asegurar que tenemos suficientes datos
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
-
                 const response = await fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`);
 
                 // Comprobar la respuesta HTTP
@@ -2320,17 +2305,16 @@ return dataTableInstance;
 
                             // CORRECCIÓN: Asegurarse de que TotalCost existe y es un número
                             const totalSales = parseFloat(item.TotalSales) || 0;
-                            const totalCost = parseFloat(item.TotalCost) || 0;
+                            const totalProfit = parseFloat(item.TotalProfit) || 0;
 
                             // CORRECCIÓN: Calcular la ganancia real restando el costo de las ventas
-                            const totalProfit = totalSales - totalCost;
+                            
 
 
                             return {
                                 date: date,
                                 monthYear: monthName,
                                 TotalSales: totalSales,
-                                TotalCost: totalCost,
                                 TotalProfit: totalProfit // Ganancia real
                             };
                         })
@@ -2348,77 +2332,7 @@ return dataTableInstance;
                         console.warn('ADVERTENCIA: Los datos de ventas y ganancia son idénticos. Es posible que los costos no estén siendo reportados correctamente por la API.');
                     }
 
-                    // Destroy existing chart if it exists
-                    if (charts.monthlySalesChart) {
-                        charts.monthlySalesChart.destroy();
-                    }
-
-                    // Create the chart
-                    const ctx = document.getElementById('monthlySalesChart').getContext('2d');
-                    charts.monthlySalesChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Ventas',
-                                    data: salesData,
-                                    borderColor: '#0057b8',
-                                    backgroundColor: 'rgba(0, 87, 184, 0.1)',
-                                    borderWidth: 2,
-                                    fill: true,
-                                    tension: 0.4
-                                },
-                                {
-                                    label: 'Ganancia',
-                                    data: profitData,
-                                    borderColor: '#00a651',
-                                    backgroundColor: 'rgba(0, 166, 81, 0.1)',
-                                    borderWidth: 2,
-                                    fill: true,
-                                    tension: 0.4
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            let label = context.dataset.label || '';
-                                            if (label) {
-                                                label += ': ';
-                                            }
-                                            if (context.parsed.y !== null) {
-                                                label += formatCurrency(context.parsed.y);
-                                            }
-                                            return label;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        callback: function (value) {
-                                            return formatCurrency(value);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    
 
                     // También actualizar el gráfico de tendencia de ventas en la sección de ventas
                     if (charts.salesTrendChart) {
@@ -2608,11 +2522,12 @@ return dataTableInstance;
 
         // 2. Encontrar el índice (posición) de ese valor máximo
         const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
-
+        // Ajustar el índice del día actual para que Lunes sea 0 y Domingo sea 6
+        const indexOfToday = dayOfWeek
         // 3. Definir tus colores base y el color para el valor máximo
         const baseColor = '#D7ECFF'; // Color para la mayoría de las barras
         const highlightColor = '#369FFF'; // Color para la barra más alta (ej. un rojo-naranja)
-
+        const highlightTodayColor = '#28a745'; // Color para la barra de hoy
         // Puedes tener más opciones de colores si quieres:
         // const highlightColor = '#28a745'; // Un verde vibrante
         // const highlightColor = '#dc3545'; // Un rojo de peligro
@@ -2620,7 +2535,13 @@ return dataTableInstance;
 
         // 4. Crear el array de backgroundColors dinámicamente
         const backgroundColors = salesDataForChart.map((sales, index) => {
-            return index === indexOfMaxSales ? highlightColor : baseColor;
+            if (index === indexOfMaxSales) {
+                return highlightColor;
+            }
+            if (index === indexOfToday) {
+                return highlightTodayColor;
+            }
+            return baseColor;
         });
             //llenar el grafico de ventas por dia dailySalesChart
             const dailySalesData = {
@@ -2640,6 +2561,8 @@ return dataTableInstance;
                 type: 'bar',
                 data: dailySalesData,
                 options: {
+                    responsive:true,
+                     maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -2676,8 +2599,6 @@ return dataTableInstance;
     }
     const response1 = await fetch(`api_proxy.php?endpoint=GetEmployees`);
     const dataArray1 = await response1.json();
-    console.log("Empleados cargados:---------------");
-    console.log(dataArray1);
     if (dataArray1 && dataArray1.length !== 0) {
         document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
     }
@@ -3303,7 +3224,26 @@ async function loadLowInventory() {
                             ]);
                         }
                     });
+                    console.log("Total Cost Value INVENTARIO:", totalCostValue);
+                    // Update inventory value in overview section
+                    const inventoryValueElement = document.getElementById('inventoryValue');
+                    if (inventoryValueElement) {
+                        console.log("Entro al if", formatCurrency(totalCostValue));
+                        inventoryValueElement.textContent = formatCurrency(totalCostValue);
+                        
+                    } else {
+                        console.warn("Elemento inventoryValue no encontrado");
+                    }
 
+                    // Calculate inventory turnover (this would typically come from API)
+                    // For demo, we'll use a random value between 4 and 12
+                    const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
+                    if (inventoryTurnoverElement) {
+                        const inventoryTurnover = (4 + Math.random() * 8).toFixed(1);
+                        inventoryTurnoverElement.textContent = `${inventoryTurnover}x`;
+                    } else {
+                        console.warn("Elemento inventoryTurnover no encontrado");
+                    }
                     // Calculate percentages of total
                     tableData.forEach(row => {
                         // Skip percentage calculation for Grand Total (case insensitive check)
@@ -3415,23 +3355,7 @@ async function loadLowInventory() {
                         console.warn("Elemento totalPotentialProfit no encontrado");
                     }
 
-                    // Update inventory value in overview section
-                    const inventoryValueElement = document.getElementById('inventoryValue');
-                    if (inventoryValueElement) {
-                        inventoryValueElement.textContent = formatCurrency(totalCostValue);
-                    } else {
-                        console.warn("Elemento inventoryValue no encontrado");
-                    }
-
-                    // Calculate inventory turnover (this would typically come from API)
-                    // For demo, we'll use a random value between 4 and 12
-                    const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
-                    if (inventoryTurnoverElement) {
-                        const inventoryTurnover = (4 + Math.random() * 8).toFixed(1);
-                        inventoryTurnoverElement.textContent = `${inventoryTurnover}x`;
-                    } else {
-                        console.warn("Elemento inventoryTurnover no encontrado");
-                    }
+                    
                 }
             } catch (error) {
                 console.error('Error loading inventory value:', error);
