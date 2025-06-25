@@ -1,0 +1,120 @@
+# -----------------------------------------------------------------------------
+# Ignorar dependencias de Composer
+# -----------------------------------------------------------------------------
+/vendor/
+/composer.lock # Si quieres que tu equipo use una versión específica, puedes comentar o eliminar esta línea
+
+# -----------------------------------------------------------------------------
+# Ignorar archivos de entorno y configuración local
+# -----------------------------------------------------------------------------
+.env
+.env.*local
+.env.local.*
+.env.testing # Para entornos de testing locales
+.env.example # Si lo usas para versionar un ejemplo, puedes comentarlo o dejarlo.
+
+# -----------------------------------------------------------------------------
+# Ignorar archivos de caché, logs, sesiones y almacenamiento (comunes en frameworks)
+# -----------------------------------------------------------------------------
+# Laravel / Symfony (ejemplos)
+/bootstrap/cache/
+/storage/*.log
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/app/public/ # Si tienes una carpeta de uploads aquí que no quieres versionar
+/public/build/ # Si utilizas Vite, Webpack, u otros bundlers para assets (Laravel Mix)
+/public/hot # Archivo de HMR de Vite
+
+# Otros caches/logs/sessions genéricos
+*.log
+*.log.*
+/tmp/
+/cache/
+/sessions/
+/logs/
+
+# -----------------------------------------------------------------------------
+# Ignorar archivos específicos de entornos de desarrollo / IDEs
+# -----------------------------------------------------------------------------
+# JetBrains (PhpStorm, IntelliJ IDEA, WebStorm)
+.idea/
+.project
+.DS_Store # macOS
+Thumbs.db # Windows
+ehthumbs.db # Windows
+Desktop.ini # Windows
+
+# VS Code
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# NetBeans
+nbproject/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Vagrant
+.vagrant/
+
+# Docker (si tienes archivos específicos del entorno local de desarrollo)
+docker-compose.override.yml
+.docker/
+*.env.local # Archivos .env específicos de Docker Compose
+
+# PHPUnit
+/.phpunit.result.cache
+
+# Xdebug
+xdebug-trace/
+
+# PhpStorm remote deployment
+.remote/
+
+# -----------------------------------------------------------------------------
+# Ignorar archivos generados automáticamente o de compilación (si aplica)
+# -----------------------------------------------------------------------------
+# Sass/Less/Webpack/Vite compilations
+/node_modules/ # Si estás usando JavaScript moderno con npm/yarn
+/dist/
+/build/
+
+# Archivos de depuración y dumps
+*.bak
+*.swp
+*.swo
+*.tmp
+*.dump
+
+# Archivos de base de datos local (ej. SQLite)
+*.sqlite
+*.db
+*.mdb
+
+# Otros específicos de proyectos
+# Si tienes una carpeta de uploads de usuario que NO debe versionarse
+/public/uploads/
+/resources/assets/js/bootstrap.js # Si es un archivo generado/compilado
+
+# -----------------------------------------------------------------------------
+# Reglas para archivos que pueden tener varias extensiones
+# -----------------------------------------------------------------------------
+# Ignorar archivos de backup comunes
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+
+# -----------------------------------------------------------------------------
+# Excepciones (si necesitas incluir algo dentro de una carpeta ignorada)
+# -----------------------------------------------------------------------------
+# Ejemplo: si ignoraste /storage/ pero quieres versionar /storage/framework/example.txt
+# !/storage/framework/example.txt

@@ -1,0 +1,180 @@
+/* Dashboard Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.company-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.company-address, .company-contact {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    padding: 1rem;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.total-sales, .profit-margin, .transaction-count {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.text-small {
+    font-size: 0.85rem;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+.w-25 {
+    width: 25%;
+}
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.low-stock-warning {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.medium-stock-warning {
+    color: #fd7e14;
+    font-weight: 500;
+}
+
+.good-stock {
+    color: #198754;
+}
+
+.chart-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.total-inventory-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.department-value {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+}
+
+.department-name {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.department-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.department-stat {
+    text-align: center;
+}
+
+.department-stat-value {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.department-stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Date Range Picker Styles */
+.daterangepicker {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #0d6efd;
+}
+
+/* DataTables Styles */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #0d6efd;
+    color: white !important;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #0b5ed7;
+    color: white !important;
+    border: none;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ced4da;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .total-sales, .profit-margin, .transaction-count {
+        font-size: 1.8rem;
+    }
+    
+    .company-name {
+        font-size: 1.5rem;
+    }
+}

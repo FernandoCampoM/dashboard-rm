@@ -1,0 +1,55 @@
+/* Mejorar estilos móviles */
+@media (max-width: 991.98px) {
+    .sidebar {
+        margin-left: -250px;
+        position: fixed;
+        z-index: 1040;
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+    
+    .sidebar.active {
+        margin-left: 0;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    
+    .content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1030;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+        font-size: 1rem;
+    }
+    
+    #mobile-menu-toggle {
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+    }
+}
+
+/* Ajustar espacio de navegación */
+.navbar-brand {
+    margin-right: 0;
+}
+
+/* Mejorar aspecto del botón de usuario en móvil */
+.navbar-toggler:focus {
+    box-shadow: none;
+}

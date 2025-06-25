@@ -1,0 +1,63 @@
+/* Estilos para las secciones de mantenimiento */
+
+/* Estilos para los modales */
+.modal-lg {
+    max-width: 800px;
+}
+
+/* Estilos para los botones de acción en las tablas */
+.edit-client, .edit-product, .delete-client, .delete-product {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Estilos para los badges */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Estilos para los formularios */
+.form-label {
+    font-weight: 500;
+}
+
+/* Estilos para el contenedor de toast */
+#toast-container {
+    z-index: 5000;
+}
+
+/* Estilos para los campos requeridos */
+.form-control:required, .form-select:required {
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Estilos para los campos con error */
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Estilos para el menú desplegable de mantenimiento */
+#maintenance-collapse {
+    padding-left: 1rem;
+}
+
+#maintenance-collapse .nav-link {
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* Animaciones para las tablas */
+.dashboard-card .table {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para los botones de filtro */
+#applyClientFilters, #resetClientFilters,
+#applyProductFilters, #resetProductFilters {
+    min-width: 100px;
+}

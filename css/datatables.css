@@ -1,0 +1,390 @@
+/* Estilos personalizados para DataTables */
+
+/* Contenedor principal de DataTables */
+.dataTables_wrapper {
+    padding: 0.5rem 0;
+}
+
+/* Alinear los botones y la búsqueda en la misma línea */
+.dataTables_wrapper .row:first-child {
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Estilo para la caja de búsqueda */
+.dataTables_filter {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dataTables_filter input {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    min-width: 250px;
+}
+
+.dataTables_filter input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    outline: 0;
+}
+
+/* Grupo de botones de DataTables */
+.dt-buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dt-button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Mejorar la paginación */
+.dataTables_paginate {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.paginate_button {
+    display: inline-block;
+    min-width: 1.5rem;
+    text-align: center;
+    border-radius: 0.25rem;
+    margin: 0 2px;
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    color: #0d6efd;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.paginate_button.current {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    font-weight: bold;
+}
+
+.paginate_button.disabled {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.paginate_button:not(.current):not(.disabled):hover {
+    background-color: #f8f9fa;
+    color: #0a58ca;
+    z-index: 2;
+}
+
+/* Estilos para la información de registros mostrados */
+.dataTables_info {
+    padding-top: 0.5rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Estilos para el selector de cantidad de registros */
+.dataTables_length select {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    appearance: none;
+}
+
+.dataTables_length select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Estilos para las celdas de la tabla */
+.dataTable {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.dataTable th {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 2px solid #dee2e6;
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.dataTable td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.dataTable tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Estilos para el menú de columnas visibles */
+.dt-button-collection {
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0,0,0,.15);
+    background-color: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+}
+
+.dt-button-collection .dt-button {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+}
+
+.dt-button-collection .dt-button:hover,
+.dt-button-collection .dt-button:focus {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+.dt-button-collection .buttons-colvisRestore {
+    border-top: 1px solid #e9ecef;
+    margin-top: 0.25rem;
+    padding-top: 0.5rem;
+    font-weight: 600;
+}
+
+/* Estilo para filas alternadas */
+.dataTable tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Estilo para filas al hacer hover */
+.dataTable tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Estilos para los botones de exportación/acción */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+}
+
+/* Estilos específicos para cada tipo de botón */
+.btn-success {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    color: #fff;
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    color: #fff;
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.btn-info:hover {
+    color: #fff;
+    background-color: #31d2f2;
+    border-color: #25cff2;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Estilos mejorados para los estados de loading/procesando */
+.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 60px;
+    margin-left: -50%;
+    margin-top: -25px;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    background: linear-gradient(to right, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.9) 25%, 
+                rgba(255, 255, 255, 0.9) 75%, 
+                rgba(255, 255, 255, 0) 100%);
+}
+
+/* Estilos para tablas responsive */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before {
+    background-color: #0d6efd;
+    border: 1.5px solid #0a58ca;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th.dtr-control::before {
+    background-color: #dc3545;
+    border: 1.5px solid #b02a37;
+}
+
+/* Estilos para mensajes de 'sin registros' */
+.dataTables_empty {
+    text-align: center;
+    padding: 2rem !important; 
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Animaciones para mejorar la experiencia de usuario */
+.dataTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Estilos para pantallas pequeñas (responsive) */
+@media (max-width: 767.98px) {
+    .dataTables_filter, 
+    .dataTables_info, 
+    .dataTables_paginate, 
+    .dataTables_length {
+        text-align: center;
+        float: none;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dataTables_filter {
+        margin-top: 0.5rem;
+    }
+    
+    .dataTables_filter input {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+    
+    .dt-buttons {
+        text-align: center;
+        float: none;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .paginate_button {
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+/* Fix para evitar que los botones de exportación tengan bordes al hacer focus */
+.dt-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Modificar el placeholder del campo de búsqueda */
+.dataTables_filter input::placeholder {
+    color: #adb5bd;
+    opacity: 1;
+}
+
+/* Estilo para filas seleccionadas */
+table.dataTable tbody tr.selected {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+table.dataTable tbody tr.selected td {
+    box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.2);
+}
+
+/* Estilo para ordenamiento de columnas */
+table.dataTable thead .sorting::after,
+table.dataTable thead .sorting_asc::after,
+table.dataTable thead .sorting_desc::after {
+    opacity: 0.4;
+}
+
+table.dataTable thead .sorting_asc::after {
+    content: "↑";
+}
+
+table.dataTable thead .sorting_desc::after {
+    content: "↓";
+}
+
+table.dataTable thead .sorting::after {
+    content: "↕";
+    opacity: 0.2;
+}
+
+/* Añadir un sutil efecto al ordenar */
+table.dataTable thead th {
+    position: relative;
+}
+
+table.dataTable thead th.sorting::after,
+table.dataTable thead th.sorting_asc::after,
+table.dataTable thead th.sorting_desc::after {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    font-family: "FontAwesome";
+}
+
+/* Añadir efecto hover a los encabezados para indicar que se pueden ordenar */
+table.dataTable thead th.sorting:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}

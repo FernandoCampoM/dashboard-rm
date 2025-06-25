@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Ventas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-card {
+            margin-bottom: 20px;
+            height: 100%;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .metric-label {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .chart-container {
+            flex-grow: 1;
+            min-height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <header class="mb-4">
+            <h1>Dashboard de Ventas</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Desde</span>
+                        <input type="date" id="dateFrom" class="form-control">
+                        <span class="input-group-text">Hasta</span>
+                        <input type="date" id="dateTo" class="form-control">
+                        <button class="btn btn-primary" id="refreshBtn">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Métricas principales -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <div class="metric-label">Ventas Totales</div>
+                        <div class="metric-value" id="totalSales">$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <div class="metric-label">Ganancia Bruta</div>
+                        <div class="metric-value" id="grossProfit">$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <div class="metric-label">Margen Bruto</div>
+                        <div class="metric-value" id="grossMargin">0%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <div class="metric-label">Transacciones</div>
+                        <div class="metric-value" id="transactionCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h5>Ventas por Hora</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesByHourChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h5>Ventas por Método de Pago</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesByMethodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h5>Ventas por Categoría</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesByCategoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h5>Tendencia de Ventas Mensuales</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salesTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Productos Más Vendidos -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Productos Más Vendidos</h5>
+                        <button class="btn btn-sm btn-outline-primary" id="exportTopProductsBtn">Exportar</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="topProductsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Departamento</th>
+                                        <th>Categoría</th>
+                                        <th>Cantidad Vendida</th>
+                                        <th>Ventas Totales</th>
+                                        <th>Ganancia</th>
+                                        <th>Margen</th>
+                                        <th>Stock Actual</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos se cargarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fechas por defecto (último mes)
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('dateFrom').value = formatDate(thirtyDaysAgo);
+            document.getElementById('dateTo').value = formatDate(today);
+            
+            // Cargar datos iniciales
+            loadDashboardData();
+            
+            // Configurar evento de actualización
+            document.getElementById('refreshBtn').addEventListener('click', loadDashboardData);
+            
+            // Configurar evento de exportación
+            document.getElementById('exportTopProductsBtn').addEventListener('click', exportTopProducts);
+        });
+        
+        // Función para formatear fechas como YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // Función para cargar todos los datos del dashboard
+        function loadDashboardData() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            // Mostrar indicador de carga
+            showLoading();
+            
+            // Cargar datos en paralelo
+            Promise.all([
+                fetchData('SalesTotals', { DateFrom: dateFrom, DateTo: dateTo }),
+                fetchData('SalesByHour', { DateFrom: dateFrom, DateTo: dateTo }),
+                fetchData('SalesByCategory', { DateFrom: dateFrom, DateTo: dateTo }),
+                fetchData('SalesByMethod', { DateFrom: dateFrom, DateTo: dateTo }),
+                fetchData('TopSellProducts', { DateFrom: dateFrom, DateTo: dateTo }),
+                fetchData('SaleTrendByMonth', { DateFrom: dateFrom, DateTo: dateTo })
+            ])
+            .then(([salesTotals, salesByHour, salesByCategory, salesByMethod, topProducts, salesTrend]) => {
+                // Actualizar métricas principales
+                updateMainMetrics(salesTotals);
+                
+                // Actualizar gráficos
+                updateSalesByHourChart(salesByHour);
+                updateSalesByCategoryChart(salesByCategory);
+                updateSalesByMethodChart(salesByMethod);
+                updateSalesTrendChart(salesTrend);
+                
+                // Actualizar tabla de productos
+                updateTopProductsTable(topProducts);
+                
+                // Ocultar indicador de carga
+                hideLoading();
+            })
+            .catch(error => {
+                console.error('Error cargando datos:', error);
+                alert('Error al cargar los datos del dashboard. Por favor, intente nuevamente.');
+                hideLoading();
+            });
+        }
+        
+        // Función para realizar peticiones a la API
+        function fetchData(endpoint, params = {}) {
+            // Construir URL con parámetros
+            const url = new URL(`api_proxy.php`, window.location.origin + window.location.pathname);
+            url.searchParams.append('endpoint', endpoint);
+            
+            // Agregar parámetros adicionales
+            Object.keys(params).forEach(key => {
+                if (params[key]) {
+                    url.searchParams.append(key, params[key]);
+                }
+            });
+            
+            // Realizar petición
+            return fetch(url.toString())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                });
+        }
+        
+        // Funciones para mostrar/ocultar indicador de carga
+        function showLoading() {
+            // Implementar indicador de carga
+            document.body.style.cursor = 'wait';
+        }
+        
+        function hideLoading() {
+            document.body.style.cursor = 'default';
+        }
+        
+        // Función para actualizar métricas principales
+        function updateMainMetrics(data) {
+            if (!data) return;
+            
+            document.getElementById('totalSales').textContent = formatCurrency(data.TotalSales);
+            document.getElementById('grossProfit').textContent = formatCurrency(data.TotalSales - data.TotalCost);
+            
+            const grossMargin = ((data.TotalSales - data.TotalCost) / data.TotalSales * 100) || 0;
+            document.getElementById('grossMargin').textContent = formatPercentage(grossMargin);
+            
+            document.getElementById('transactionCount').textContent = formatNumber(data.TransactionCount);
+        }
+        
+        // Función para actualizar gráfico de ventas por hora
+        function updateSalesByHourChart(data) {
+            if (!data || !data.length) return;
+            
+            const ctx = document.getElementById('salesByHourChart').getContext('2d');
+            
+            // Destruir gráfico existente si hay uno
+            if (window.salesByHourChart) {
+                window.salesByHourChart.destroy();
+            }
+            
+            // Preparar datos
+            const hours = data.map(item => `${item.HourOfDay}:00`);
+            const sales = data.map(item => item.TotalSales);
+            const transactions = data.map(item => item.TransactionCount);
+            
+            // Crear nuevo gráfico
+            window.salesByHourChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Ventas',
+                            data: sales,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Transacciones',
+                            data: transactions,
+                            type: 'line',
+                            fill: false,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Ventas ($)'
+                            }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Transacciones'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Función para actualizar gráfico de ventas por categoría
+        function updateSalesByCategoryChart(data) {
+            if (!data || !data.length) return;
+            
+            const ctx = document.getElementById('salesByCategoryChart').getContext('2d');
+            
+            // Destruir gráfico existente si hay uno
+            if (window.salesByCategoryChart) {
+                window.salesByCategoryChart.destroy();
+            }
+            
+            // Ordenar por ventas totales (descendente)
+            data.sort((a, b) => b.TotalSales - a.TotalSales);
+            
+            // Limitar a las 10 principales categorías
+            const topCategories = data.slice(0, 10);
+            
+            // Preparar datos
+            const categories = topCategories.map(item => item.CategoryName);
+            const sales = topCategories.map(item => item.TotalSales);
+            const profits = topCategories.map(item => item.TotalProfit);
+            
+            // Crear nuevo gráfico
+            window.salesByCategoryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [
+                        {
+                            label: 'Ventas',
+                            data: sales,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Ganancia',
+                            data: profits,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Monto ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Función para actualizar gráfico de ventas por método de pago
+        function updateSalesByMethodChart(data) {
+            if (!data || !data.length) return;
+            
+            const ctx = document.getElementById('salesByMethodChart').getContext('2d');
+            
+            // Destruir gráfico existente si hay uno
+            if (window.salesByMethodChart) {
+                window.salesByMethodChart.destroy();
+            }
+            
+            // Calcular totales por método de pago
+            const totalCash = data.reduce((sum, item) => sum + (item.CashPayments || 0), 0);
+            const totalCredit = data.reduce((sum, item) => sum + (item.CreditCardPayments || 0), 0);
+            const totalDebit = data.reduce((sum, item) => sum + (item.DebitCardPayments || 0), 0);
+            const totalCheck = data.reduce((sum, item) => sum + (item.CheckPayments || 0), 0);
+            const totalAthMovil = data.reduce((sum, item) => sum + (item.AthMovilPayments || 0), 0);
+            
+            // Crear nuevo gráfico
+            window.salesByMethodChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Efectivo', 'Tarjeta de Crédito', 'Tarjeta de Débito', 'Cheque', 'ATH Móvil'],
+                    datasets: [{
+                        data: [totalCash, totalCredit, totalDebit, totalCheck, totalAthMovil],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(153, 102, 255, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Función para actualizar gráfico de tendencia de ventas
+        function updateSalesTrendChart(data) {
+            if (!data || !data.length) return;
+            
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            
+            // Destruir gráfico existente si hay uno
+            if (window.salesTrendChart) {
+                window.salesTrendChart.destroy();
+            }
+            
+            // Ordenar por fecha (ascendente)
+            data.sort((a, b) => a.MonthYear.localeCompare(b.MonthYear));
+            
+            // Limitar a los últimos 12 meses
+            const recentMonths = data.slice(-12);
+            
+            // Preparar datos
+            const months = recentMonths.map(item => {
+                const date = new Date(item.Year, item.Month - 1);
+                return date.toLocaleDateString('es', { month: 'short', year: 'numeric' });
+            });
+            const sales = recentMonths.map(item => item.TotalSales);
+            const profits = recentMonths.map(item => item.TotalProfit);
+            
+            // Crear nuevo gráfico
+            window.salesTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Ventas',
+                            data: sales,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Ganancia',
+                            data: profits,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Monto ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Función para actualizar tabla de productos más vendidos
+        function updateTopProductsTable(data) {
+            if (!data || !data.length) return;
+            
+            const tableBody = document.querySelector('#topProductsTable tbody');
+            tableBody.innerHTML = '';
+            
+            // Ordenar por cantidad vendida (descendente)
+            data.sort((a, b) => b.TotalQuantitySold - a.TotalQuantitySold);
+            
+            // Limitar a los 20 principales productos
+            const topProducts = data.slice(0, 20);
+            
+            // Agregar filas a la tabla
+            topProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.ProductCode}</td>
+                    <td>${product.ProductName}</td>
+                    <td>${product.Department}</td>
+                    <td>${product.Category}</td>
+                    <td class="text-end">${formatNumber(product.TotalQuantitySold)}</td>
+                    <td class="text-end">${formatCurrency(product.TotalSales)}</td>
+                    <td class="text-end">${formatCurrency(product.TotalProfit)}</td>
+                    <td class="text-end">${formatPercentage(product.ProfitMarginPercentage)}</td>
+                    <td class="text-end">${formatNumber(product.CurrentStock)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Función para exportar productos más vendidos a CSV
+        function exportTopProducts() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            
+            fetchData('TopSellProducts', { DateFrom: dateFrom, DateTo: dateTo })
+                .then(data => {
+                    if (!data || !data.length) {
+                        alert('No hay datos para exportar.');
+                        return;
+                    }
+                    
+                    // Ordenar por cantidad vendida (descendente)
+                    data.sort((a, b) => b.TotalQuantitySold - a.TotalQuantitySold);
+                    
+                    // Crear contenido CSV
+                    const headers = ['Código', 'Producto', 'Departamento', 'Categoría', 'Cantidad Vendida', 
+                                    'Ventas Totales', 'Ganancia', 'Margen', 'Stock Actual'];
+                    
+                    let csvContent = headers.join(',') + '\n';
+                    
+                    data.forEach(product => {
+                        const row = [
+                            `"${product.ProductCode}"`,
+                            `"${product.ProductName}"`,
+                            `"${product.Department}"`,
+                            `"${product.Category}"`,
+                            product.TotalQuantitySold,
+                            product.TotalSales,
+                            product.TotalProfit,
+                            product.ProfitMarginPercentage,
+                            product.CurrentStock
+                        ];
+                        csvContent += row.join(',') + '\n';
+                    });
+                    
+                    // Crear blob y descargar
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `productos_mas_vendidos_${dateFrom}_${dateTo}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.error('Error exportando datos:', error);
+                    alert('Error al exportar los datos. Por favor, intente nuevamente.');
+                });
+        }
+        
+        // Funciones de utilidad para formateo
+        function formatCurrency(value) {
+            return '$' + (parseFloat(value) || 0).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+        
+        function formatPercentage(value) {
+            return (parseFloat(value) || 0).toFixed(1) + '%';
+        }
+        
+        function formatNumber(value) {
+            return (parseInt(value) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
+</body>
+</html>
