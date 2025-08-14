@@ -7,7 +7,14 @@
  */
 
 // Configuración básica
-define('API_BASE_URL', 'http://localhost:8082/cse.api.v1/');
+require_once 'setup/config_functions.php';
+//validar si existe una configuracion del backend guardada
+$config = get_configBackend();
+if (!$config) {
+    header("Location: setup/setup-backend.php");
+    exit;
+}
+define('API_BASE_URL', "http://{$config['backend_ip']}:{$config['backend_port']}/cse.api.v1/");
 define('API_USERNAME', 'testserver'); // Cambiar por tu usuario real
 define('API_PASSWORD', 'testserver'); // Cambiar por tu contraseña real
 define('DEBUG_MODE', true); // Activar para ver errores en pantalla

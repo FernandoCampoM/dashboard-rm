@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script de inicio de sesión para el Dashboard Ejecutivo
  * Este archivo maneja tanto la presentación del formulario como la lógica de validación
@@ -10,6 +11,22 @@
 
 session_start(); // Iniciar la sesión para manejar el estado de autenticación
 require_once '../config.php';
+require_once '../setup/config_functions.php';
+//validar si existe una configuracion del backend guardada
+$config = get_configBackend();
+if (!$config) {
+    header("Location: ../setup/setup-backend.php");
+    exit;
+}
+ // 1. Verificar si el usuario ha iniciado sesión
+// Se comprueba si la variable de sesión 'loggedin' está establecida y es verdadera
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) {
+    // Si ha iniciado sesión, lo redirigimos al dashboard
+    header('Location: ../index.php');
+    exit; // Es crucial usar exit() después de una redirección para detener la ejecución del script
+}
+
+
 $error_message = ''; // Variable para almacenar mensajes de error
 $responseUsers = []; 
 $userID =-1;
@@ -218,6 +235,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" name="UserPass" placeholder="Password" required>
             </div>
             <button type="submit" class="login-button">Log In</button>
+            <!-- Enlace de cambio de IP/puerto -->
+<p class="mt-2 mb-0 text-center">
+    <a href="../setup/setup-backend.php?edit=1" class="text-muted small">
+        Cambiar IP y puerto del servidor
+    </a>
+</p>
         </form>
         </div>
     </div>

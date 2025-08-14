@@ -2,6 +2,19 @@
 session_start();
 // Incluir configuración
 require_once 'config.php';
+// Ruta del archivo de configuración
+require_once 'setup/config_functions.php';
+//validar si existe una configuracion del backend guardada
+
+
+$config = get_configBackend();
+if (!$config) {
+    header("Location: setup/setup-backend.php");
+    exit;
+} 
+
+
+
 // 1. Verificar si el usuario ha iniciado sesión
 // Se comprueba si la variable de sesión 'loggedin' está establecida y es verdadera
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -22,7 +35,7 @@ $username = $_SESSION['Username'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard CEO - Supermercados</title>
-
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS -->
@@ -37,7 +50,7 @@ $username = $_SESSION['Username'];
     <link rel="stylesheet" type="text/css" href="css/sidebar.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/maintenance.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
-
+    
 
 </head>
 
@@ -109,7 +122,7 @@ $username = $_SESSION['Username'];
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                            <li><a id="btn-configuracion" class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -126,7 +139,7 @@ $username = $_SESSION['Username'];
         <div class="row">
             <!-- Sidebar 
             <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">-->
-            <div class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebarTest" >
                 <div class="position-sticky pt-3">
                     <!-- Estructura actualizada de enlaces del sidebar -->
                     <ul class="nav flex-column">
@@ -322,7 +335,7 @@ $username = $_SESSION['Username'];
                                                 <div class="row mb-0">
                                                     <p class="col  text-end me-4 mb-0" id="yesterdaySales"><strong>
                                                             <span class="trend-indicator trend-up" id="salesTrend">
-                                                                <i class="col fas fa-long-arrow-alt-up"></i> 0%</strong>
+                                                                <i class="col fas fa-long-arrow-alt-up"></i> </strong>
                                                         </span>$0.00
                                                     </p>
                                                 </div>
@@ -433,13 +446,34 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="col-md-6 col-lg-6 mb-4 col">
                                     <div class="card dashboard-card-list">
-                                        <div class="card-header">
+                                        <div class="card-header d-flex align-items-center">
+                                            <div class="card-icon">
+                                                <i class="fas fa-folder fa-2x"></i>
+                                            </div>
                                             <h5 class="card-title mb-0">Ventas por Departamento</h5>
                                         </div>
                                         <div class="card-body">
                                             <div class="chart-container">
                                                 <canvas id="departmentSalesChart"></canvas>
                                             </div>
+                                            
+                                            <div class="list-container" id="department-sales-list">
+                                                
+                                            </div>
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination justify-content-center mt-3">
+                                                    <li id="prev-btn-li" class="page-item disabled">
+                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                    </li>
+                                                    <li id="next-btn-li" class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                    </li>
+                                                </ul>
+                                                </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -476,7 +510,7 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="col-md-6 col-lg-6 mb-4">
                                     <div class="card dashboard-card-list">
-                                        <div class="card-header">
+                                        <div class="card-header d-flex align-items-center">
                                             <div class="card-icon">
                                                 <i class="fas fa-money-bill-transfer fa-2x"></i>
                                             </div>
@@ -486,6 +520,23 @@ $username = $_SESSION['Username'];
                                             <div class="chart-container">
                                                 <canvas id="paymentMethodsChart"></canvas>
                                             </div>
+                                            <div class="list-container" id="payment-methods-list">
+
+                                            </div>
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination justify-content-center mt-3">
+                                                    <li id="prev-btn-li-paymentMethods" class="page-item disabled">
+                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                    </li>
+                                                    <li id="next-btn-li-paymentMethods" class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                    </li>
+                                                </ul>
+                                                </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -592,15 +643,18 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6   test ">
-                                            <div class="card dashboard-card">
-
-                                                <div class="card-body ">
-                                                    <div class="d-flex  align-items-center mb-0">
+                                            <div class="card ">
+                                                <div class="card-header d-flex align-items-center ">
+                                                
+                                                   
                                                         <div class="card-icon ms-3">
                                                             <i class="fas fa-dollar-sign fa-2x"></i>
                                                         </div>
                                                         <h5 class="card-title mb-0">Nomina</h5>
-                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="card-body ">
+                                                    
                                                     <div class="row m-0">
                                                         <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
                                                     </div>
@@ -699,7 +753,7 @@ $username = $_SESSION['Username'];
                     
                     
                 </div>
-
+                                      
 
 
 
@@ -1447,7 +1501,37 @@ $username = $_SESSION['Username'];
 
         </div>
     </div>
+<!-- Modal editar backend config Bootstrap -->
+<div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="configModalLabel">Configuración Backend</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
 
+        <div class="login-container">
+            <h2>Configuración de Backend</h2>
+            <div class="card card-config p-4">
+                <div class="form-group mb-3">
+                    <label for="backend-ip" class="form-label text-start d-block">IP del backend:</label>
+                    <input type="text" id="backend-ip" class="form-control" placeholder="192.168.0.10" 
+                           value="<?= htmlspecialchars($config['backend_ip'] ?? '') ?>">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="backend-port" class="form-label text-start d-block">Puerto del backend:</label>
+                    <input type="text" id="backend-port" class="form-control" placeholder="3000" 
+                           value="<?= htmlspecialchars($config['backend_port'] ?? '') ?>">
+                </div>
+                <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>                                 
     <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -1469,6 +1553,7 @@ $username = $_SESSION['Username'];
 
     <!-- Custom JavaScript -->
     <script>
+        
         // Global variables
         let currentDateFrom = moment().format('YYYY-MM-DD');
         let currentDateTo = moment().format('YYYY-MM-DD');
@@ -1478,6 +1563,266 @@ $username = $_SESSION['Username'];
         // Initialize datepickers with current values
         document.getElementById('dateFrom').value = currentDateFrom;
         document.getElementById('dateTo').value = currentDateTo;
+
+        //VARIABLES PARA DEPARTMENTS LIST
+        const departmentList = document.getElementById('department-sales-list');
+        const prevBtnLi = document.getElementById('prev-btn-li');
+        const nextBtnLi = document.getElementById('next-btn-li');
+        const prevBtn = prevBtnLi.querySelector('.page-link');
+        const nextBtn = nextBtnLi.querySelector('.page-link');
+        const itemsPerPage = 5;
+        let currentPage = 1;
+        let currentDataDepartments = [];
+        // Constantes para los elementos del DOM de la lista de métodos de pago
+const paymentMethodsList = document.getElementById('payment-methods-list');
+const prevBtnLiPaymentMethods = document.getElementById('prev-btn-li-paymentMethods');
+const nextBtnLiPaymentMethods = document.getElementById('next-btn-li-paymentMethods');
+const prevBtnPaymentMethods = prevBtnLiPaymentMethods.querySelector('.page-link');
+const nextBtnPaymentMethods = nextBtnLiPaymentMethods.querySelector('.page-link');
+// Variables de estado para la paginación
+const itemsPerPagePaymentMethods = 5;
+let currentPagePaymentMethods = 1;
+let currentPaymentMethodsData = [];
+         const _backgroundColor = [
+    '#0057b8', // Azul
+    '#00a651', // Verde
+    '#ffc107', // Amarillo
+    '#dc3545', // Rojo
+    '#6f42c1', // Morado
+    '#fd7e14', // Naranja
+    '#20c997', // Verde agua
+    '#6c757d', // Gris
+
+    '#ff66b2', // Rosa fuerte
+    '#17a2b8', // Azul turquesa
+    '#8bc34a', // Verde lima
+    '#ff5722', // Naranja rojizo
+    '#4caf50', // Verde estándar
+    '#673ab7', // Púrpura oscuro
+    '#3f51b5', // Azul índigo
+    '#e91e63', // Rosa intenso
+    '#795548', // Marrón
+    '#9e9e9e', // Gris claro
+    '#607d8b', // Azul grisáceo
+    '#cddc39'  // Amarillo verdoso
+];
+const sidebarTest = document.getElementById('sidebarTest');
+sidebarTest.style.position = 'static';
+
+        /**
+ * Renderiza los ítems de la lista para la página actual.
+ * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
+ */
+function renderListItems(dataToRender) {
+    console.log('Rendering list items:', dataToRender);
+    departmentList.innerHTML = '';
+
+    dataToRender.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
+        console.log('Rendering item:', item);
+        console.log('Data:', currentDataDepartments);
+        const indexToData = currentDataDepartments.findIndex(department => department.DepartmentID === item.DepartmentID);
+        // Usa el índice y el operador módulo para ciclar a través de los colores sin eliminarlos
+        const color = _backgroundColor[indexToData % _backgroundColor.length];
+
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="color-box me-2" style="background-color: ${color};"></div>
+                <span class="category fw-bold">${item.Department || 'Sin Departamento'}</span>
+            </div>
+            <span class="value">${formatCurrency(item.TotalSales || 0)}</span>
+        `;
+        departmentList.appendChild(listItem);
+    });
+}
+        /**
+ * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación.
+ * @param {number} totalPages - El número total de páginas.
+ */
+function updateNavigationControls(totalPages) {
+    if (currentPage === 1) {
+        prevBtnLi.classList.add('disabled');
+    } else {
+        prevBtnLi.classList.remove('disabled');
+    }
+
+    if (currentPage === totalPages) {
+        nextBtnLi.classList.add('disabled');
+    } else {
+        nextBtnLi.classList.remove('disabled');
+    }
+}
+
+/**
+ * Maneja la paginación para los ítems de venta.
+ * @param {Array} newData - El conjunto completo de datos a paginar.
+ */
+function setupPagination(newData) {
+    currentDataDepartments = newData;
+    currentPage = 1; // Reinicia la página a 1 cuando los datos cambian
+    
+    const totalPages = Math.ceil(currentDataDepartments.length / itemsPerPage);
+
+    function displayCurrentPage() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const itemsToDisplay = currentDataDepartments.slice(start, end);
+        renderListItems(itemsToDisplay);
+        updateNavigationControls(totalPages);
+    }
+    
+    // Limpia los listeners para evitar duplicados
+    prevBtn.removeEventListener('click', handlePrevClick);
+    nextBtn.removeEventListener('click', handleNextClick);
+
+    function handlePrevClick(e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            displayCurrentPage();
+        }
+    }
+
+    function handleNextClick(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayCurrentPage();
+        }
+    }
+
+    prevBtn.addEventListener('click', handlePrevClick);
+    nextBtn.addEventListener('click', handleNextClick);
+
+    // Muestra la primera página al inicializar
+    displayCurrentPage();
+}
+/**
+ * Renderiza los ítems de la lista de métodos de pago para la página actual.
+ * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
+ */
+function renderPaymentMethodItems(dataToRender) {
+    paymentMethodsList.innerHTML = '';
+    
+    dataToRender.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
+        
+        // Usa el índice y el operador módulo para ciclar a través de los colores
+        
+        
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="color-box me-2" style="background-color: ${item.color};"></div>
+                <span class="category fw-bold">${item.name || 'Sin Método'}</span>
+            </div>
+            <span class="value">${formatCurrency(item.value || 0)}</span>
+        `;
+        paymentMethodsList.appendChild(listItem);
+    });
+}
+/**
+ * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
+ * @param {number} totalPages - El número total de páginas.
+ */
+function updatePaymentMethodNavigation(totalPages) {
+    if (currentPagePaymentMethods === 1) {
+        prevBtnLiPaymentMethods.classList.add('disabled');
+    } else {
+        prevBtnLiPaymentMethods.classList.remove('disabled');
+    }
+
+    if (currentPagePaymentMethods === totalPages) {
+        nextBtnLiPaymentMethods.classList.add('disabled');
+    } else {
+        nextBtnLiPaymentMethods.classList.remove('disabled');
+    }
+}
+
+/**
+ * Configura y gestiona la paginación para la lista de métodos de pago.
+ * @param {Array} newData - El conjunto completo de datos a paginar.
+ */
+function setupPaymentMethodPagination(newData) {
+    currentPaymentMethodsData = newData;
+    currentPagePaymentMethods = 1; // Reinicia la página a 1 cuando los datos cambian
+    
+    const totalPages = Math.ceil(currentPaymentMethodsData.length / itemsPerPagePaymentMethods);
+
+    function displayCurrentPaymentMethodPage() {
+        const start = (currentPagePaymentMethods - 1) * itemsPerPagePaymentMethods;
+        const end = start + itemsPerPagePaymentMethods;
+        const itemsToDisplay = currentPaymentMethodsData.slice(start, end);
+        renderPaymentMethodItems(itemsToDisplay);
+        updatePaymentMethodNavigation(totalPages);
+    }
+    
+    // Limpia los listeners antiguos para evitar duplicados
+    prevBtnPaymentMethods.removeEventListener('click', handlePrevClickPaymentMethods);
+    nextBtnPaymentMethods.removeEventListener('click', handleNextClickPaymentMethods);
+
+    function handlePrevClickPaymentMethods(e) {
+        e.preventDefault();
+        if (currentPagePaymentMethods > 1) {
+            currentPagePaymentMethods--;
+            displayCurrentPaymentMethodPage();
+        }
+    }
+
+    function handleNextClickPaymentMethods(e) {
+        e.preventDefault();
+        if (currentPagePaymentMethods < totalPages) {
+            currentPagePaymentMethods++;
+            displayCurrentPaymentMethodPage();
+        }
+    }
+
+    // Agrega los nuevos listeners
+    prevBtnPaymentMethods.addEventListener('click', handlePrevClickPaymentMethods);
+    nextBtnPaymentMethods.addEventListener('click', handleNextClickPaymentMethods);
+
+    // Muestra la primera página al inicializar
+    displayCurrentPaymentMethodPage();
+}
+document.getElementById("save-config").addEventListener("click", function () {
+    const backend_ip = document.getElementById("backend-ip").value.trim();
+    const backend_port = document.getElementById("backend-port").value.trim();
+
+    if (backend_ip && backend_port) {
+        const config = { backend_ip, backend_port };
+
+        fetch("setup/save_config.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                alert("Configuración guardada correctamente.");
+                bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+                window.location.href='authentication/logout.php'; // Recarga la página para aplicar cambios
+            } else {
+                alert("Error al guardar la configuración en el servidor.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ocurrió un error de red al intentar guardar la configuración.");
+        });
+    } else {
+        alert("Por favor ingresa IP y puerto.");
+    }
+});
+document.getElementById("btn-configuracion").addEventListener("click", function (e) {
+    e.preventDefault(); // Evita recargar la página
+
+    // Usar la API de Bootstrap para abrir el modal
+    var configModal = new bootstrap.Modal(document.getElementById('configModal'));
+    configModal.show();
+});
+
 
         // Show/Hide loading overlay
         function toggleLoading(show = true) {
@@ -2193,12 +2538,12 @@ return dataTableInstance;
                             const salesChange = todaySales - yesterdaySales;
                             if (porcentajeCambio >= 0) {
                                 yesterdaySalesElement.innerHTML = `<span class="trend-indicator trend-up" id="salesTrend">
-                                                        <i class="col fas fa-long-arrow-alt-up"></i> ${Math.abs(porcentajeCambio).toFixed(1)}%</strong>
+                                                        <i class="col fas fa-long-arrow-alt-up"></i> </strong>
                                                         </span>${formatCurrency(yesterdaySales)}`;
 
                             } else {
                                 yesterdaySalesElement.innerHTML = `<span class="trend-indicator trend-down" id="salesTrend">
-                                                        <i class="col fas fa-long-arrow-alt-down"></i> ${Math.abs(porcentajeCambio).toFixed(1)}%</strong>
+                                                        <i class="col fas fa-long-arrow-alt-down"></i> </strong>
                                                         </span>${formatCurrency(yesterdaySales)}`;
                             }
                             //yesterdaySalesElement.textContent = formatCurrency(yesterdaySales);
@@ -2865,6 +3210,7 @@ async function loadLowInventory() {
         document.addEventListener('DOMContentLoaded', initDashboard);
         // Load sales by department
         async function loadSalesByDepartment() {
+           
             try {
                 const response = await fetch(`api_proxy.php?endpoint=SalesByDepartment&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
                 const data = await response.json();
@@ -2873,7 +3219,7 @@ async function loadLowInventory() {
                     // Prepare data for the chart
                     const labels = data.map(item => item.Department || 'Sin Departamento');
                     const salesData = data.map(item => item.TotalSales || 0);
-
+                    
                     // Destroy existing chart if it exists
                     if (charts.departmentSalesChart) {
                         charts.departmentSalesChart.destroy();
@@ -2887,16 +3233,7 @@ async function loadLowInventory() {
                             labels: labels,
                             datasets: [{
                                 data: salesData,
-                                backgroundColor: [
-                                    '#0057b8',
-                                    '#00a651',
-                                    '#ffc107',
-                                    '#dc3545',
-                                    '#6f42c1',
-                                    '#fd7e14',
-                                    '#20c997',
-                                    '#6c757d'
-                                ],
+                                backgroundColor: _backgroundColor,
                                 borderWidth: 1
                             }]
                         },
@@ -2922,6 +3259,8 @@ async function loadLowInventory() {
                             }
                         }
                     });
+                    currentDataDepartments = data;
+                    setupPagination(data);
 
                     // Update the department sales table
                     const tableData = data.map(item => [
@@ -3146,7 +3485,8 @@ async function loadLowInventory() {
                             }
                         }
                     });
-
+                    currentPaymentMethodsData = methods;
+                    setupPaymentMethodPagination(methods);
                     // Update payment methods table
                     const tableData = data.map(item => [
                         moment(item.SaleDate).format('DD/MM/YYYY'),
