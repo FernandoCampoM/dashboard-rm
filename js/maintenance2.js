@@ -7,7 +7,7 @@ let productsMaintenanceTable
 
 // Function to format currency
 function formatCurrency(number) {
-  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(number)
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(number)
 }
 
 // Function to safely convert to locale string, handling null/undefined

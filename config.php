@@ -11,7 +11,7 @@ require_once 'setup/config_functions.php';
 //validar si existe una configuracion del backend guardada
 $config = get_configBackend();
 if (!$config) {
-    header("Location: setup/setup-backend.php");
+    header("Location: /dashboard-rm/setup/setup-backend.php");
     exit;
 }
 define('API_BASE_URL', "http://{$config['backend_ip']}:{$config['backend_port']}/cse.api.v1/");
@@ -156,6 +156,7 @@ function logRequest($endpoint, $info) {
 
 // Función para formatear moneda
 function formatCurrency($amount) {
+    
     return '$' . number_format($amount, 2, '.', ',');
 }
 

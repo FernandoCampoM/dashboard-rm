@@ -13,14 +13,17 @@ session_start(); // Iniciar la sesión para manejar el estado de autenticación
 require_once '../config.php';
 require_once '../setup/config_functions.php';
 //validar si existe una configuracion del backend guardada
-$config = get_configBackend();
+
+
 if (!$config) {
-    header("Location: ../setup/setup-backend.php");
+     header("Location: ../setup/setup-backend.php");
     exit;
-}
+}  
+
  // 1. Verificar si el usuario ha iniciado sesión
 // Se comprueba si la variable de sesión 'loggedin' está establecida y es verdadera
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) {
+    echo "<script>alert('¡La condición se cumplió! Redirigiendo a la página de configuración.');</script>";
     // Si ha iniciado sesión, lo redirigimos al dashboard
     header('Location: ../index.php');
     exit; // Es crucial usar exit() después de una redirección para detener la ejecución del script
@@ -234,6 +237,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <input type="password" name="UserPass" placeholder="Password" required>
             </div>
+             
             <button type="submit" class="login-button">Log In</button>
             <!-- Enlace de cambio de IP/puerto -->
 <p class="mt-2 mb-0 text-center">

@@ -6,7 +6,7 @@ let clientsTable;
 
 // Función para formatear moneda
 function formatCurrency(number) {
-  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(number);
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(number);
 }
 
 // Función para mostrar notificaciones toast con registro en consola

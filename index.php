@@ -76,7 +76,7 @@ $username = $_SESSION['Username'];
 
             <a class="navbar-brand" href="#">
                 <i class="fas fa-shopping-cart me-2"></i>
-                SuperDashboard
+                RM Dashboard
             </a>
             <a class="message"> </a>
             <div class="col-md-6">
@@ -219,8 +219,7 @@ $username = $_SESSION['Username'];
                             </h5>
                         </div>
                         <div class="small">
-                            <p class="mb-1"><i class="fas fa-clock me-2"></i> Actualizado: <span
-                                    id="last-update-time">Hoy 15:30</span></p>
+                            <p class="mb-1"><i class="fas fa-clock me-2"></i> Actualizado: <span id="last-update-time">Hoy 15:30</span></p>
                             <p class="mb-0"><i class="fas fa-user me-2"></i> Usuario: <span id="current-user"><a>
                                         <?php echo htmlspecialchars($_SESSION['EmployeeName'] ?? 'Invitado/a'); ?>
                                         <br><?php
@@ -413,38 +412,8 @@ $username = $_SESSION['Username'];
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-lg-6 mb-4 col">
-                                    <div class="card dashboard-card-list">
-                                        <div class="card-header d-flex align-items-center ">
-                                            <div class="card-icon">
-                                                <i class="fas fa-volume-up fa-2x"></i>
-                                            </div>
-                                            <h5 class="card-title mb-0">Ventas por Categoria</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table id="salesByCategoryTable" class="table table-hover table-striped ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Categoria</th>
-                                                            <th scope="col" class="text-end">Venta</th>
-                                                            <th scope="col" class="text-end">Ganancia</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="salesByCategoryBody">
-                                                        <tr>
-                                                            <td>test category</td>
-                                                            <td class="text-end">$ 85.54</td>
-                                                            <td class="text-end">$ 15.55</td>
-                                                        </tr>
-                                                        
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                
+                                <div class="col-md-11 col-lg-11 mb-4 col">
                                     <div class="card dashboard-card-list">
                                         <div class="card-header d-flex align-items-center">
                                             <div class="card-icon">
@@ -474,6 +443,37 @@ $username = $_SESSION['Username'];
                                                     </li>
                                                 </ul>
                                                 </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card dashboard-card-list">
+                                        <div class="card-header d-flex align-items-center ">
+                                            <div class="card-icon">
+                                                <i class="fas fa-volume-up fa-2x"></i>
+                                            </div>
+                                            <h5 class="card-title mb-0">Ventas por Categoria</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table id="salesByCategoryTable" class="table table-hover table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Categoria</th>
+                                                            <th scope="col" class="text-end">Venta</th>
+                                                            <th scope="col" class="text-end">Ganancia</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="salesByCategoryBody">
+                                                        <tr>
+                                                            <td>test category</td>
+                                                            <td class="text-end">$ 85.54</td>
+                                                            <td class="text-end">$ 15.55</td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -540,9 +540,6 @@ $username = $_SESSION['Username'];
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row" id="kpi-cards2">
-                                
                                 <div class="col-md-6 col-lg-6 mb-4">
                                     <div class="card dashboard-card">
                                         <div class="card-header d-flex align-items-center">
@@ -553,13 +550,17 @@ $username = $_SESSION['Username'];
                                         </div>
                                         <div class="card-body">
                                             <h2 class="widget-value" id="inventoryValue">$0.000</h2>
-                                            <div class="d-flex align-items-center mt-2">
+                                            <!-- <div class="d-flex align-items-center mt-2">
                                                 <span class="text-muted">Rotación</span>
                                                 <span class="ms-auto" id="inventoryTurnover">0x</span>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row" id="kpi-cards2">
+                                
+                                
                             </div>
                             </div>
                             <!--- Contenedor ESTADISTICAS-->
@@ -895,12 +896,7 @@ $username = $_SESSION['Username'];
                                                 <option value="">Todos los departamentos</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-2">
-                                            <label for="supplierFilter" class="form-label">Proveedor</label>
-                                            <select class="form-select" id="supplierFilter">
-                                                <option value="">Todos los proveedores</option>
-                                            </select>
-                                        </div>
+                                        
                                         <div class="col-md-3 mb-2">
                                             <label class="form-label">&nbsp;</label>
                                             <button class="btn btn-primary w-100" id="applyProductFilters">
@@ -1304,7 +1300,7 @@ $username = $_SESSION['Username'];
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-12 text-end">
-                                            <button class="btn btn-primary" id="applyProductFilters">
+                                            <button class="btn btn-primary" id="    ">
                                                 <i class="fas fa-search me-1"></i> Buscar
                                             </button>
                                             <button class="btn btn-secondary ms-2" id="resetProductFilters">
@@ -1606,8 +1602,8 @@ let currentPaymentMethodsData = [];
     '#607d8b', // Azul grisáceo
     '#cddc39'  // Amarillo verdoso
 ];
-const sidebarTest = document.getElementById('sidebarTest');
-sidebarTest.style.position = 'static';
+
+
 
         /**
  * Renderiza los ítems de la lista para la página actual.
@@ -1620,18 +1616,21 @@ function renderListItems(dataToRender) {
     dataToRender.forEach((item, index) => {
         const listItem = document.createElement('div');
         listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
-        console.log('Rendering item:', item);
-        console.log('Data:', currentDataDepartments);
+        console.log('Background Color', _backgroundColor);
         const indexToData = currentDataDepartments.findIndex(department => department.DepartmentID === item.DepartmentID);
+        console.log('Index to Data:', indexToData);
         // Usa el índice y el operador módulo para ciclar a través de los colores sin eliminarlos
         const color = _backgroundColor[indexToData % _backgroundColor.length];
-
+        console.log('Color:', color);
         listItem.innerHTML = `
             <div class="d-flex align-items-center">
-                <div class="color-box me-2" style="background-color: ${color};"></div>
+                <div class="color-box me-2" style="background-color: ${color};width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    border: 1px solid #ccc;"></div>
                 <span class="category fw-bold">${item.Department || 'Sin Departamento'}</span>
             </div>
-            <span class="value">${formatCurrency(item.TotalSales || 0)}</span>
+            <span class="value">${formatCurrencyP(item.TotalSales || 0)}</span>
         `;
         departmentList.appendChild(listItem);
     });
@@ -1717,7 +1716,7 @@ function renderPaymentMethodItems(dataToRender) {
                 <div class="color-box me-2" style="background-color: ${item.color};"></div>
                 <span class="category fw-bold">${item.name || 'Sin Método'}</span>
             </div>
-            <span class="value">${formatCurrency(item.value || 0)}</span>
+            <span class="value">${formatCurrencyP(item.value || 0)}</span>
         `;
         paymentMethodsList.appendChild(listItem);
     });
@@ -1835,12 +1834,18 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
         }
 
         // Format currency
-        function formatCurrency(value) {
-            return numeral(value).format('$0,0.00');
+        function formatCurrencyP(value) {
+           const n = Number(value) || 0;
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
+    return formatter.format(n);
         }
 
         // Format percentage
         function formatPercentage(value) {
+            numeral.locale('en');
             return numeral(value / 100).format('0.0%');
         }
 
@@ -2539,14 +2544,14 @@ return dataTableInstance;
                             if (porcentajeCambio >= 0) {
                                 yesterdaySalesElement.innerHTML = `<span class="trend-indicator trend-up" id="salesTrend">
                                                         <i class="col fas fa-long-arrow-alt-up"></i> </strong>
-                                                        </span>${formatCurrency(yesterdaySales)}`;
+                                                        </span>${formatCurrencyP(yesterdaySales)}`;
 
                             } else {
                                 yesterdaySalesElement.innerHTML = `<span class="trend-indicator trend-down" id="salesTrend">
                                                         <i class="col fas fa-long-arrow-alt-down"></i> </strong>
-                                                        </span>${formatCurrency(yesterdaySales)}`;
+                                                        </span>${formatCurrencyP(yesterdaySales)}`;
                             }
-                            //yesterdaySalesElement.textContent = formatCurrency(yesterdaySales);
+                            //yesterdaySalesElement.textContent = formatCurrencyP(yesterdaySales);
                         } else {
                             console.warn("Could not retrieve sales data for today or yesterday to calculate trend.");
                             // If data isn't available, also hide the elements
@@ -2585,16 +2590,18 @@ return dataTableInstance;
                     const salesData = data[0];
                     // Update KPI cards
                     const totalProfit = salesData.TotalSales - salesData.TotalCost;
-                    document.getElementById('totalProfit').textContent = formatCurrency(totalProfit);
+                    console.log('Total Profit:', totalProfit);
+                    console.log('Total Profit Formateado:', formatCurrencyP(totalProfit));
+                    document.getElementById('totalProfit').textContent = formatCurrencyP(totalProfit);
                     // Update KPI cards with sales data
-                    document.getElementById('totalCost').textContent = formatCurrency(salesData.TotalCost);
-                    document.getElementById('stateTax').textContent = formatCurrency(salesData.TotalStateTax);
-                    document.getElementById('municipalTax').textContent = formatCurrency(salesData.TotalCityTax);
-                    document.getElementById('totalTax').textContent = formatCurrency(salesData.TotalStateTax + salesData.TotalCityTax);
-                    document.getElementById('totalSales').textContent = formatCurrency(salesData.TotalSales);
+                    document.getElementById('totalCost').textContent = formatCurrencyP(salesData.TotalCost);
+                    document.getElementById('stateTax').textContent = formatCurrencyP(salesData.TotalStateTax);
+                    document.getElementById('municipalTax').textContent = formatCurrencyP(salesData.TotalCityTax);
+                    document.getElementById('totalTax').textContent = formatCurrencyP(salesData.TotalStateTax + salesData.TotalCityTax);
+                    document.getElementById('totalSales').textContent = formatCurrencyP(salesData.TotalSales);
                     
-                    document.getElementById('totalCost').textContent = formatCurrency(salesData.TotalCost);
-                    //TODO: document.getElementById('soldItemsLabel').textContent = formatCurrency(salesData.);
+                    document.getElementById('totalCost').textContent = formatCurrencyP(salesData.TotalCost);
+                    //TODO: document.getElementById('soldItemsLabel').textContent = formatCurrencyP(salesData.);
 
              
 
@@ -2606,8 +2613,8 @@ return dataTableInstance;
                     //DATOS PARA LA SECCION DE ESTADISTICAS
                     document.getElementById('totalTransactions').textContent = formatNumber(salesData.TransactionCount);
                     
-                    document.getElementById('averageSalePerTransaction').textContent = formatCurrency(salesData.AverageTicketAmount);
-                    document.getElementById('avgProfitPerTransaction').textContent = formatCurrency(salesData.AverageProfitPerTransaction);
+                    document.getElementById('averageSalePerTransaction').textContent = formatCurrencyP(salesData.AverageTicketAmount);
+                    document.getElementById('avgProfitPerTransaction').textContent = formatCurrencyP(salesData.AverageProfitPerTransaction);
 
                 }
             } catch (error) {
@@ -2725,7 +2732,7 @@ return dataTableInstance;
                                                 label += ': ';
                                             }
                                             if (context.parsed.y !== null) {
-                                                label += formatCurrency(context.parsed.y);
+                                                label += formatCurrencyP(context.parsed.y);
                                             }
                                             return label;
                                         }
@@ -2742,7 +2749,7 @@ return dataTableInstance;
                                     beginAtZero: true,
                                     ticks: {
                                         callback: function (value) {
-                                            return formatCurrency(value);
+                                            return formatCurrencyP(value);
                                         }
                                     }
                                 }
@@ -2932,7 +2939,7 @@ return dataTableInstance;
     const averageSalesPerHour = totalSalesSum / numberOfItems;
 
 
-        document.getElementById('avgSalesPerHour').textContent = formatCurrency(averageSalesPerHour);
+        document.getElementById('avgSalesPerHour').textContent = formatCurrencyP(averageSalesPerHour);
         // Sumar todos los 'TotalSales'
     const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
     const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
@@ -2981,8 +2988,8 @@ return dataTableInstance;
             "destroy": true, // Importante: Destruye la instancia anterior si existe
             "columns": [ // <-- ¡Esto es crucial! Define tus columnas y sus fuentes de datos
                 { "data": "CategoryName", "defaultContent": "Sin Categoría" },
-                { "data": "TotalSales", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" },
-                { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" }
+                { "data": "TotalSales", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
+                { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
             ]
         });
         
@@ -3006,8 +3013,8 @@ return dataTableInstance;
                 "destroy": true,
                  "columns": [
                     { "data": "CategoryName", "defaultContent": "Sin Categoría" },
-                    { "data": "TotalSales", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" },
-                    { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrency(data || 0); }, "className": "text-end" }
+                    { "data": "TotalSales", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
+                    { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
                 ]
             });
         }
@@ -3069,6 +3076,8 @@ async function loadLowInventory() {
             toggleLoading(true);
 
             try {
+                const lastUpdateTime = document.getElementById('last-update-time');
+                lastUpdateTime.textContent = `Hoy ${new Date().toLocaleTimeString()}`;
                 // Load overview section data
                 await loadCompanyInfo();
                 await loadSalesTotals();
@@ -3102,7 +3111,8 @@ async function loadLowInventory() {
             toggleLoading(true);
 
             try {
-                
+                 const lastUpdateTime = document.getElementById('last-update-time');
+                lastUpdateTime.textContent = `Hoy ${new Date().toLocaleTimeString()}`;
                 await loadSalesTotals();
                 await loadTopCategory();
                 await loadLowInventory()
@@ -3162,9 +3172,17 @@ async function loadLowInventory() {
                 toggleLoading(false);
             }
         }
-
+       
         // Initialize the dashboard - ¡ESTA FUNCIÓN SE MODIFICÓ!
         async function initDashboard() {
+            try{
+                
+                const sidebarTest = document.getElementById('sidebarTest');
+                sidebarTest.style.position = 'static';
+            }catch(error){
+                console.error('Error al fijar la posición de la barra lateral:', error);
+            }
+            
             try {
 
                 // Cargar todos los datos
@@ -3252,7 +3270,7 @@ async function loadLowInventory() {
                                         label: function (context) {
                                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                             const percentage = Math.round((context.parsed * 100) / total);
-                                            return `${context.label}: ${formatCurrency(context.parsed)} (${percentage}%)`;
+                                            return `${context.label}: ${formatCurrencyP(context.parsed)} (${percentage}%)`;
                                         }
                                     }
                                 }
@@ -3265,8 +3283,8 @@ async function loadLowInventory() {
                     // Update the department sales table
                     const tableData = data.map(item => [
                         item.Department || 'Sin Departamento',
-                        formatCurrency(item.TotalSales || 0),
-                        formatCurrency((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
                         `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`
                     ]);
 
@@ -3356,7 +3374,7 @@ async function loadLowInventory() {
                                     beginAtZero: true,
                                     ticks: {
                                         callback: function (value) {
-                                            return formatCurrency(value);
+                                            return formatCurrencyP(value);
                                         }
                                     }
                                 },
@@ -3380,7 +3398,7 @@ async function loadLowInventory() {
                                             }
                                             if (context.parsed.y !== null) {
                                                 if (context.dataset.label === 'Ventas') {
-                                                    label += formatCurrency(context.parsed.y);
+                                                    label += formatCurrencyP(context.parsed.y);
                                                 } else {
                                                     label += formatNumber(context.parsed.y);
                                                 }
@@ -3478,7 +3496,7 @@ async function loadLowInventory() {
                                     callbacks: {
                                         label: function (context) {
                                             const index = context.dataIndex;
-                                            return `${context.label}: ${formatCurrency(context.parsed)} (${percentages[index]}%)`;
+                                            return `${context.label}: ${formatCurrencyP(context.parsed)} (${percentages[index]}%)`;
                                         }
                                     }
                                 }
@@ -3490,12 +3508,12 @@ async function loadLowInventory() {
                     // Update payment methods table
                     const tableData = data.map(item => [
                         moment(item.SaleDate).format('DD/MM/YYYY'),
-                        formatCurrency(item.TotalSales || 0),
-                        formatCurrency(item.CashPayments || 0),
-                        formatCurrency(item.CreditCardPayments || 0),
-                        formatCurrency(item.DebitCardPayments || 0),
-                        formatCurrency(item.CheckPayments || 0),
-                        formatCurrency(item.AthMovilPayments || 0)
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP(item.CashPayments || 0),
+                        formatCurrencyP(item.CreditCardPayments || 0),
+                        formatCurrencyP(item.DebitCardPayments || 0),
+                        formatCurrencyP(item.CheckPayments || 0),
+                        formatCurrencyP(item.AthMovilPayments || 0)
                     ]);
 
                     const paymentMethodColumns = [
@@ -3557,9 +3575,9 @@ async function loadLowInventory() {
 
                             tableData.push([
                                 item.Department,
-                                formatCurrency(costValue),
-                                formatCurrency(priceValue),
-                                formatCurrency(potentialProfit),
+                                formatCurrencyP(costValue),
+                                formatCurrencyP(priceValue),
+                                formatCurrencyP(potentialProfit),
                                 '0%' // Will calculate after getting total
                             ]);
                         }
@@ -3568,8 +3586,8 @@ async function loadLowInventory() {
                     // Update inventory value in overview section
                     const inventoryValueElement = document.getElementById('inventoryValue');
                     if (inventoryValueElement) {
-                        console.log("Entro al if", formatCurrency(totalCostValue));
-                        inventoryValueElement.textContent = formatCurrency(totalCostValue);
+                        console.log("Entro al if", formatCurrencyP(totalCostValue));
+                        inventoryValueElement.textContent = formatCurrencyP(totalCostValue);
                         
                     } else {
                         console.warn("Elemento inventoryValue no encontrado");
@@ -3577,13 +3595,14 @@ async function loadLowInventory() {
 
                     // Calculate inventory turnover (this would typically come from API)
                     // For demo, we'll use a random value between 4 and 12
-                    const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
+                    //Elemento de Rotacion del Inventario
+                   /*  const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
                     if (inventoryTurnoverElement) {
                         const inventoryTurnover = (4 + Math.random() * 8).toFixed(1);
                         inventoryTurnoverElement.textContent = `${inventoryTurnover}x`;
                     } else {
                         console.warn("Elemento inventoryTurnover no encontrado");
-                    }
+                    } */
                     // Calculate percentages of total
                     tableData.forEach(row => {
                         // Skip percentage calculation for Grand Total (case insensitive check)
@@ -3644,7 +3663,7 @@ async function loadLowInventory() {
                                                     const value = context.parsed;
                                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                                     const percentage = ((value / total) * 100).toFixed(1);
-                                                    return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                                                    return `${context.label}: ${formatCurrencyP(value)} (${percentage}%)`;
                                                 }
                                             }
                                         }
@@ -3677,20 +3696,16 @@ async function loadLowInventory() {
                     const totalPriceValueElement = document.getElementById('totalPriceValue');
                     const totalPotentialProfitElement = document.getElementById('totalPotentialProfit');
 
-                    if (totalCostValueElement) {
-                        totalCostValueElement.textContent = formatCurrency(totalCostValue);
-                    } else {
-                        console.warn("Elemento totalCostValue no encontrado");
-                    }
+                    
 
                     if (totalPriceValueElement) {
-                        totalPriceValueElement.textContent = formatCurrency(totalPriceValue);
+                        totalPriceValueElement.textContent = formatCurrencyP(totalPriceValue);
                     } else {
                         console.warn("Elemento totalPriceValue no encontrado");
                     }
 
                     if (totalPotentialProfitElement) {
-                        totalPotentialProfitElement.textContent = formatCurrency(totalPriceValue - totalCostValue);
+                        totalPotentialProfitElement.textContent = formatCurrencyP(totalPriceValue - totalCostValue);
                     } else {
                         console.warn("Elemento totalPotentialProfit no encontrado");
                     }
@@ -3711,9 +3726,9 @@ async function loadLowInventory() {
                 if (data && data.length > 0) {
                     // Update the category sales table
                     const tableData = data.map(item => [
-                        item.Category || 'Sin Categoría',
-                        formatCurrency(item.TotalSales || 0),
-                        formatCurrency((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        item.CategoryName || 'Sin Categoría',
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
                         `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`
                     ]);
 
@@ -3723,6 +3738,9 @@ async function loadLowInventory() {
                         { title: "Ganancia", data: 2 },
                         { title: "Margen", data: 3 }
                     ];
+                    console.log("Data", data);
+                    console.log("Datos de ventas por categoría:", tableData);
+
                     tables.categorySalesTable = createDataTable('categorySalesTable', tableData, categoryColumns, [[1, 'desc']]);
                 }
             } catch (error) {
@@ -3744,8 +3762,8 @@ async function loadLowInventory() {
                         safeToLocaleString(item.CurrentStock),
                         safeToLocaleString(item.MinimumLevel),
                         safeToLocaleString(item.MaximumLevel),
-                        formatCurrency(item.Price || 0),
-                        formatCurrency(item.Cost || 0),
+                        formatCurrencyP(item.Price || 0),
+                        formatCurrencyP(item.Cost || 0),
                         item.Category || '',
                         item.Department || '',
                         item.PrimarySupplier || ''
@@ -3784,25 +3802,51 @@ async function loadLowInventory() {
                 console.error('Error loading low level items:', error);
             }
         }
+        // Función para llenar los filtros dinámicamente
+function llenarFiltros(productos) {
+    const categoryFilterObj = document.getElementById('categoryFilter');
+const departmentFilterObj = document.getElementById('departmentFilter');
+  const categorias = [...new Set(productos.map(p => p.Category))];
+  const departamentos = [...new Set(productos.map(p => p.Department))];
+  const proveedores = [...new Set(productos.map(p => p.ProviderName))];
 
+  // Llenar categorías
+  categorias.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilterObj.appendChild(option);
+  });
+
+  // Llenar departamentos
+  departamentos.forEach(dep => {
+    const option = document.createElement('option');
+    option.value = dep;
+    option.textContent = dep;
+    departmentFilterObj.appendChild(option);
+  });
+
+  
+}
         // Load top selling products
         async function loadTopProducts() {
             try {
                 toggleLoading(true);
-
+                const categoryFilterObj = document.getElementById('categoryFilter');
+                const departmentFilterObj = document.getElementById('departmentFilter');
                 // Get filter values
                 const category = document.getElementById('categoryFilter')?.value || '';
                 const department = document.getElementById('departmentFilter')?.value || '';
-                const supplier = document.getElementById('supplierFilter')?.value || '';
 
                 // Build query parameters
                 let queryParams = `DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`;
                 if (category) queryParams += `&Category=${encodeURIComponent(category)}`;
                 if (department) queryParams += `&Department=${encodeURIComponent(department)}`;
-                if (supplier) queryParams += `&Supplier=${encodeURIComponent(supplier)}`;
 
                 const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
                 const data = await response.json();
+                console.log("Datos de productos más vendidos:", data);
+                llenarFiltros(data);
 
                 // Verificar que la tabla existe antes de intentar inicializarla
                 const tableElement = document.getElementById('topProductsTable');
@@ -3850,9 +3894,9 @@ async function loadLowInventory() {
                         item.Department || '',
                         item.Category || '',
                         safeToLocaleString(item.TotalQuantitySold),
-                        formatCurrency(item.TotalSales || 0),
-                        formatCurrency((item.TotalSales || 0) - (item.TotalCost || 0)),
-                        formatCurrency(item.AveragePrice || 0),
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.AveragePrice || 0),
                         `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`,
                         safeToLocaleString(item.CurrentStock)
                     ]);
@@ -3942,7 +3986,7 @@ async function loadLowInventory() {
                                             tooltip: {
                                                 callbacks: {
                                                     label: function (context) {
-                                                        return `Ventas: ${formatCurrency(context.parsed.x)}`;
+                                                        return `Ventas: ${formatCurrencyP(context.parsed.x)}`;
                                                     }
                                                 }
                                             }
@@ -3952,7 +3996,7 @@ async function loadLowInventory() {
                                                 beginAtZero: true,
                                                 ticks: {
                                                     callback: function (value) {
-                                                        return formatCurrency(value);
+                                                        return formatCurrencyP(value);
                                                     }
                                                 }
                                             }
@@ -4006,7 +4050,7 @@ async function loadLowInventory() {
                                             tooltip: {
                                                 callbacks: {
                                                     label: function (context) {
-                                                        return `Ganancia: ${formatCurrency(context.parsed.x)}`;
+                                                        return `Ganancia: ${formatCurrencyP(context.parsed.x)}`;
                                                     }
                                                 }
                                             }
@@ -4016,7 +4060,7 @@ async function loadLowInventory() {
                                                 beginAtZero: true,
                                                 ticks: {
                                                     callback: function (value) {
-                                                        return formatCurrency(value);
+                                                        return formatCurrencyP(value);
                                                     }
                                                 }
                                             }
