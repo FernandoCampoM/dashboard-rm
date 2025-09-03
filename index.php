@@ -2194,16 +2194,64 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
 
         // **NUEVA FUNCIÓN:** Actualiza los campos de input de fecha en el HTML
         function updateDateInputs() {
+            
             const fromInput = document.getElementById('dateFrom');
             const toInput = document.getElementById('dateTo');
 
             if (fromInput) {
-                fromInput.value = currentDateFrom;
+                fromInput.value = formatDateToInput(currentDateFrom);
             }
             if (toInput) {
-                toInput.value = currentDateTo;
+                toInput.value = formatDateToInput(currentDateTo);
             }
         }
+        /**
+         * Convierte un objeto Date a la cadena "yyyy-MM-dd" requerida por los inputs HTML.
+         * @param {Date} dateObj - El objeto Date a formatear.
+         * @returns {string} La fecha formateada o cadena vacía si no es un objeto Date válido.
+         */
+        function formatDateToInput(dateObj) {
+            if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+                return dateObj.toString().substring(0,10);
+            }
+
+            // 1. Obtiene el año (yyyy)
+            const year = dateObj.getFullYear();
+            
+            // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
+            // getMonth() devuelve 0 para Enero, por eso se suma 1.
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            
+            // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            // 4. Combina en el formato yyyy-MM-dd
+            return `${year}-${month}-${day}`;
+        }
+        /**
+         * Convierte un objeto Date a la cadena "yyyy/MM/dd" requerida por los inputs HTML.
+         * @param {Date} dateObj - El objeto Date a formatear.
+         * @returns {string} La fecha formateada o cadena vacía si no es un objeto Date válido.
+         */
+        function formatDateToAPI(dateObj) {
+            if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+                return dateObj.toString().substring(0,10);
+            }
+
+            // 1. Obtiene el año (yyyy)
+            const year = dateObj.getFullYear();
+            
+            // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
+            // getMonth() devuelve 0 para Enero, por eso se suma 1.
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            
+            // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            // 4. Combina en el formato yyyy-MM-dd
+            return `${year}-${month}-${day}`;
+        }
+
 
         // **NUEVA FUNCIÓN:** Gestiona el estado 'active' de los botones de filtro
         function setActiveFilterButton(activeButtonId) {
@@ -3042,12 +3090,14 @@ return dataTableInstance;
                     }
 
                     
-
+                    console.log("Charts:", charts);
                     // También actualizar el gráfico de tendencia de ventas en la sección de ventas
                     if (charts.salesTrendChart) {
+                        console.log("Destroying existing salesTrendChart instance");
                         charts.salesTrendChart.destroy();
                     }
                     if(charts.salesTrendChartPrevious){
+                        console.log("Destroying existing salesTrendChartPrevious instance");
                         charts.salesTrendChartPrevious.destroy();
                     }
 
@@ -3117,7 +3167,7 @@ return dataTableInstance;
                             }
                         }
                     });
-                    charts.ctxTrendPrevious = new Chart(ctxTrendPrevious, {
+                    charts.salesTrendChartPrevious = new Chart(ctxTrendPrevious, {
                         type: 'line',
                         data: {
                             labels: lastYearLabels,
@@ -3184,7 +3234,7 @@ return dataTableInstance;
                 } else {
                     console.warn('No se recibieron datos para la tendencia de ventas mensuales');
                     // Mostrar mensaje de error en los contenedores de gráficos
-                    ['monthlySalesChart', 'salesTrendChart'].forEach(chartId => {
+                    ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
                         const chartElement = document.getElementById(chartId);
                         if (chartElement && chartElement.parentNode) {
                             chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de ventas disponibles para mostrar la tendencia</div>';
@@ -3194,7 +3244,7 @@ return dataTableInstance;
             } catch (error) {
                 console.error('Error loading monthly sales trend:', error);
                 // Mostrar mensaje de error en los contenedores de gráficos
-                ['monthlySalesChart', 'salesTrendChart'].forEach(chartId => {
+                ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
                     const chartElement = document.getElementById(chartId);
                     if (chartElement && chartElement.parentNode) {
                         chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos de tendencia: ${error.message}</div>`;
@@ -3267,23 +3317,38 @@ return dataTableInstance;
             viernes.setDate(lunes.getDate() + 4);
             const sabado = new Date(lunes);
             sabado.setDate(lunes.getDate() + 5);
-            const responseLunes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(lunes)}&DateTo=${formatDate(lunes)}`);
+            console.log("Lunes de esta semana:", formatDateToInput(lunes));
+            console.log("Martes de esta semana:", formatDateToInput(martes));
+            console.log("Miercoles de esta semana:", formatDateToInput(miercoles));
+            console.log("Jueves de esta semana:", formatDateToInput(jueves));
+            console.log("Viernes de esta semana:", formatDateToInput(viernes));
+            console.log("Sabado de esta semana:", formatDateToInput(sabado));
+            console.log("Domingo de esta semana:", formatDateToInput(domingo));
+            const responseLunes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(lunes)}&DateTo=${formatDateToInput(lunes)}`);
             const dataLunes = await responseLunes.json();
-            const responseMartes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(martes)}&DateTo=${formatDate(martes)}`);
+
+            const responseMartes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(martes)}&DateTo=${formatDateToInput(martes)}`);
             const dataMartes = await responseMartes.json();
-            const responseMiercoles = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(miercoles)}&DateTo=${formatDate(miercoles)}`);
+            const responseMiercoles = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(miercoles)}&DateTo=${formatDateToInput(miercoles)}`);
             const dataMiercoles = await responseMiercoles.json();
-            const responseJueves = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(jueves)}&DateTo=${formatDate(jueves)}`);
+            const responseJueves = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(jueves)}&DateTo=${formatDateToInput(jueves)}`);
             const dataJueves = await responseJueves.json();
-            const responseViernes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(viernes)}&DateTo=${formatDate(viernes)}`);
+            const responseViernes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(viernes)}&DateTo=${formatDateToInput(viernes)}`);
             const dataViernes = await responseViernes.json();
-            const responseSabado = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(sabado)}&DateTo=${formatDate(sabado)}`);
+            const responseSabado = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(sabado)}&DateTo=${formatDateToInput(sabado)}`);
             const dataSabado = await responseSabado.json();
-            const responseDomingo = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(domingo)}&DateTo=${formatDate(domingo)}`);
+            const responseDomingo = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(domingo)}&DateTo=${formatDateToInput(domingo)}`);
             const dataDomingo = await responseDomingo.json();
             if(charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
+            console.log("Data Lunes:", dataLunes);
+            console.log("Data Martes:", dataMartes);
+            console.log("Data Miercoles:", dataMiercoles);
+            console.log("Data Jueves:", dataJueves);
+            console.log("Data Viernes:", dataViernes);
+            console.log("Data Sabado:", dataSabado);
+            console.log("Data Domingo:", dataDomingo);
             const salesDataForChart = [
                 dataLunes[0]?.TotalSales || 0,
                 dataMartes[0]?.TotalSales || 0,
@@ -3294,9 +3359,10 @@ return dataTableInstance;
                 dataDomingo[0]?.TotalSales || 0
             ]; // Ejemplo de datos
 
+            console.log("Sales Data for Chart:", salesDataForChart);
 
         const maxSales = Math.max(...salesDataForChart);
-
+            console.log("Max Sales Value:", maxSales);
         // 2. Encontrar el índice (posición) de ese valor máximo
         const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
         // Ajustar el índice del día actual para que Lunes sea 0 y Domingo sea 6
