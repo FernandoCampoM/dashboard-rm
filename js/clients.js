@@ -489,7 +489,7 @@ function deleteClient(clientId) {
 // Función para guardar un cliente (crear o actualizar)
 function saveClient(event) {
   event.preventDefault();
-  
+  console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
   const clientId = document.getElementById("clientId").value;
   const isNewClient = !clientId;
   
@@ -624,9 +624,11 @@ function initClientMaintenance() {
   
   const saveClientBtn = document.getElementById("saveClientBtn");
   if (saveClientBtn) {
+
     saveClientBtn.addEventListener("click", function() {
       const clientForm = document.getElementById("clientForm");
       if (clientForm) {
+        console.log("Disparando submit del formulario de cliente");
         // Crear un evento para disparar el submit del formulario
         const event = new Event("submit", {
           bubbles: true,

@@ -796,7 +796,7 @@ $username = $_SESSION['Username'];
                     </div>
                     <!-- Sales Categories and Department Tables -->
                     <div class="row">
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-12 mb-4">
                             <div class="card dashboard-card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Ventas por Categoría</h5>
@@ -811,6 +811,10 @@ $username = $_SESSION['Username'];
                                                     <th>Ventas</th>
                                                     <th>Ganancia</th>
                                                     <th>Margen</th>
+                                                    <th>Facturas</th>
+                                                    <th>Unidades Vendidas</th>
+                                                    <th>Precio Promedio</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -821,7 +825,10 @@ $username = $_SESSION['Username'];
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-4">
+                        
+                    </div>
+                     <div class="row">
+                        <div class="col-md-12 mb-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Ventas por Departamento</h5>
@@ -836,6 +843,9 @@ $username = $_SESSION['Username'];
                                                     <th>Ventas</th>
                                                     <th>Ganancia</th>
                                                     <th>Margen</th>
+                                                    <th>Cantidad de Facturas</th>
+                                                    <th>Cantidad Vendida</th>
+                                                    <th>Promedio de Precio</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -845,9 +855,8 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
+                        </div>                
+                     </div>                   
                     <!-- Payment Methods -->
                     <div class="row">
                         <div class="col-12 mb-4">
@@ -3426,14 +3435,20 @@ async function loadLowInventory() {
                         item.Department || 'Sin Departamento',
                         formatCurrencyP(item.TotalSales || 0),
                         formatCurrencyP(item.TotalProfit || 0),
-                        formatPercentage(item.ProfitMarginPercentage || 0)
+                        formatPercentage(item.ProfitMarginPercentage || 0),
+                        formatNumber(item.InvoiceCount || 0),
+                        formatNumber(item.QuantitySold || 0),
+                        formatCurrencyP(item.AveragePrice || 0)
                     ]);
 
                     const departmentColumns = [
                         { title: "Departamento", data: 0 },
                         { title: "Ventas", data: 1 },
                         { title: "Ganancia", data: 2 },
-                        { title: "Margen", data: 3 }
+                        { title: "Margen", data: 3 },
+                        { title: "Facturas", data: 4 },
+                        { title: "Unidades Vendidas", data: 5 },
+                        { title: "Precio Promedio", data: 6 }
                     ];
                     tables.departmentSalesTable = createDataTable('departmentSalesTable', tableData, departmentColumns, [[1, 'desc']]);
                 }
@@ -3924,14 +3939,20 @@ async function loadLowInventory() {
                         item.CategoryName || 'Sin Categoría',
                         formatCurrencyP(item.TotalSales || 0),
                         formatCurrencyP(item.TotalProfit || 0),
-                        formatPercentage(item.ProfitMarginPercentage || 0)
+                        formatPercentage(item.ProfitMarginPercentage || 0),
+                        formatNumber(item.InvoiceCount || 0),
+                        formatNumber(item.QuantitySold || 0),
+                        formatCurrencyP(item.AveragePrice || 0)
                     ]);
 
                     const categoryColumns = [
                         { title: "Categoría", data: 0 },
                         { title: "Ventas", data: 1 },
                         { title: "Ganancia", data: 2 },
-                        { title: "Margen", data: 3 }
+                        { title: "Margen", data: 3 },
+                        { title: "Facturas", data: 4 },
+                        { title: "Unidades Vendidas", data: 5 },
+                        { title: "Precio Promedio", data: 6 }
                     ];
 
                     tables.categorySalesTable = createDataTable('categorySalesTable', tableData, categoryColumns, [[1, 'desc']]);
