@@ -256,19 +256,19 @@ $username = $_SESSION['Username'];
                 <div class="date-filters">
                     <div class="row align-items-center">
                         <div class="col-md-6">
-                            <h4 class="mb-0"><i class="fas fa-filter me-2"></i> RETAIL MANAGER PR</h4>
+                            <h4 class="mb-0"><i class="fas fa-filter me-2"></i> <?php echo $_SESSION['InfoCompany']['Name'] ?? 'Nombre de la Empresa'; ?></h4>
                         </div>
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text" onclick="document.getElementById('dateFrom').showPicker()"><i class="fas fa-calendar"></i></span>
                                         <input type="date" class="form-control" id="dateFrom">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text" onclick="document.getElementById('dateTo').showPicker()"><i class="fas fa-calendar"></i></span>
                                         <input type="date" class="form-control" id="dateTo">
                                     </div>
                                 </div>
@@ -546,7 +546,7 @@ $username = $_SESSION['Username'];
                                             <div class="card-icon">
                                                 <i class="fas fa-boxes fa-2x"></i>
                                             </div>
-                                            <h5 class="card-title mb-0">Valor Inventariooo</h5>
+                                            <h5 class="card-title mb-0">Valor Inventario</h5>
                                         </div>
                                         <div class="card-body">
                                             <h2 class="widget-value" id="inventoryValue">$0.000</h2>
@@ -554,6 +554,26 @@ $username = $_SESSION['Username'];
                                                 <span class="text-muted">Rotación</span>
                                                 <span class="ms-auto" id="inventoryTurnover">0x</span>
                                             </div> -->
+                                            <div class="chart-container">
+                                                <canvas id="inventoryValueChart1"></canvas>
+                                            </div>
+                                            <div class="list-container" id="inventory-sumary-list">
+                                                
+                                            </div>
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination justify-content-center mt-3">
+                                                    <li id="prev-btn-li-inventory" class="page-item disabled">
+                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                    </li>
+                                                    <li id="next-btn-li-inventory" class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -1312,6 +1332,25 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                     </div>
+                                        <!-- El template (oculto por defecto) -->
+<template id="modalActualizarProducto">
+  <div class="modal-content" >
+    <input type="text" style="padding: 0; margin: 0; height: 35px; width: 200px; border: 1px solid #a59f9fff; border-radius: 4px; 
+                    box-sizing: border-box; font-size: 14px;"  id="datoInput" placeholder="">
+    <div class="actions" style="box-shadow: 0 4px 8px rgba(0, 0, 0,0.3); background: #fff;
+                border-radius: 4px; height: 30px; width: 200px; 
+                display: flex; justify-content: center; align-items: center; gap: 10px;">
+      <button class="close-btn"  style="border: none; background: transparent; 
+                     height: 25px; width: 25px; display: flex; 
+                     justify-content: center; align-items: center; cursor: pointer;">
+        <span style="color: red; font-size: 18px;">✖</span></button>
+      <button class="save-btn custom-icon-success" style=" padding-left: 10px; border: none; background: transparent; 
+                     height: 25px; width: 25px; display: flex; 
+                     justify-content: center; align-items: center; cursor: pointer;">
+        <span style="color: green; font-size: 18px;">✔</span></button>
+    </div>
+  </div>
+</template>
 
                     <!-- Tabla de Productos -->
                     <div class="row">
@@ -1319,6 +1358,7 @@ $username = $_SESSION['Username'];
                             <div class="card dashboard-card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Listado de Productos</h5>
+                                    
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -1334,7 +1374,6 @@ $username = $_SESSION['Username'];
                                                     <th>Stock</th>
                                                     <th>Departamento</th>
                                                     <th>Categoría</th>
-                                                    <th>Estado</th>
                                                     <th>Acciones</th>
                                                 </tr>
                                             </thead>
@@ -1536,6 +1575,7 @@ $username = $_SESSION['Username'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- DataTables Extensions JS -->
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -1579,6 +1619,16 @@ const nextBtnPaymentMethods = nextBtnLiPaymentMethods.querySelector('.page-link'
 const itemsPerPagePaymentMethods = 5;
 let currentPagePaymentMethods = 1;
 let currentPaymentMethodsData = [];
+// Constantes para los elementos del DOM del resumen de Inventario
+const inventoryList = document.getElementById('inventory-sumary-list');
+const prevBtnLiInventory = document.getElementById('prev-btn-li-inventory');
+const nextBtnLiInventory = document.getElementById('next-btn-li-inventory');
+const prevBtnInventory = prevBtnLiInventory.querySelector('.page-link');
+const nextBtnInventory = nextBtnLiInventory.querySelector('.page-link');
+// Variables de estado para la paginación
+const itemsPerPageInventory = 5;
+let currentPageInventory = 1;
+let currentInventoryData = [];
          const _backgroundColor = [
     '#0057b8', // Azul
     '#00a651', // Verde
@@ -1610,18 +1660,17 @@ let currentPaymentMethodsData = [];
  * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
  */
 function renderListItems(dataToRender) {
-    console.log('Rendering list items:', dataToRender);
     departmentList.innerHTML = '';
 
     dataToRender.forEach((item, index) => {
         const listItem = document.createElement('div');
         listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
-        console.log('Background Color', _backgroundColor);
+        
         const indexToData = currentDataDepartments.findIndex(department => department.DepartmentID === item.DepartmentID);
-        console.log('Index to Data:', indexToData);
+       
         // Usa el índice y el operador módulo para ciclar a través de los colores sin eliminarlos
         const color = _backgroundColor[indexToData % _backgroundColor.length];
-        console.log('Color:', color);
+        
         listItem.innerHTML = `
             <div class="d-flex align-items-center">
                 <div class="color-box me-2" style="background-color: ${color};width: 16px;
@@ -1713,7 +1762,10 @@ function renderPaymentMethodItems(dataToRender) {
         
         listItem.innerHTML = `
             <div class="d-flex align-items-center">
-                <div class="color-box me-2" style="background-color: ${item.color};"></div>
+                <div class="color-box me-2" style="background-color: ${item.color};width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    border: 1px solid #ccc;"></div>
                 <span class="category fw-bold">${item.name || 'Sin Método'}</span>
             </div>
             <span class="value">${formatCurrencyP(item.value || 0)}</span>
@@ -1783,6 +1835,96 @@ function setupPaymentMethodPagination(newData) {
 
     // Muestra la primera página al inicializar
     displayCurrentPaymentMethodPage();
+}
+/**
+ * Renderiza los ítems de la lista de métodos de pago para la página actual.
+ * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
+ */
+function renderInventoryItems(dataToRender) {
+   inventoryList.innerHTML = '';
+
+    dataToRender.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
+        
+        // Usa el índice y el operador módulo para ciclar a través de los colores
+        
+        
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="color-box me-2" style="background-color: ${item[5]};width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    border: 1px solid #ccc;"></div>
+                <span class="category fw-bold">${item[0] || 'Sin Método'}</span>
+            </div>
+            <span class="value">${item[1] || 0}</span>
+        `;
+        inventoryList.appendChild(listItem);
+    });
+}
+/**
+ * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
+ * @param {number} totalPages - El número total de páginas.
+ */
+function updateInventoryNavigation(totalPages) {
+    if (currentPageInventory === 1) {
+        prevBtnLiInventory.classList.add('disabled');
+    } else {
+        prevBtnLiInventory.classList.remove('disabled');
+    }
+
+    if (currentPageInventory === totalPages) {
+        nextBtnLiInventory.classList.add('disabled');
+    } else {
+        nextBtnLiInventory.classList.remove('disabled');
+    }
+}
+
+/**
+ * Configura y gestiona la paginación para la lista de métodos de pago.
+ * @param {Array} newData - El conjunto completo de datos a paginar.
+ */
+function setupInventoryPagination(newData) {
+    currentInventoryData = newData;
+    currentPageInventory = 1; // Reinicia la página a 1 cuando los datos cambian
+
+    const totalPages = Math.ceil(currentInventoryData.length / itemsPerPageInventory);
+
+    function displayCurrentInventoryPage() {
+        const start = (currentPageInventory - 1) * itemsPerPageInventory;
+        const end = start + itemsPerPageInventory;
+        const itemsToDisplay = currentInventoryData.slice(start, end);
+        renderInventoryItems(itemsToDisplay);
+        updateInventoryNavigation(totalPages);
+    }
+    
+    // Limpia los listeners antiguos para evitar duplicados
+    prevBtnInventory.removeEventListener('click', handlePrevClickInventory);
+    nextBtnInventory.removeEventListener('click', handleNextClickInventory);
+
+    function handlePrevClickInventory(e) {
+        e.preventDefault();
+        if (currentPageInventory > 1) {
+            currentPageInventory--;
+            displayCurrentInventoryPage();
+        }
+    }
+
+    function handleNextClickInventory(e) {
+        e.preventDefault();
+        if (currentPageInventory < totalPages) {
+            currentPageInventory++;
+            displayCurrentInventoryPage();
+        }
+    }
+
+    // Agrega los nuevos listeners
+    prevBtnInventory.addEventListener('click', handlePrevClickInventory);
+    nextBtnInventory.addEventListener('click', handleNextClickInventory);
+
+    // Muestra la primera página al inicializar
+    displayCurrentInventoryPage();
 }
 document.getElementById("save-config").addEventListener("click", function () {
     const backend_ip = document.getElementById("backend-ip").value.trim();
@@ -2590,8 +2732,7 @@ return dataTableInstance;
                     const salesData = data[0];
                     // Update KPI cards
                     const totalProfit = salesData.TotalSales - salesData.TotalCost;
-                    console.log('Total Profit:', totalProfit);
-                    console.log('Total Profit Formateado:', formatCurrencyP(totalProfit));
+                   
                     document.getElementById('totalProfit').textContent = formatCurrencyP(totalProfit);
                     // Update KPI cards with sales data
                     document.getElementById('totalCost').textContent = formatCurrencyP(salesData.TotalCost);
@@ -3284,8 +3425,8 @@ async function loadLowInventory() {
                     const tableData = data.map(item => [
                         item.Department || 'Sin Departamento',
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
-                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`
+                        formatCurrencyP(item.TotalProfit || 0),
+                        formatPercentage(item.ProfitMarginPercentage || 0)
                     ]);
 
                     const departmentColumns = [
@@ -3551,12 +3692,15 @@ async function loadLowInventory() {
                     const tableData = [];
 
                     // Process inventory data
+                    let indexInventory = 0;
                     data.forEach(item => {
                         // Skip "GRAND TOTAL" entries for the chart (case insensitive check)
                         if (item.Department && !item.Department.toUpperCase().includes('GRAND TOTAL')) {
+                            const value = Math.abs(parseFloat(item.TotalInventoryValue) || 0);
+                            
                             departmentNames.push(item.Department);
                             // Use absolute value to handle negative values
-                            const value = Math.abs(parseFloat(item.TotalInventoryValue) || 0);
+                            
                             departmentValues.push(value);
                         }
 
@@ -3578,15 +3722,14 @@ async function loadLowInventory() {
                                 formatCurrencyP(costValue),
                                 formatCurrencyP(priceValue),
                                 formatCurrencyP(potentialProfit),
-                                '0%' // Will calculate after getting total
+                                '0%', // Will calculate after getting total
+                                _backgroundColor[indexInventory++ % _backgroundColor.length], // Unique index for each row
                             ]);
                         }
                     });
-                    console.log("Total Cost Value INVENTARIO:", totalCostValue);
                     // Update inventory value in overview section
                     const inventoryValueElement = document.getElementById('inventoryValue');
                     if (inventoryValueElement) {
-                        console.log("Entro al if", formatCurrencyP(totalCostValue));
                         inventoryValueElement.textContent = formatCurrencyP(totalCostValue);
                         
                     } else {
@@ -3617,22 +3760,15 @@ async function loadLowInventory() {
 
                     // Update inventory value chart - verificar si el elemento existe
                     const chartElement = document.getElementById('inventoryValueChart');
-                    if (chartElement) {
-                        if (charts.inventoryValueChart) {
+                    const inventoryValueChart = document.getElementById('inventoryValueChart1');
+                    if (chartElement && inventoryValueChart) {
+                        if (charts.inventoryValueChart && charts.inventoryValueChart1) {
                             charts.inventoryValueChart.destroy();
+                            charts.inventoryValueChart1.destroy();
                         }
 
                         // Colors for the chart
-                        const colors = [
-                            '#4CAF50', // Verde
-                            '#2196F3', // Azul
-                            '#FF9800', // Naranja
-                            '#9C27B0', // Púrpura
-                            '#F44336', // Rojo
-                            '#00BCD4', // Cian
-                            '#795548', // Marrón
-                            '#607D8B'  // Gris azulado
-                        ];
+                        const colors = _backgroundColor;
 
                         // Only create chart if we have data
                         if (departmentNames.length > 0 && departmentValues.some(v => v > 0)) {
@@ -3677,10 +3813,69 @@ async function loadLowInventory() {
                                 chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de inventario disponibles</div>';
                             }
                         }
+                        let InventoryNamesTemp = [];
+                        let InventoryValuesTemp = [];
+                        departmentValues.forEach((value, index) => {
+                            if(value > 0){
+                                InventoryNamesTemp.push(departmentNames[index]);
+                                InventoryValuesTemp.push(value);
+                            }
+                        })
+                        // Only create chart if we have data
+                        if (InventoryNamesTemp.length > 0 && InventoryValuesTemp.some(v => v > 0)) {
+                            const ctx = inventoryValueChart.getContext('2d');
+                            charts.inventoryValueChart1 = new Chart(ctx, {
+                                type: 'pie',
+                                data: {
+                                    labels: InventoryNamesTemp,
+                                    datasets: [{
+                                        data: InventoryValuesTemp,
+                                        backgroundColor: _backgroundColor.slice(0, InventoryNamesTemp.length),
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                            labels: {
+                                                boxWidth: 15
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (context) {
+                                                    const value = context.parsed;
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = ((value / total) * 100).toFixed(1);
+                                                    return `${context.label}: ${formatCurrencyP(value)} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            console.warn('No valid inventory data for chart');
+                            // Display a message in the chart container
+                            if (chartElement.parentNode) {
+                                chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de inventario disponibles</div>';
+                            }
+                        }
                     } else {
                         console.warn("Elemento inventoryValueChart no encontrado");
                     }
-
+                    
+                    currentInventoryData = [];
+                    tableData.forEach(row => {
+                        if(row[1]!=="$0.00"){
+                            currentInventoryData.push(row);
+                        }
+                    })
+                    setupInventoryPagination(currentInventoryData);
+                    
                     // Update inventory value table
                     const inventoryValueColumns = [
                         { title: "Departamento", data: 0 },
@@ -3728,8 +3923,8 @@ async function loadLowInventory() {
                     const tableData = data.map(item => [
                         item.CategoryName || 'Sin Categoría',
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
-                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`
+                        formatCurrencyP(item.TotalProfit || 0),
+                        formatPercentage(item.ProfitMarginPercentage || 0)
                     ]);
 
                     const categoryColumns = [
@@ -3738,8 +3933,6 @@ async function loadLowInventory() {
                         { title: "Ganancia", data: 2 },
                         { title: "Margen", data: 3 }
                     ];
-                    console.log("Data", data);
-                    console.log("Datos de ventas por categoría:", tableData);
 
                     tables.categorySalesTable = createDataTable('categorySalesTable', tableData, categoryColumns, [[1, 'desc']]);
                 }
@@ -3845,7 +4038,6 @@ const departmentFilterObj = document.getElementById('departmentFilter');
 
                 const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
                 const data = await response.json();
-                console.log("Datos de productos más vendidos:", data);
                 llenarFiltros(data);
 
                 // Verificar que la tabla existe antes de intentar inicializarla

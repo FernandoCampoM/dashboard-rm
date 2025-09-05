@@ -152,7 +152,7 @@ function loadProductsData() {
           const categoryName = category ? category.CategoryName : product.Category
 
           // Crear botones de acción
-          const editButton = `<button class="btn btn-sm btn-primary edit-product" data-id="${product.ProductCode}"><i class="fas fa-edit"></i></button>`
+          //const editButton = `<button class="btn btn-sm btn-primary edit-product" data-id="${product.ProductCode}"><i class="fas fa-edit"></i></button>`
           const deleteButton = `<button class="btn btn-sm btn-danger ms-1 delete-product" data-id="${product.ProductCode}"><i class="fas fa-trash"></i></button>`
 
           return [
@@ -164,10 +164,7 @@ function loadProductsData() {
             safeToLocaleString(product.CurrentStock),
             departmentName, // Mostrar el nombre del departamento en lugar del ID
             categoryName, // Mostrar el nombre de la categoría en lugar del ID
-            product.Active === "1"
-              ? '<span class="badge bg-success">Activo</span>'
-              : '<span class="badge bg-danger">Inactivo</span>',
-            editButton + deleteButton,
+             deleteButton,
           ]
         })
 
@@ -200,19 +197,17 @@ function loadProductsData() {
             showToast("Error", "DataTables no está cargado. Verifique las dependencias.", "error")
             return
           }
-
           // Define columns with proper width and alignment
           const columns = [
             { title: "Código", data: 0, width: "10%" },
-            { title: "Descripción", data: 1, width: "15%" },
-            { title: "Código de Barras", data: 2, width: "10%" },
-            { title: "Precio", data: 3, width: "8%", className: "text-end" },
-            { title: "Costo", data: 4, width: "8%", className: "text-end" },
-            { title: "Stock", data: 5, width: "7%", className: "text-center" },
+            { title: "Descripción", data: 1, width: "15%",className: "editable" },
+            { title: "Código de Barras", data: 2, width: "10%",className: "editable" },
+            { title: "Precio", data: 3, width: "8%",className: "editable" },
+            { title: "Costo", data: 4, width: "8%", className: "editable" },
+            { title: "Stock", data: 5, width: "7%",  },
             { title: "Departamento", data: 6, width: "12%" },
             { title: "Categoría", data: 7, width: "12%" },
-            { title: "Estado", data: 8, width: "8%", className: "text-center" },
-            { title: "Acciones", data: 9, width: "10%", className: "text-center", orderable: false },
+            { title: "Acciones", data: 8, width: "10%", className: "text-center", orderable: false },
           ]
 
           // Inicializar o actualizar la tabla
@@ -230,7 +225,7 @@ function loadProductsData() {
               responsive: true,
               autoWidth: false, // Disable auto width calculation
               columnDefs: [
-                { responsivePriority: 1, targets: [0, 1, 9] }, // These columns are most important
+                { responsivePriority: 1, targets: [0, 1] }, // These columns are most important
                 { responsivePriority: 2, targets: [3, 8] }, // These columns are next important
               ],
               dom:
@@ -243,14 +238,14 @@ function loadProductsData() {
               },
             })
 
-            // Añadir eventos a los botones de acción - only add once
+            /* // Añadir eventos a los botones de acción - only add once
             $(document).off("click", ".edit-product").on("click", ".edit-product", function () {
               
               const productCode = $(this).data("id")
               
               editProduct(productCode)
             })
-
+ */
             $(document).off("click", ".delete-product").on("click", ".delete-product", function () {
               
               const productCode = $(this).data("id")
@@ -258,7 +253,29 @@ function loadProductsData() {
               deleteProduct(productCode)
             })
           }
+          //--------------
+       // 🔹 Agregar modal al hacer un solo clic en una celda
+$('#productsMaintenanceTable tbody').on('click', 'td.editable', function (event) {
+  let cell = productsMaintenanceTable.cell(this);
+  let oldValue = cell.data();
+  if(cell.index().column===3 || cell.index().column===4){
+    oldValue=oldValue.replace("$", "")
+  }
+  var row = cell.index().row;
+  var valueCol0 = productsMaintenanceTable.cell(row, 0).data()
+  // Llamamos al modal dinámico
+  openDialog2("string", event, { 
+    id: cell.index().row,       // fila como referencia
+    column: cell.index().column, // columna
+    oldValue: oldValue, cell: cell, itemCode: valueCol0 // nodo TD
+  });
 
+  // Opcional: pasar el valor actual al input del modal
+  setTimeout(() => {
+    const input = document.querySelector("#datoInput");
+    if (input) input.value = oldValue;
+  }, 0);
+});
           
         } catch (error) {
           console.error("Error initializing DataTable:", error)
@@ -679,9 +696,17 @@ function deleteProduct(productCode) {
   
 
   if (confirm("¿Está seguro que desea eliminar este producto?")) {
-    toggleLoading(true)
-    
-    fetch(`api_proxy.php?endpoint=DeleteProduct&ItemCode=${encodeURIComponent(productCode)}`, {
+    Swal.fire({
+      title: "Funcionalidad no Implementada",
+      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
+      icon: "info",
+      showCancelButton: false,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar",
+    })
+    //TODO: COMENTADO PORQUE EL API NO TIENE DELETEPRODUCT, CUANDO EL API LO TENGA, DESCOMENTAR
+    /* fetch(`api_proxy.php?endpoint=DeleteProduct&ItemCode=${encodeURIComponent(productCode)}`, {
       method: "POST",
     })
       .then((response) => {
@@ -706,7 +731,7 @@ function deleteProduct(productCode) {
       })
       .finally(() => {
         toggleLoading(false)
-      })
+      }) */
   }
 }
 
@@ -826,8 +851,17 @@ function initProductMaintenance() {
   const addProductBtn = document.getElementById("addProductBtn")
   if (addProductBtn) {
     addProductBtn.addEventListener("click", () => {
-      console.log("Add Product button clicked")
-      document.getElementById("productForm").reset()
+      Swal.fire({
+      title: "Funcionalidad no Implementada",
+      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
+      icon: "info",
+      showCancelButton: false,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar",
+    })
+    //TODO: COMENTADO PORQUE EL API da error al crear productos, CUANDO EL API LO TENGA, DESCOMENTAR
+      /* document.getElementById("productForm").reset()
       document.getElementById("productFormTitle").textContent = "Agregar Producto"
       
       // Asegurarse de que el código de producto esté vacío para nuevos productos
@@ -842,12 +876,29 @@ function initProductMaintenance() {
         showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error")
         return
       }
-      jQuery("#productModal").modal("show")
+      jQuery("#productModal").modal("show") */
     })
   } else {
     console.warn("Add product button not found")
   }
 
+  const add_Product_Btn = document.getElementById("add-product-btn")
+  if (add_Product_Btn) {
+    add_Product_Btn.addEventListener("click", () => {
+      Swal.fire({
+      title: "Funcionalidad no Implementada",
+      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
+      icon: "info",
+      showCancelButton: false,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar",
+    })
+    
+    })
+  } else {
+    console.warn("Add product button not found")
+  }
   const productForm = document.getElementById("productForm")
   if (productForm) {
     productForm.addEventListener("submit", saveProduct)
@@ -1179,3 +1230,176 @@ window.addEventListener("unhandledrejection", (event) => {
   showToast("Error", "Se produjo un error en una operación asíncrona. Consulte la consola para más detalles.", "error")
 })
 
+// Ejemplo de un modal dinámico con template
+  let overlayRef = null;
+
+  function openDialog2(type, event, element) {
+    if(element.column===3 || element.column===4){
+      element.oldValue=element.oldValue.replace("$", "")
+    }
+    // cerrar overlay anterior
+    if (overlayRef) overlayRef.remove();
+
+    // obtener template
+    const template = document.querySelector("#modalActualizarProducto");
+    const modalContent = template.content.cloneNode(true);
+
+    // crear overlay
+    overlayRef = document.createElement("div");
+    overlayRef.classList.add("overlay");
+
+    // colocar modal dentro del overlay
+    overlayRef.appendChild(modalContent);
+
+    // insertar en DOM
+    document.body.appendChild(overlayRef);
+
+    // posicionar relativo al target
+    const target = event.target;
+    const rect = target.getBoundingClientRect();
+
+    const modalBox = overlayRef.querySelector(".modal-content");
+    modalBox.style.position = "absolute";
+ modalBox.style.top = window.scrollY + rect.bottom + "px"; 
+modalBox.style.left = window.scrollX + rect.left + "px"; 
+
+// 🔹 Detectar input
+  const input = overlayRef.querySelector("#datoInput");
+
+  // 🔹 Si la columna es 3 o 4 → input numérico
+  if (element.column === 3 || element.column === 4) {
+    input.type = "number";
+    input.min = "0"; // opcional
+  } else {
+    input.type = "text";
+  }
+    // cerrar con clic en backdrop
+    overlayRef.addEventListener("click", (e) => {
+      if (e.target === overlayRef) overlayRef.remove();
+    });
+
+    // botones de acción
+    overlayRef.querySelector(".close-btn").addEventListener("click", () => {
+      overlayRef.remove();
+    });
+
+    overlayRef.querySelector(".save-btn").addEventListener("click", () => {
+      const value = overlayRef.querySelector("#datoInput").value;
+       // 🚀 Aquí actualizamos la celda en DataTables
+    const cell = element.cell
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `Vas a cambiar el valor a: "${value}"`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, guardar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 🚀 Actualizamos la celda en DataTable
+        updateProductColumn(element.column,element.itemCode, value, cell); // Llamada a la función para actualizar en la API
+        
+
+        overlayRef.remove();
+      }
+    });
+      
+      
+    });
+  }
+  function updateProductColumn(column, itemCode, newValue,cell) {
+    let userId = -1; // Asegúrate de que currentUserId esté definido en tu contexto
+    const urlApiUserId='api_proxy.php?endpoint=GetLoggedUserId';
+    const timeoutIdD = setTimeout(() => {
+    toggleLoading(false)
+    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
+  }, 30000) // 30 seconds timeout
+    fetch(urlApiUserId)
+    .then((response) => {
+      clearTimeout(timeoutIdD) // Clear the timeout
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then((data) => {
+      const result = data
+      if(result && result.success && result.success == true){
+        userId = result.userId
+      }
+      let apiUrlRequest = ``
+    switch (column) {
+      case 1:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdNameChange&ItemCode=${itemCode}&NewName=${newValue}&UserID=${userId}`
+        break;
+      case 2:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdBarcodeChange&ItemCode=${itemCode}&NewBarcode=${newValue}&UserID=${userId}`
+        break;
+      case 4:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdCostChange&ItemCode=${itemCode}&NewCost=${newValue}&UserID=${userId}`
+        break;
+      case 3:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdPriceChange&ItemCode=${itemCode}&NewPrice=${newValue}&UserID=${userId}`
+        break;
+      case 5:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdDepartmentChange&ItemCode=${itemCode}&NewDepartment=${newValue}&UserID=${userId}`
+        break;
+      case 6:
+        apiUrlRequest= `api_proxy.php?endpoint=ProdCategoryChange&ItemCode=${itemCode}&NewCategory=${newValue}&UserID=${userId}`
+        break;
+    }
+    // Use a timeout to prevent hanging requests
+  const timeoutId = setTimeout(() => {
+    toggleLoading(false)
+    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
+  }, 30000) // 30 seconds timeout
+
+  fetch(apiUrlRequest)
+    .then((response) => {
+      clearTimeout(timeoutId) // Clear the timeout
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then((data) => {
+      const result = data
+      if(result && result.success && result.success == true && result.status==200){
+        if(column===3 || column===4){
+          cell.data('$' + newValue).draw();
+        }else{
+          cell.data(newValue).draw();
+        }
+        Swal.fire({
+          title: "Guardado",
+          text: "El cambio se realizó con éxito",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }else{
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo realizar el cambio",
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false
+        });
+        console.error("Error actualizando el producto:", result.message || "Error desconocido");
+      }
+    })
+    .catch((error) => {
+      clearTimeout(timeoutId) // Clear the timeout
+      console.error("Error actualizando el producto:", error)
+      showToast("Error", "No se pudo actualizar el producto: " + error.message, "error")
+    })
+    .finally(() => {
+      toggleLoading(false)
+    })
+    })
+    
+  }
+
+ 

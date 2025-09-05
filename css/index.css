@@ -7,6 +7,64 @@
     --total-ventas-color: #369FFF;
     --list-header-color: #ffffff;
 }
+/* Contenedor principal */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+}
+
+/* Input estilo material */
+#datoInput {
+  width: 140px;
+  height: 30px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+#datoInput:focus {
+  border-color: #3f51b5; /* azul material */
+  box-shadow: 0 0 3px rgba(63, 81, 181, 0.5);
+}
+
+/* Contenedor de botones */
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+/* Botones */
+.actions button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colores personalizados */
+.close-btn {
+  color: red;
+}
+.save-btn {
+  color: green;
+}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

@@ -8,6 +8,18 @@
 
 // Incluir el archivo de configuración que contiene funciones y constantes
 require_once 'config.php';
+session_start();
+// 2. Si el usuario ha iniciado sesión, el script continúa
+// A partir de aquí, puedes acceder a los datos de la sesión:
+$userID = -1;
+$username = "";
+// 1. Verificar si el usuario ha iniciado sesión
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+    $userID = $_SESSION['UserID'];
+    $username = $_SESSION['Username'];
+}
+
+
 
 // Verificar que se proporcionó un endpoint
 if (!isset($_GET['endpoint'])) {
@@ -19,6 +31,7 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'GetLoggedUserId',
     'InfoCompany', 
     'SalesTotals', 
     'SalesByCategory', 
@@ -39,7 +52,13 @@ $allowedGetEndpoints = [
     'GetClientDetails',
     'ClientCategories',
     'GetProductImage',
-    'GetEmployees'
+    'GetEmployees',
+    'ProdNameChange',
+    'ProdBarcodeChange',
+    'ProdCostChange',
+    'ProdPriceChange',
+    'ProdDepartmentChange',
+    'ProdCategoryChange'
 ];
 
 // Lista de endpoints permitidos para solicitudes POST
@@ -73,7 +92,13 @@ try {
             sendErrorResponse("Endpoint no permitido para solicitudes GET: {$endpoint}", 403);
             exit;
         }
-        
+        if($endpoint === 'GetLoggedUserId') {
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'userId' => $userID]);
+            exit;
+            
+        }
         // Realizar la llamada a la API
         $response = callAPI($endpoint, $params);
         

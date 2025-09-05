@@ -222,8 +222,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 // Ajusta 'ID' y 'Name' si las claves de tu API son diferentes (ej. 'UserID', 'EmployeeName')
                                 $employeeID = isset($employee['ID']) ? htmlspecialchars($employee['ID']) : '';
                                 $employeeName = isset($employee['Name']) ? htmlspecialchars($employee['Name']) : '';
-
-                                if (!empty($employeeID) && !empty($employeeName)) {
+                                $employeeAccess = isset($employee['Acces']) ? htmlspecialchars($employee['Acces']) : '';
+                                
+                                if (!empty($employeeID) && !empty($employeeName) && !empty($employeeAccess) && $employeeAccess==1) {
                                     $selected = ($userID === $employeeID) ? 'selected' : '';
                                     echo "<option value=\"{$employeeID}\" {$selected}>{$employeeName} (ID: {$employeeID})</option>";
                                 }

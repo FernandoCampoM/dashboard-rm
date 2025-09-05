@@ -74,10 +74,7 @@ function loadProducts() {
             safeToLocaleString(product.CurrentStock),
             departmentName, // Mostrar el nombre del departamento en lugar del ID
             categoryName, // Mostrar el nombre de la categoría en lugar del ID
-            product.Active === "1"
-              ? '<span class="badge bg-success">Activo</span>'
-              : '<span class="badge bg-danger">Inactivo</span>',
-            editButton + deleteButton,
+            //editButton + deleteButton,
           ]
         })
 
@@ -91,12 +88,12 @@ function loadProducts() {
           { title: "Stock", data: 5 },
           { title: "Departamento", data: 6 },
           { title: "Categoría", data: 7 },
-          { title: "Estado", data: 8 },
-          { title: "Acciones", data: 9 },
+          { title: "Acciones", data: 8 },
         ]
 
         // Inicializar o actualizar la tabla
         if ($.fn.DataTable.isDataTable("#productsMaintenanceTable")) {
+          console.log("DataTable initialized/updated successfully")
           productsMaintenanceTable.clear().rows.add(tableData).draw()
         } else {
           productsMaintenanceTable = $("#productsMaintenanceTable").DataTable({
@@ -245,9 +242,7 @@ function editProduct(productCode) {
           document.getElementById("productCategory").value = product.Category || ""
         }
 
-        if (document.getElementById("productActive")) {
-          document.getElementById("productActive").checked = product.Active === "1"
-        }
+        
 
         // Show form
         document.getElementById("productFormTitle").textContent = "Editar Producto"
@@ -300,10 +295,7 @@ function saveProduct(event) {
     productData[key] = value
   }
 
-  // Handle checkbox for active status
-  if (document.getElementById("productActive")) {
-    productData.Active = document.getElementById("productActive").checked ? "1" : "0"
-  }
+
 
   // Determine endpoint based on whether it's a new product or an update
   const endpoint = isNewProduct ? "CreateProduct" : "UpdateProduct"
