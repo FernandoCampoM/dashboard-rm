@@ -15,4 +15,5 @@ function save_configBackend($backend_ip, $backend_port) {
     ];
     file_put_contents(__DIR__ . '/backend_config.json', json_encode($config, JSON_PRETTY_PRINT));
 }
+
 ?>

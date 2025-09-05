@@ -489,10 +489,28 @@ function deleteClient(clientId) {
 // Función para guardar un cliente (crear o actualizar)
 function saveClient(event) {
   event.preventDefault();
-  console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
+  console.log("Guardando cliente...");
+  const urlApiNewClient = "api_proxy.php?endpoint=GetNewClientID";
+   const timeoutId = setTimeout(() => {
+    toggleLoading(false)
+    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
+  }, 30000) // 30 seconds timeout
+
+  fetch(urlApiNewClient)
+    .then((response) => {
+       clearTimeout(timeoutId) // Clear the timeout
+      console.log("Respuesta de GetNewClientID:", response);
+    })
+    .catch((error) => {
+      console.error("Error llamando a GetNewClientID:", error);
+    });
   const clientId = document.getElementById("clientId").value;
   const isNewClient = !clientId;
-  
+  console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
+  if (!clientId) {
+    console.log("No se proporcionó ID de cliente. Asumiendo nuevo cliente.");
+  }
+
   // Recopilar datos del formulario
   const clientData = {
     ClientID: clientId,
@@ -619,6 +637,7 @@ function initClientMaintenance() {
   
   const clientForm = document.getElementById("clientForm");
   if (clientForm) {
+
     clientForm.addEventListener("submit", saveClient);
   }
   

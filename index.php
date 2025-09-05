@@ -27,6 +27,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // A partir de aquí, puedes acceder a los datos de la sesión:
 $userID = $_SESSION['UserID'];
 $username = $_SESSION['Username'];
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -1206,7 +1208,8 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="modal-body">
                                     <form id="clientForm">
-                                        <input type="hidden" id="clientId">
+
+                                        <input type="hidden" class="form-control" id="clientId" readonly>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="clientName" class="form-label">Nombre</label>

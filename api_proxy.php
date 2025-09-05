@@ -32,6 +32,7 @@ $endpoint = $_GET['endpoint'];
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
     'GetLoggedUserId',
+    'GetNewClientID',
     'InfoCompany', 
     'SalesTotals', 
     'SalesByCategory', 
@@ -98,6 +99,42 @@ try {
             echo json_encode(['success' => true, 'userId' => $userID]);
             exit;
             
+        }
+        if($endpoint === 'GetNewClientID') {
+            $newClientID = '0000';
+            //Obtenemos todos los clientes para determinar el siguiente ID
+            /* $allClients = callAPI('Clients', []);
+            $newClientID = '0000';
+            if ($allClients === false) {
+                $newClientID = '0001'; // Si hay un error, empezamos desde 0001
+            }else{
+                // Convertimos a números
+                $idsNumericos = array_map(function($e) {
+                    return intval($e["ClientID"]);
+                }, $allClients);
+
+                // Filtramos los que no son válidos (NaN en PHP sería cuando no es numérico, pero intval siempre devuelve número)
+                $idsNumericos = array_filter($idsNumericos, function($n) {
+                    return is_numeric($n);
+                });
+
+                // Obtenemos el máximo
+                $maxId = max($idsNumericos);
+
+                // Nuevo ID sumando 1 al máximo     
+                $nuevoId = $maxId + 1;
+
+                // Si quieres con ceros a la izquierda (4 dígitos)
+                $nuevoIdStr = str_pad($nuevoId, 4, "0", STR_PAD_LEFT);
+                $newClientID = $nuevoIdStr;
+            } */     
+            // Generar un nuevo ClientID único
+            
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'userId' => $userID]);
+            
+            exit;
         }
         // Realizar la llamada a la API
         $response = callAPI($endpoint, $params);
