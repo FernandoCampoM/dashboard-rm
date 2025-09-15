@@ -31,6 +31,7 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'ClientCreateNew',
     'GetLoggedUserId',
     'GetNewClientID',
     'InfoCompany', 
@@ -103,7 +104,7 @@ try {
         if($endpoint === 'GetNewClientID') {
             $newClientID = '0000';
             //Obtenemos todos los clientes para determinar el siguiente ID
-            /* $allClients = callAPI('Clients', []);
+             $allClients = callAPI('Clients', []);
             $newClientID = '0000';
             if ($allClients === false) {
                 $newClientID = '0001'; // Si hay un error, empezamos desde 0001
@@ -127,12 +128,12 @@ try {
                 // Si quieres con ceros a la izquierda (4 dígitos)
                 $nuevoIdStr = str_pad($nuevoId, 4, "0", STR_PAD_LEFT);
                 $newClientID = $nuevoIdStr;
-            } */     
+            }     
             // Generar un nuevo ClientID único
             
             
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'userId' => $userID]);
+            echo json_encode(['success' => true, 'userId' => $newClientID]);
             
             exit;
         }

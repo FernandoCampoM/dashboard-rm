@@ -1260,8 +1260,8 @@ window.addEventListener("unhandledrejection", (event) => {
 
     const modalBox = overlayRef.querySelector(".modal-content");
     modalBox.style.position = "absolute";
- modalBox.style.top = window.scrollY + rect.bottom + "px"; 
-modalBox.style.left = window.scrollX + rect.left + "px"; 
+    modalBox.style.top = window.scrollY + rect.bottom + "px"; 
+    modalBox.style.left =  rect.left + "px"; 
 
 // 🔹 Detectar input
   const input = overlayRef.querySelector("#datoInput");

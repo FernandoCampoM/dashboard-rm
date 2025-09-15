@@ -121,13 +121,14 @@ function loadClientsData() {
 
           return [
             client.ClientID || "",
-            client.FirstName || "",
+            client.ClientName || "",
             client.LastName || "",
             client.City || "",
             client.Phone || "",
             client.Email || "",
-            categoryName || "",
-            client.Active === "S" ? 
+            client.Category || "",
+            formatCurrency(client.CreditLimit || 0),
+            client.IsActive === "Si" ? 
               '<span class="badge bg-success">Activo</span>' : 
               '<span class="badge bg-danger">Inactivo</span>',
             editButton + deleteButton
@@ -171,8 +172,9 @@ function loadClientsData() {
             { title: "Teléfono", data: 4, width: "12%" },
             { title: "Email", data: 5, width: "15%" },
             { title: "Categoría", data: 6, width: "10%" },
-            { title: "Estado", data: 7, width: "8%", className: "text-center" },
-            { title: "Acciones", data: 8, width: "10%", className: "text-center", orderable: false }
+            { title: "Crédito", data: 7, width: "8%", className: "text-center" },
+            { title: "Estado", data: 8, width: "8%", className: "text-center" },
+            { title: "Acciones", data: 9, width: "10%", className: "text-center", orderable: false }
           ];
 
           // Inicializar o actualizar la tabla
@@ -496,20 +498,89 @@ function saveClient(event) {
     showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
   }, 30000) // 30 seconds timeout
 
-  fetch(urlApiNewClient)
+  
+  const clientId = document.getElementById("clientId").value;
+  const isNewClient = !clientId;
+  console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
+  if (isNewClient) {
+    fetch(urlApiNewClient)
     .then((response) => {
        clearTimeout(timeoutId) // Clear the timeout
-      console.log("Respuesta de GetNewClientID:", response);
+      response.json().then(data => {
+        console.log("Nuevo ID de cliente obtenido:", data.userId);
+        console.log("Status:", data.success);
+        if(data.success){
+          let queryParams='&Number='+data.userId;
+          queryParams+='&Name='+document.getElementById("clientName").value;
+          queryParams+='&Phone='+document.getElementById("clientPhone").value;
+          queryParams+='&Email='+document.getElementById("clientEmail").value;
+          queryParams+='&Category='+document.getElementById("clientCategory").value;
+          queryParams+='&Salesman=1';
+          queryParams+='&CreditLimit='+document.getElementById("clientCreditLimit").value;
+
+          const clientData = {
+            ClientID: data.userId || "",
+            FirstName: document.getElementById("clientName").value,
+            LastName: document.getElementById("clientLastName").value,
+            Address1: document.getElementById("clientAddress1").value,
+            Address2: document.getElementById("clientAddress2").value,
+            City: document.getElementById("clientCity").value,
+            ZipCode: document.getElementById("clientZipCode").value,
+            Country: document.getElementById("clientCountry").value,
+            Phone: document.getElementById("clientPhone").value,
+            Email: document.getElementById("clientEmail").value,
+            Category: document.getElementById("clientCategory").value,
+            Active: document.getElementById("clientActive").value
+          };
+           // Determinar endpoint basado en si es un cliente nuevo o una actualización
+          const endpoint = 'ClientCreateNew';
+          
+          toggleLoading(true);
+          
+          fetch(`api_proxy.php?endpoint=${endpoint}`+queryParams, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+            .then((result) => {
+              console.log("Response status antes de comprobar:", result.ok);
+              if (result.ok === false) {
+                throw new Error(`¡Error HTTP! Estado: ${result.status}`);
+              }else{
+                //showToast("Éxito", `Cliente ${isNewClient ? "creado" : "actualizado"} correctamente`, "success");
+                Swal.fire({
+                title: "Éxito",
+                text: `Cliente ${isNewClient ? "creado" : "actualizado"} correctamente`,
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+              });
+                // Verificar si jQuery está definido
+                if (typeof jQuery === "undefined") {
+                  console.error("¡jQuery no está cargado!");
+                  showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error");
+                  return;
+                }
+                
+                jQuery("#clientModal").modal("hide");
+                loadClients(); // Recargar tabla de clientes
+              } 
+            })
+            .catch((error) => {
+              console.error(`Error ${isNewClient ? "creando" : "actualizando"} cliente:`, error);
+              showToast("Error", `No se pudo ${isNewClient ? "crear" : "actualizar"} el cliente: ` + error.message, "error");
+            })
+            .finally(() => {
+              toggleLoading(false);
+            });
+        }
+      });
     })
     .catch((error) => {
       console.error("Error llamando a GetNewClientID:", error);
     });
-  const clientId = document.getElementById("clientId").value;
-  const isNewClient = !clientId;
-  console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
-  if (!clientId) {
-    console.log("No se proporcionó ID de cliente. Asumiendo nuevo cliente.");
-  }
+  }else{
 
   // Recopilar datos del formulario
   const clientData = {
@@ -571,8 +642,32 @@ function saveClient(event) {
     .finally(() => {
       toggleLoading(false);
     });
+  }
 }
+function GetNewClientID() {
+  const urlApiNewClient = "api_proxy.php?endpoint=GetNewClientID";
+   const timeoutId = setTimeout(() => {
+    toggleLoading(false)
+    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
+  }, 30000) // 30 seconds timeout
 
+  fetch(urlApiNewClient)
+    .then((response) => {
+       clearTimeout(timeoutId) // Clear the timeout
+      response.json().then(data => {
+        const inputClientId = document.getElementById("clientId");
+        if (inputClientId) {
+          inputClientId.value = data.userId || "";
+          console.log("Nuevo ID de cliente asignado:", inputClientId.value);
+        } else {
+          console.error("Elemento input para clientId no encontrado");
+        }
+      });
+    })
+    .catch((error) => {
+      console.error("Error llamando a GetNewClientID:", error);
+    });
+}
 // Función para inicializar la sección de mantenimiento de clientes
 function initClientMaintenance() {
   

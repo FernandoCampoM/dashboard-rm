@@ -1271,6 +1271,13 @@ $username = $_SESSION['Username'];
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="clientCreditLimit" class="form-label">Limite de Credito</label>
+                                                <input type="text" class="form-control" id="clientCreditLimit">
+                                            </div>
+                                            
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -1346,7 +1353,7 @@ $username = $_SESSION['Username'];
                     </div>
                                         <!-- El template (oculto por defecto) -->
 <template id="modalActualizarProducto">
-  <div class="modal-content" >
+  <div class="modal-content" style="width: 200px;">
     <input type="text" style="padding: 0; margin: 0; height: 35px; width: 200px; border: 1px solid #a59f9fff; border-radius: 4px; 
                     box-sizing: border-box; font-size: 14px;"  id="datoInput" placeholder="">
     <div class="actions" style="box-shadow: 0 4px 8px rgba(0, 0, 0,0.3); background: #fff;
