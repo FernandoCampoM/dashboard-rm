@@ -8,6 +8,22 @@ let clientsTable;
 function formatCurrency(number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(number);
 }
+// Función para formatear fecha
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // meses son 0-11
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 
 // Función para mostrar notificaciones toast con registro en consola
 function showToast(title, message, type) {
@@ -127,7 +143,8 @@ function loadClientsData() {
             client.Phone || "",
             client.Email || "",
             client.Category || "",
-            formatCurrency(client.CreditLimit || 0),
+            formatCurrency(client.Balance || 0),
+            formatDate(client.LastPurchaseDate || 0),
             client.IsActive === "Si" ? 
               '<span class="badge bg-success">Activo</span>' : 
               '<span class="badge bg-danger">Inactivo</span>',
@@ -172,9 +189,10 @@ function loadClientsData() {
             { title: "Teléfono", data: 4, width: "12%" },
             { title: "Email", data: 5, width: "15%" },
             { title: "Categoría", data: 6, width: "10%" },
-            { title: "Crédito", data: 7, width: "8%", className: "text-center" },
-            { title: "Estado", data: 8, width: "8%", className: "text-center" },
-            { title: "Acciones", data: 9, width: "10%", className: "text-center", orderable: false }
+            { title: "Balance", data: 7, width: "8%", className: "text-center" },
+            { title: "Última Compra", data: 8, width: "8%", className: "text-center" },
+            { title: "Estado", data: 9, width: "8%", className: "text-center" },
+            { title: "Acciones", data: 10, width: "10%", className: "text-center", orderable: false }
           ];
 
           // Inicializar o actualizar la tabla
@@ -413,12 +431,13 @@ function editClient(clientId) {
   function populateClientForm(client) {
     // Resetear el formulario
     document.getElementById("clientForm").reset();
-    
-    
+    document.getElementById("clientBalanceDiv").classList.remove("d-none");
+    document.getElementById("clientLastPurchaseDateDiv").classList.remove("d-none");
+    document.getElementById("saveClientBtn").classList.add("d-none");
     // Mapear los nombres de campo de la API a los IDs de campo del formulario
     const fieldMappings = {
       ClientID: "clientId",
-      FirstName: "clientName",
+      ClientName: "clientName",
       LastName: "clientLastName",
       Address1: "clientAddress1",
       Address2: "clientAddress2",
@@ -428,7 +447,10 @@ function editClient(clientId) {
       Phone: "clientPhone",
       Email: "clientEmail",
       Category: "clientCategory",
-      Active: "clientActive"
+      IsActive: "clientActive",
+      CreditLimit: "clientCreditLimit",
+      Balance: "clientBalance",
+      LastPurchaseDate: "clientLastPurchaseDate"
     };
     
     
@@ -436,7 +458,22 @@ function editClient(clientId) {
     for (const [apiField, formField] of Object.entries(fieldMappings)) {
       const formElement = document.getElementById(formField);
       if (formElement && client[apiField] !== undefined) {
-        formElement.value = client[apiField] || "";
+        switch(apiField) {
+          case "IsActive":
+            formElement.value = client[apiField] === "Si" ? "Active" : "Inactive";
+            break;
+          case "LastPurchaseDate":
+            formElement.value = formatDate(client[apiField] || "");
+            break;
+          case "Balance":
+            formElement.value = formatCurrency(client[apiField] || 0);
+            break;
+          case "CreditLimit":
+            formElement.value = formatCurrency(client[apiField] || 0);
+            break;
+          default:
+            formElement.value = client[apiField] || "";
+        }
       }
     }
     
@@ -718,7 +755,9 @@ function initClientMaintenance() {
       document.getElementById("clientForm").reset();
       document.getElementById("clientModalLabel").textContent = "Agregar Cliente";
       document.getElementById("clientId").value = ""; // Asegurarse de que el ID esté vacío para nuevos clientes
-      
+      document.getElementById("clientBalanceDiv").classList.add("d-none");
+    document.getElementById("clientLastPurchaseDateDiv").classList.add("d-none");
+    document.getElementById("saveClientBtn").classList.remove("d-none");
       // Verificar si jQuery está definido
       if (typeof jQuery === "undefined") {
         console.error("¡jQuery no está cargado!");

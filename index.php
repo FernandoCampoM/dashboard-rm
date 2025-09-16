@@ -1276,7 +1276,14 @@ $username = $_SESSION['Username'];
                                                 <label for="clientCreditLimit" class="form-label">Limite de Credito</label>
                                                 <input type="text" class="form-control" id="clientCreditLimit">
                                             </div>
-                                            
+                                            <div class="col-md-4" id="clientBalanceDiv">
+                                                <label for="clientBalance" class="form-label">Balance</label>
+                                                <input type="text" class="form-control" id="clientBalance" readonly>
+                                            </div>
+                                            <div class="col-md-4" id="clientLastPurchaseDateDiv">
+                                                <label for="clientLastPurchaseDate" class="form-label">Última Compra</label>
+                                                <input type="text" class="form-control" id="clientLastPurchaseDate" readonly>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
