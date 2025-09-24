@@ -31,6 +31,8 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'ProdUnits',
+    'RecReceiveInventory',
     'ClientCreateNew',
     'GetLoggedUserId',
     'GetNewClientID',
@@ -49,6 +51,7 @@ $allowedGetEndpoints = [
     'LowLevelItems', 
     'InventoryValue', 
     'TopSellProducts',
+    'LowSellProducts',
     'Clients',
     'GetClient',
     'GetClientDetails',

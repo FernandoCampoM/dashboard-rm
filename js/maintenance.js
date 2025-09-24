@@ -154,7 +154,9 @@ function loadProductsData() {
           // Crear botones de acción
           //const editButton = `<button class="btn btn-sm btn-primary edit-product" data-id="${product.ProductCode}"><i class="fas fa-edit"></i></button>`
           const deleteButton = `<button class="btn btn-sm btn-danger ms-1 delete-product" data-id="${product.ProductCode}"><i class="fas fa-trash"></i></button>`
-
+          const recibirInventario = `<button class="btn btn-sm btn-secondary ms-1 receive-inventory" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}"><i class="fas fa-square-plus"></i></button>`
+          const tagButton = `<button class="btn btn-sm btn-secondary ms-1 tag-product" data-id="${product.ProductCode}"><i class="fas fa-tag"></i></button>`
+          const pre_ordenButton = `<button class="btn btn-sm btn-secondary ms-1 pre-orden" data-id="${product.ProductCode}">Pre-Orden</button>`
           return [
             product.ProductCode || "",
             product.ProductName || "",
@@ -164,7 +166,8 @@ function loadProductsData() {
             safeToLocaleString(product.CurrentStock),
             departmentName, // Mostrar el nombre del departamento en lugar del ID
             categoryName, // Mostrar el nombre de la categoría en lugar del ID
-             deleteButton,
+            recibirInventario + tagButton + deleteButton, //+ editButton
+            pre_ordenButton
           ]
         })
 
@@ -208,6 +211,7 @@ function loadProductsData() {
             { title: "Departamento", data: 6, width: "12%" },
             { title: "Categoría", data: 7, width: "12%" },
             { title: "Acciones", data: 8, width: "10%", className: "text-center", orderable: false },
+            { title: "Movimiento", data: 9, width: "8%", className: "text-center", orderable: false },
           ]
 
           // Inicializar o actualizar la tabla
@@ -252,6 +256,27 @@ function loadProductsData() {
               
               deleteProduct(productCode)
             })
+            $(document).off("click", ".receive-inventory").on("click", ".receive-inventory", function () {
+              fetch('modalReceiveInventory.php')
+              .then(response => response.text())
+              .then(html => {
+                document.getElementById('receiveInventoryContainer').innerHTML = html;
+                const productBarCode = $(this).data("barcode");
+              const productName = $(this).data("name");
+              const productCode = $(this).data("id");
+              document.getElementById('unidadesProductoGroup').classList.add('d-none'); // oculta
+              document.getElementById('codigoProducto').innerText = productCode;
+              document.getElementById('nombreProducto').innerText = productName;
+              document.getElementById('barcodeProducto').innerText = productBarCode;
+                var configModal = new bootstrap.Modal(document.getElementById('recibirProductoModal'));
+              configModal.show();
+              });
+              // Usar la API de Bootstrap para abrir el modal
+              
+              const userId = $("#userIdSpan").text()
+              //receiveInventory(userId, productCode, QuantityReceived)
+            })
+
           }
           //--------------
        // 🔹 Agregar modal al hacer un solo clic en una celda
@@ -733,6 +758,36 @@ function deleteProduct(productCode) {
         toggleLoading(false)
       }) */
   }
+}
+function receiveInventory(userId, productCode, QuantityReceived) {
+  fetch(`api_proxy.php?endpoint=RecReceiveInventory&ItemCode=${encodeURIComponent(productCode)}&QuantityReceived=${QuantityReceived}&UserID=${userId}`, {
+      method: "GET",
+    })
+      .then((result) => {
+        
+        if (result.success) {
+          showToast("Éxito", "Producto recibido correctamente", "success")
+          Swal.fire({
+            title: "Éxito",
+            text: "Producto recibido correctamente",
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Aceptar",
+          })
+          loadProducts() // Reload products table
+        } else {
+          showToast("Error", result.message || "No se pudo eliminar el producto", "error")
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting product:", error)
+        showToast("Error", "No se pudo eliminar el producto: " + error.message, "error")
+      })
+      .finally(() => {
+        toggleLoading(false)
+      })
 }
 
 // Function to save a product (create or update)

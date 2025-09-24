@@ -1,4 +1,8 @@
+
+
 <?php
+##TODO CREAR PRODUCTOS HACER QUE FUNCIONE
+##TODO COMPARAR LOS DOS AÑOS EN EL PANEL GENERAL UNO DEBAJO DEL OTRO
 session_start();
 // Incluir configuración
 require_once 'config.php';
@@ -121,6 +125,7 @@ $username = $_SESSION['Username'];
                             echo htmlspecialchars($accessText);
                             // Mostrar el texto del nivel de acceso, sanitizando para seguridad
                             ?>
+                            <span class="sr-only" id="userIdSpan"><?php echo htmlspecialchars($userID); ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
@@ -328,7 +333,7 @@ $username = $_SESSION['Username'];
                                                 <div class="card-icon ms-3">
                                                     <i class="fas fa-dollar-sign fa-2x"></i>
                                                 </div>
-                                                <h5 class="card-title mb-0">Ventas Totales</h5>
+                                                <h5 class="card-title mb-0">Ventas</h5>
                                             </div>
                                             <div class="col m-0">
                                                 <h2 class="widget-value text-center m-0" id="totalSales">$0.00</h2>
@@ -717,6 +722,7 @@ $username = $_SESSION['Username'];
                                                 <div class="card-body">
                                                     <div class="chart-container">
                                                         <canvas id="hourlyChart"></canvas>
+                                                        <div id="hourlyChartMessage" class="text-center p-2 text-muted"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -984,6 +990,7 @@ $username = $_SESSION['Username'];
                                 <div class="card-body">
                                     <div class="chart-container">
                                         <canvas id="topProductsChart"></canvas>
+                                        <div id="topProductsChartMessage" class="text-center p-2 text-muted"></div>
                                     </div>
                                 </div>
                             </div>
@@ -996,6 +1003,41 @@ $username = $_SESSION['Username'];
                                 <div class="card-body">
                                     <div class="chart-container">
                                         <canvas id="topProfitChart"></canvas>
+                                        <div id="topProfitChartMessage" class="text-center p-2 text-muted"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card dashboard-card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Productos Menos Vendidos</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="leastProductsTable" class="table table-striped table-hover"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Producto</th>
+                                                    <th>Departamento</th>
+                                                    <th>Categoría</th>
+                                                    <th>Unidades</th>
+                                                    <th>Ventas</th>
+                                                    <th>Ganancia</th>
+                                                    <th>Precio Prom.</th>
+                                                    <th>Margen</th>
+
+                                                    <th>Stock</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Data will be loaded dynamically -->
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -1401,6 +1443,7 @@ $username = $_SESSION['Username'];
                                                     <th>Departamento</th>
                                                     <th>Categoría</th>
                                                     <th>Acciones</th>
+                                                    <th>Movimiento</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1592,7 +1635,9 @@ $username = $_SESSION['Username'];
       </div>
     </div>
   </div>
-</div>                                 
+</div> 
+<div id="receiveInventoryContainer"></div>
+                              
     <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -2756,6 +2801,7 @@ return dataTableInstance;
 
                 if (data && data[0]) {
                     const salesData = data[0];
+                    salesData.TotalSales = salesData.TotalSales - salesData.TotalStateTax - salesData.TotalCityTax;
                     // Update KPI cards
                     const totalProfit = salesData.TotalSales - salesData.TotalCost;
                    
@@ -3479,7 +3525,8 @@ async function loadLowInventory() {
             try {
                 const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
                 const data = await response.json();
-
+                console.log('Datos de ventas por hora recibidos de la API:');
+                console.log(data);
                 if (data && data.length > 0) {
                     // Preparar arrays para todas las horas (0-23)
                     const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
@@ -3586,17 +3633,17 @@ async function loadLowInventory() {
                 } else {
                     console.warn('No se recibieron datos para ventas por hora');
                     // Mostrar mensaje de error en el contenedor del gráfico
-                    const chartElement = document.getElementById('hourlyChart');
-                    if (chartElement && chartElement.parentNode) {
-                        chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de ventas por hora disponibles</div>';
+                    const msgElement = document.getElementById('hourlyChartMessage');
+                    if (msgElement) {
+                        msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                     }
                 }
             } catch (error) {
                 console.error('Error loading sales by hour:', error);
                 // Mostrar mensaje de error en el contenedor del gráfico
-                const chartElement = document.getElementById('hourlyChart');
-                if (chartElement && chartElement.parentNode) {
-                    chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos de ventas por hora: ${error.message}</div>`;
+                const msgElement = document.getElementById('hourlyChartMessage');
+                if (msgElement) {
+                    msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                 }
             }
         }
@@ -4071,13 +4118,16 @@ const departmentFilterObj = document.getElementById('departmentFilter');
 
                 // Build query parameters
                 let queryParams = `DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`;
+                
                 if (category) queryParams += `&Category=${encodeURIComponent(category)}`;
                 if (department) queryParams += `&Department=${encodeURIComponent(department)}`;
 
                 const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
+                const responseLeast = await fetch(`api_proxy.php?endpoint=LowSellProducts&${queryParams}`);
                 const data = await response.json();
+                const dataLeast = await responseLeast.json();
                 llenarFiltros(data);
-
+                //para TOP PRODUCTOS
                 // Verificar que la tabla existe antes de intentar inicializarla
                 const tableElement = document.getElementById('topProductsTable');
                 if (!tableElement) {
@@ -4242,6 +4292,8 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         } else {
                             console.error("Elemento 'topProductsChart' no encontrado en el DOM");
                         }
+                        ////para least productos 
+                        
 
                         // Update profit chart - check if element exists first
                         const profitChartElement = document.getElementById('topProfitChart');
@@ -4309,7 +4361,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                     } else {
                         console.warn('No product data available for charts');
                         // Safely display a message if no data
-                        ['topProductsChart', 'topProfitChart'].forEach(chartId => {
+                        ['topProductsChartMessage', 'topProfitChartMessage'].forEach(chartId => {
                             const chartElement = document.getElementById(chartId);
                             if (chartElement && chartElement.parentNode) {
                                 chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de productos disponibles</div>';
@@ -4329,10 +4381,10 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                     }
 
                     // Safely display a message if no data
-                    ['topProductsChart', 'topProfitChart'].forEach(chartId => {
-                        const chartElement = document.getElementById(chartId);
-                        if (chartElement && chartElement.parentNode) {
-                            chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de productos disponibles</div>';
+                    ['topProductsChartMessage', 'topProfitChartMessage'].forEach(chartId => {
+                        const msgElement = document.getElementById(chartId);
+                        if (msgElement) {
+                            msgElement.textContent = 'No hay datos de productos disponibles';
                         }
                     });
 
@@ -4350,13 +4402,121 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         }
                     }
                 }
+                // Verificar que la tabla existe antes de intentar inicializarla
+                const tableElementLeast = document.getElementById('leastProductsTable');
+                if (!tableElementLeast) {
+                    console.error("Tabla 'leastProductsTable' no encontrada en el DOM");
+                    return;
+                }
+
+                // Verificar que la tabla tiene la estructura correcta
+                const theadLeast = tableElementLeast.querySelector('thead');
+                const tbodyLeast = tableElementLeast.querySelector('tbody');
+
+                if (!theadLeast || !tbodyLeast) {
+                    console.error("La tabla 'leastProductsTable' no tiene la estructura correcta (thead o tbody faltante)");
+                    // Intentar corregir la estructura
+                    if (!theadLeast) {
+                        const newThead = document.createElement('thead');
+                        newThead.innerHTML = `
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Departamento</th>
+                                <th>Categoría</th>
+                                <th>Unidades</th>
+                                <th>Ventas</th>
+                                <th>Ganancia</th>
+                                <th>Precio Prom.</th>
+                                <th>Margen</th>
+                                <th>Stock</th>
+                            </tr>
+                        `;
+                        tableElementLeast.prepend(newThead);
+                    }
+                    if (!tbody) {
+                        const newTbody = document.createElement('tbody');
+                        tableElementLeast.append(newTbody);
+                    }
+                }
+
+                if (dataLeast && Array.isArray(dataLeast) && dataLeast.length > 0) {
+                    // Update least products table
+                    const tableData = dataLeast.map(item => [
+                        item.ProductCode || '',
+                        item.ProductName || '',
+                        item.Department || '',
+                        item.Category || '',
+                        safeToLocaleString(item.TotalQuantitySold),
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.AveragePrice || 0),
+                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`,
+                        safeToLocaleString(item.CurrentStock)
+                    ]);
+
+                    const leastProductsColumns = [
+                        { title: "Código", data: 0 },
+                        { title: "Producto", data: 1 },
+                        { title: "Departamento", data: 2 },
+                        { title: "Categoría", data: 3 },
+                        { title: "Unidades", data: 4 },
+                        { title: "Ventas", data: 5 },
+                        { title: "Ganancia", data: 6 },
+                        { title: "Precio Prom.", data: 7 },
+                        { title: "Margen", data: 8 },
+                        { title: "Stock", data: 9 }
+                    ];
+
+                    // Inicializar la tabla con manejo de errores
+                    tables.leastProductsTable = createDataTable('leastProductsTable', tableData, leastProductsColumns, [[5, 'desc']]);
+
+                    if (!tables.leastProductsTable) {
+                        console.error("No se pudo inicializar la tabla 'leastlProductsTable'");
+                        // Mostrar los datos de forma básica como último recurso
+                        const tbody = tableElementLeast.querySelector('tbody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            tableData.forEach(row => {
+                                const tr = document.createElement('tr');
+                                row.forEach(cell => {
+                                    const td = document.createElement('td');
+                                    td.innerHTML = cell;
+                                    tr.appendChild(td);
+                                });
+                                tbody.appendChild(tr);
+                            });
+                        }
+                    }
+                }else {
+                    console.warn('No product data returned from API');
+                    // Clear existing charts if no data
+                    if (charts.leastProductsTable) {
+                        charts.leastProductsTable.destroy();
+                        charts.leastProductsTable = null;
+                    }
+                    
+                    // Clear the table
+                    if ($.fn.DataTable.isDataTable('#leastProductsTable')) {
+                        $('#leastProductsTable').DataTable().clear().draw();
+                    } else {
+                        // Si la tabla no está inicializada, mostrar un mensaje
+                        const tableElement = document.getElementById('leastProductsTable');
+                        if (tableElement) {
+                            const tbody = tableElement.querySelector('tbody');
+                            if (tbody) {
+                                tbody.innerHTML = '<tr><td colspan="10" class="text-center">No hay datos disponibles</td></tr>';
+                            }
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Error loading top products:', error);
                 // Safely display error message
-                ['topProductsChart', 'topProfitChart'].forEach(chartId => {
-                    const chartElement = document.getElementById(chartId);
-                    if (chartElement && chartElement.parentNode) {
-                        chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos: ${error.message}</div>`;
+                ['topProductsChartMessage', 'topProfitChartMessage'].forEach(chartId => {
+                    const msgElement = document.getElementById(chartId);
+                    if (msgElement) {
+                        msgElement.textContent = `Error al cargar datos: ${error.message}`;
                     }
                 });
 

@@ -6,7 +6,7 @@
 }
 
 /* Estilos para los botones de acción en las tablas */
-.edit-client, .edit-product, .delete-client, .delete-product {
+.edit-client, .edit-product, .delete-client, .delete-product, .receive-inventory, .tag-product, .pre-orden {
     padding: 0.25rem 0.5rem;
 }
 
