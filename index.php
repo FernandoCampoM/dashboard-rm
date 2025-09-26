@@ -1,7 +1,6 @@
 
 
 <?php
-##TODO CREAR PRODUCTOS HACER QUE FUNCIONE
 ##TODO COMPARAR LOS DOS AÑOS EN EL PANEL GENERAL UNO DEBAJO DEL OTRO
 session_start();
 // Incluir configuración
@@ -1456,7 +1455,23 @@ $username = $_SESSION['Username'];
                         </div>
                     </div>
 
-                    <!-- Modal para Añadir/Editar Producto -->
+                    
+                </section>
+
+
+                <!-- Footer -->
+                <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                    <div class="row">
+                        <div class="col-12 col-md text-center">
+                            <small class="d-block mb-3 text-muted">© SuperDashboard 2025</small>
+                        </div>
+                    </div>
+                </footer>
+            </main>
+
+        </div>
+    </div>
+<!-- Modal para Añadir/Editar Producto -->
                     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-lg">
@@ -1471,17 +1486,17 @@ $username = $_SESSION['Username'];
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="productCode" class="form-label">Código</label>
-                                                <input type="text" class="form-control" id="productCode" required>
+                                                <input type="text" class="form-control" id="productCode" name="productCode" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="productBarcode" class="form-label">Código de Barras</label>
-                                                <input type="text" class="form-control" id="productBarcode">
+                                                <input type="text" class="form-control" id="productBarcode" name="productBarcode">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-12">
                                                 <label for="productDescription" class="form-label">Descripción</label>
-                                                <input type="text" class="form-control" id="productDescription"
+                                                <input type="text" class="form-control" id="productDescription" name="productDescription"
                                                     required>
                                             </div>
                                         </div>
@@ -1491,7 +1506,7 @@ $username = $_SESSION['Username'];
                                                 <div class="input-group">
                                                     <span class="input-group-text">$</span>
                                                     <input type="number" step="0.01" class="form-control"
-                                                        id="productCost" required>
+                                                        id="productCost" name="productCost" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -1499,20 +1514,20 @@ $username = $_SESSION['Username'];
                                                 <div class="input-group">
                                                     <span class="input-group-text">$</span>
                                                     <input type="number" step="0.01" class="form-control"
-                                                        id="productPrice" required>
+                                                        id="productPrice" name="productPrice" required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="productDepartment" class="form-label">Departamento</label>
-                                                <select class="form-select" id="productDepartment" required>
+                                                <select class="form-select" id="productDepartment" name="productDepartment" required>
                                                     <option value="">Seleccionar departamento</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="productCategory" class="form-label">Categoría</label>
-                                                <select class="form-select" id="productCategory" required>
+                                                <select class="form-select" id="productCategory" name="productCategory" required>
                                                     <option value="">Seleccionar categoría</option>
                                                 </select>
                                             </div>
@@ -1520,36 +1535,46 @@ $username = $_SESSION['Username'];
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="productSupplier" class="form-label">Proveedor</label>
-                                                <input type="text" class="form-control" id="productSupplier">
+                                                <input type="text" class="form-control" id="productSupplier" name="productSupplier">
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 d-none">
                                                 <label for="productLocation" class="form-label">Ubicación</label>
-                                                <input type="text" class="form-control" id="productLocation">
+                                                <input type="text" class="form-control" id="productLocation" name="productLocation">
                                             </div>
                                         </div>
                                         <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="productTax1" class="form-label">Tax 1</label>
+                                                <input type="text" class="form-control" id="productTax1" name="productTax1">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="productTax2" class="form-label">Tax 2</label>
+                                                <input type="text" class="form-control" id="productTax2" name="productTax2">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 d-none">
                                             <div class="col-md-4">
                                                 <label for="productReorderPoint" class="form-label">Punto de
                                                     Reorden</label>
-                                                <input type="number" class="form-control" id="productReorderPoint">
+                                                <input type="number" class="form-control" id="productReorderPoint" name="productReorderPoint">
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="productReorderQty" class="form-label">Cantidad de
                                                     Reorden</label>
-                                                <input type="number" class="form-control" id="productReorderQty">
+                                                <input type="number" class="form-control" id="productReorderQty" name="productReorderQty">
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="productActive" class="form-label">Estado</label>
-                                                <select class="form-select" id="productActive">
+                                                <select class="form-select" id="productActive" name="productActive">
                                                     <option value="1">Activo</option>
                                                     <option value="0">Inactivo</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 d-none">
                                             <div class="col-md-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsFood">
+                                                    <input class="form-check-input" type="checkbox" id="productIsFood" name="productIsFood">
                                                     <label class="form-check-label" for="productIsFood">
                                                         Es Alimento
                                                     </label>
@@ -1557,7 +1582,7 @@ $username = $_SESSION['Username'];
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsWic">
+                                                    <input class="form-check-input" type="checkbox" id="productIsWic" name="productIsWic">
                                                     <label class="form-check-label" for="productIsWic">
                                                         Es WIC
                                                     </label>
@@ -1565,7 +1590,7 @@ $username = $_SESSION['Username'];
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsTouch">
+                                                    <input class="form-check-input" type="checkbox" id="productIsTouch" name="productIsTouch">
                                                     <label class="form-check-label" for="productIsTouch">
                                                         Es Touch
                                                     </label>
@@ -1573,7 +1598,7 @@ $username = $_SESSION['Username'];
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsSerie">
+                                                    <input class="form-check-input" type="checkbox" id="productIsSerie" name="productIsSerie">
                                                     <label class="form-check-label" for="productIsSerie">
                                                         Es Serie
                                                     </label>
@@ -1590,21 +1615,6 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                     </div>
-                </section>
-
-
-                <!-- Footer -->
-                <footer class="pt-4 my-md-5 pt-md-5 border-top">
-                    <div class="row">
-                        <div class="col-12 col-md text-center">
-                            <small class="d-block mb-3 text-muted">© SuperDashboard 2025</small>
-                        </div>
-                    </div>
-                </footer>
-            </main>
-
-        </div>
-    </div>
 <!-- Modal editar backend config Bootstrap -->
 <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -3143,24 +3153,25 @@ return dataTableInstance;
 
     if (dataArray && dataArray.length !== 0) {
          // Sumar todos los 'TotalSales'
-    const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
+        const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
 
-    // Contar el número de ítems
-    const numberOfItems = dataArray.length;
+        // Contar el número de ítems
+        const numberOfItems = dataArray.length;
 
-    // Calcular el promedio
-    const averageSalesPerHour = totalSalesSum / numberOfItems;
+        // Calcular el promedio
+        const averageSalesPerHour = totalSalesSum / numberOfItems;
 
 
         document.getElementById('avgSalesPerHour').textContent = formatCurrencyP(averageSalesPerHour);
-        // Sumar todos los 'TotalSales'
-    const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
-    const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
+            // Sumar todos los 'TotalSales'
+        const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
+        const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
 
-    // Calcular el promedio
-    const avgProductsPerHour = totalItemsSold / totalTransactios;
+        // Calcular el promedio
+        const avgProductsPerSale = totalItemsSold / totalTransactios;
 
-        document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerHour);
+        document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerSale);
+        document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
     }
     const response1 = await fetch(`api_proxy.php?endpoint=GetEmployees`);
     const dataArray1 = await response1.json();

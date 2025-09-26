@@ -21,7 +21,6 @@
           <div class="form-group mb-3" id="unidadesProductoGroup">
             <label for="unidadesProductoLabel" class="form-label">Unidades:</label>
             <select id="unidadesProducto" class="form-select">
-              <option value="AE">AE</option>
             </select>
           </div>
           
@@ -32,7 +31,7 @@
 
           
           <!-- Botón Recibir -->
-          <button id="btnRecibir" class="btn w-100" style="background-color:#ccff00; font-weight:bold;">
+          <button id="btnRecibirInventario" class="btn w-100" style="background-color:#ccff00; font-weight:bold;">
             RECIBIR
           </button>
         </div>

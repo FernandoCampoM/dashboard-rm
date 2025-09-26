@@ -142,12 +142,12 @@ function loadProductsData() {
           
 
           // Buscar el nombre del departamento
-          const department = productDepartments.find((d) => d.DepartmentID === product.Department)
+          const department = productDepartments.find((d) => d.DepartmentName === product.Department)
           
           const departmentName = department ? department.DepartmentName : product.Department
 
           // Buscar el nombre de la categoría
-          const category = productCategories.find((c) => c.CategoryID === product.Category)
+          const category = productCategories.find((c) => c.CategoryName === product.Category)
           
           const categoryName = category ? category.CategoryName : product.Category
 
@@ -155,8 +155,8 @@ function loadProductsData() {
           //const editButton = `<button class="btn btn-sm btn-primary edit-product" data-id="${product.ProductCode}"><i class="fas fa-edit"></i></button>`
           const deleteButton = `<button class="btn btn-sm btn-danger ms-1 delete-product" data-id="${product.ProductCode}"><i class="fas fa-trash"></i></button>`
           const recibirInventario = `<button class="btn btn-sm btn-secondary ms-1 receive-inventory" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}"><i class="fas fa-square-plus"></i></button>`
-          const tagButton = `<button class="btn btn-sm btn-secondary ms-1 tag-product" data-id="${product.ProductCode}"><i class="fas fa-tag"></i></button>`
-          const pre_ordenButton = `<button class="btn btn-sm btn-secondary ms-1 pre-orden" data-id="${product.ProductCode}">Pre-Orden</button>`
+          const tagButton = `<button class="btn btn-sm btn-secondary ms-1 tag-product" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}"><i class="fas fa-tag"></i></button>`
+          const pre_ordenButton = `<button class="btn btn-sm btn-secondary ms-1 pre-orden" data-id="${product.ProductCode}" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}">Pre-Orden</button>`
           return [
             product.ProductCode || "",
             product.ProductName || "",
@@ -268,14 +268,62 @@ function loadProductsData() {
               document.getElementById('codigoProducto').innerText = productCode;
               document.getElementById('nombreProducto').innerText = productName;
               document.getElementById('barcodeProducto').innerText = productBarCode;
+              document.getElementById('recibirProductoLabel').innerText = `Recibir Producto`;
                 var configModal = new bootstrap.Modal(document.getElementById('recibirProductoModal'));
               configModal.show();
+              // Agregar evento al botón de confirmar
+              document.getElementById('btnRecibirInventario').addEventListener('click', function() {
+                const QuantityReceived = document.getElementById('cantidadProducto').value;
+                const userId = $("#userIdSpan").text()
+                receiveInventory(userId, productCode, QuantityReceived);
+                configModal.hide();
               });
-              // Usar la API de Bootstrap para abrir el modal
-              
-              const userId = $("#userIdSpan").text()
-              //receiveInventory(userId, productCode, QuantityReceived)
-            })
+              });
+            });
+            $(document).off("click", ".tag-product").on("click", ".tag-product", function () {
+              const productCode = $(this).data("id");
+              productLabelPrint(productCode);
+            });
+            $(document).off("click", ".pre-orden").on("click", ".pre-orden", function () {
+              fetch('modalReceiveInventory.php')
+              .then(response => response.text())
+              .then(html => {
+                
+                document.getElementById('receiveInventoryContainer').innerHTML = html;
+                const productBarCode = $(this).data("barcode");
+              const productName = $(this).data("name");
+              const productCode = $(this).data("id");
+              getUnitsByProduct(productCode).then(units => {
+                if (!units || units.length === 0) {
+                 const option = document.createElement('option');
+                  option.value = 1;
+                  option.text = 'Unidad- Each';
+                  document.getElementById('unidadesProducto').appendChild(option);
+                }
+                units.forEach(unit => {
+                  const option = document.createElement('option');
+                  option.value = unit.UnitID;
+                  option.text = unit.UnitDescription;
+                  document.getElementById('unidadesProducto').appendChild(option);
+                });
+              });
+              document.getElementById('unidadesProductoGroup').classList.remove('d-none'); // muestra
+              document.getElementById('codigoProducto').innerText = productCode;
+              document.getElementById('nombreProducto').innerText = productName;
+              document.getElementById('barcodeProducto').innerText = productBarCode;
+              document.getElementById('recibirProductoLabel').innerText = `Pre-Orden Change`;
+                var configModal = new bootstrap.Modal(document.getElementById('recibirProductoModal'));
+              configModal.show();
+              // Agregar evento al botón de confirmar
+              document.getElementById('btnRecibirInventario').addEventListener('click', function() {
+                const QuantityReceived = document.getElementById('cantidadProducto').value;
+                const UnitID = document.getElementById('unidadesProducto').value;
+                const userId = $("#userIdSpan").text()
+                productPreOrderChange(userId, productCode, QuantityReceived, UnitID);
+                configModal.hide();
+              });
+              });
+            });
 
           }
           //--------------
@@ -420,7 +468,7 @@ function loadProductCategories(callback) {
     showToast("Error", "La solicitud de categorías ha tardado demasiado tiempo.", "error")
   }, 30000) // 30 seconds timeout
 
-  const apiUrl = "api_proxy.php?endpoint=InventoryCategories&Short=yes"
+  const apiUrl = "api_proxy.php?endpoint=InventoryCategories"
   
 
   fetch(apiUrl)
@@ -433,12 +481,10 @@ function loadProductCategories(callback) {
       return response.json()
     })
     .then((data) => {
-      console.log("Antes del error")
       const categories = logApiResponse("InventoryCategories", data)
 
       if (categories && categories.length > 0) {
         productCategories = categories
-        
 
         // Llenar el select de categorías para filtros
         const filterSelect = document.getElementById("productCategoryFilter")
@@ -764,30 +810,137 @@ function receiveInventory(userId, productCode, QuantityReceived) {
       method: "GET",
     })
       .then((result) => {
-        
-        if (result.success) {
-          showToast("Éxito", "Producto recibido correctamente", "success")
-          Swal.fire({
-            title: "Éxito",
-            text: "Producto recibido correctamente",
-            icon: "success",
-            showCancelButton: false,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Aceptar",
+        if(result.ok){
+          result.json().then(data => {
+            if ( data.success) {
+              Swal.fire({
+                title: "Éxito",
+                text: "Producto recibido correctamente",
+                icon: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Aceptar",
+                timer: 3000,                // 3 segundos
+                timerProgressBar: true
+              })
+              loadProducts() // Reload products table
+            } else {
+              showToast("Error", data.message || "No se pudo RECIBIR el producto", "error")
+            }
           })
-          loadProducts() // Reload products table
-        } else {
-          showToast("Error", result.message || "No se pudo eliminar el producto", "error")
         }
+        
       })
       .catch((error) => {
-        console.error("Error deleting product:", error)
-        showToast("Error", "No se pudo eliminar el producto: " + error.message, "error")
+        console.error("Error receiving product:", error)
+        showToast("Error", "No se pudo RECIBIR el producto: " + error.message, "error")
       })
       .finally(() => {
         toggleLoading(false)
       })
+}
+
+function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
+  fetch(`api_proxy.php?endpoint=ProdPreOrdChange&ItemCode=${encodeURIComponent(productCode)}&PreOrdeQty=${PreOrdeQty}&UserID=${userId}&UnitID=${UnitID}`, {
+      method: "GET",
+    })
+      .then((result) => {
+        if(result.ok){
+          result.json().then(data => {
+            if ( data.success) {
+              Swal.fire({
+                title: "Éxito",
+                text: "Pre - Orden cambiado correctamente",
+                icon: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Aceptar",
+                timer: 3000,                // 3 segundos
+                timerProgressBar: true
+              })
+              loadProducts() // Reload products table
+            } else {
+              showToast("Error", data.message || "No se pudo cambiar la Pre - Orden", "error")
+            }
+          })
+        }
+        
+      })
+      .catch((error) => {
+        console.error("Error changing pre-order:", error)
+        showToast("Error", "No se pudo cambiar la Pre - Orden: " + error.message, "error")
+      })
+      .finally(() => {
+        toggleLoading(false)
+      })
+}
+function productLabelPrint(productCode) {
+  fetch(`api_proxy.php?endpoint=ProdLabelPrint&ItemCode=${encodeURIComponent(productCode)}`, {
+      method: "GET",
+    })
+      .then((result) => {
+        if(result.ok){
+          result.json().then(data => {
+            if ( data.success) {
+              Swal.fire({
+                title: "Éxito",
+                text: "Etiquetas enviadas a imprimir correctamente",
+                icon: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Aceptar",
+                timer: 3000,                // 3 segundos
+                timerProgressBar: true
+              })
+              loadProducts() // Reload products table
+            } else {
+              showToast("Error", data.message || "No se pudo imprimir las etiquetas", "error")
+            }
+          })
+        }
+        
+      })
+      .catch((error) => {
+        console.error("Error printing labels:", error)
+        showToast("Error", "No se pudo imprimir las etiquetas: " + error.message, "error")
+      })
+      .finally(() => {
+        toggleLoading(false)
+      })
+}
+
+
+function getUnitsByProduct(productCode) {
+  return fetch(`api_proxy.php?endpoint=ProdUnits&ItemCode=${encodeURIComponent(productCode)}`, {
+  method: "GET",
+})
+  .then((result) => {
+    if (result.ok) {
+      return result.json(); // importante: retorna el .json() para encadenar
+    } else {
+      return []; // Retorna un array vacío en caso de error HTTP
+    }
+  })
+  .then((data) => {
+    if (Array.isArray(data)) {
+      return data; // ✅ Caso en que la API devuelve un array
+    } else if (typeof data === "object" && data !== null) {
+      return []; // ✅ Caso en que la API devuelve un objeto (no es un array)
+    } else {
+      console.error("Formato inesperado:", data);
+    }
+    return []; // Retorna un array vacío en caso de formato inesperado
+  })
+  .catch((error) => {
+    return []; // Retorna un array vacío en caso de error
+  })
+  .finally(() => {
+    toggleLoading(false);
+  });
+
 }
 
 // Function to save a product (create or update)
@@ -796,13 +949,12 @@ function saveProduct(event) {
   
 
   const productCode = document.getElementById("productCode").value
-  const isNewProduct = !productCode
+  const isNewProduct = true
   
 
   // Collect form data
   const formData = new FormData(document.getElementById("productForm"))
   const productData = {}
-
   for (const [key, value] of formData.entries()) {
     productData[key] = value
   }
@@ -811,20 +963,16 @@ function saveProduct(event) {
   if (document.getElementById("productActive")) {
     productData.Active = document.getElementById("productActive").checked ? "1" : "0"
   }
-
-  
-
   // Determine endpoint based on whether it's a new product or an update
-  const endpoint = isNewProduct ? "CreateProduct" : "UpdateProduct"
-
+  const endpoint = isNewProduct ? "ProdCreateNewItem" : "UpdateProduct"
+  var params="ItemCode="+productData.productCode+"&BarCode="+productData.productBarcode+"&Description="+encodeURIComponent(productData.productDescription)+"&Price="+productData.productPrice+"&Cost="+productData.productCost+"&DepartmentNum="+productData.productDepartment+"&CategoryNum="+productData.productCategory+"&Supplier="+encodeURIComponent(productData.productSupplier)+"&Tax1="+productData.productTax1+"&Tax2="+productData.productTax2;
   toggleLoading(true)
-  
-  fetch(`api_proxy.php?endpoint=${endpoint}`, {
-    method: "POST",
+
+  fetch(`api_proxy.php?endpoint=${endpoint}&${params}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(productData),
   })
     .then((response) => {
       if (!response.ok) {
@@ -836,22 +984,63 @@ function saveProduct(event) {
       
 
       if (result.success) {
-        showToast("Éxito", `Producto ${isNewProduct ? "creado" : "actualizado"} correctamente`, "success")
+        
+        Swal.fire({
+          title: "Éxito",
+          text: `Producto ${isNewProduct ? "creado" : "actualizado"} correctamente`,
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Aceptar",
+          timer: 3000,                // 3 segundos
+          timerProgressBar: true
+        })
         // Declare jQuery if it's not already declared
         if (typeof jQuery === "undefined") {
           console.error("jQuery is not loaded!")
-          showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error")
+          Swal.fire({
+            title: "Error",
+            text: "jQuery no está cargado. Verifique las dependencias.",
+            icon: "error",
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Aceptar",
+            timer: 3000,                // 3 segundos
+            timerProgressBar: true
+          })
           return
         }
         jQuery("#productModal").modal("hide")
         loadProducts() // Reload products table
       } else {
-        showToast("Error", result.message || `No se pudo ${isNewProduct ? "crear" : "actualizar"} el producto`, "error")
+        Swal.fire({
+          title: "Error",
+          text: result.message || `No se pudo ${isNewProduct ? "crear" : "actualizar"} el producto`,
+          icon: "error",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Aceptar",
+          timer: 3000,                // 3 segundos
+          timerProgressBar: true
+        })
       }
     })
     .catch((error) => {
       console.error(`Error ${isNewProduct ? "creating" : "updating"} product:`, error)
-      showToast("Error", `No se pudo ${isNewProduct ? "crear" : "actualizar"} el producto: ` + error.message, "error")
+      Swal.fire({
+        title: "Error",
+        text: `No se pudo ${isNewProduct ? "crear" : "actualizar"} el producto: ${error.message}`,
+        icon: "error",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar",
+        timer: 3000,                // 3 segundos
+        timerProgressBar: true
+      })
     })
     .finally(() => {
       toggleLoading(false)
@@ -906,18 +1095,10 @@ function initProductMaintenance() {
   const addProductBtn = document.getElementById("addProductBtn")
   if (addProductBtn) {
     addProductBtn.addEventListener("click", () => {
-      Swal.fire({
-      title: "Funcionalidad no Implementada",
-      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
-      icon: "info",
-      showCancelButton: false,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Aceptar",
-    })
-    //TODO: COMENTADO PORQUE EL API da error al crear productos, CUANDO EL API LO TENGA, DESCOMENTAR
-      /* document.getElementById("productForm").reset()
-      document.getElementById("productFormTitle").textContent = "Agregar Producto"
+     
+    
+      document.getElementById("productForm").reset()
+      document.getElementById("productModalLabel").textContent = "Añadir Producto"
       
       // Asegurarse de que el código de producto esté vacío para nuevos productos
       if (document.getElementById("productCode")) {
@@ -931,7 +1112,7 @@ function initProductMaintenance() {
         showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error")
         return
       }
-      jQuery("#productModal").modal("show") */
+      jQuery("#productModal").modal("show")
     })
   } else {
     console.warn("Add product button not found")
@@ -940,26 +1121,28 @@ function initProductMaintenance() {
   const add_Product_Btn = document.getElementById("add-product-btn")
   if (add_Product_Btn) {
     add_Product_Btn.addEventListener("click", () => {
-      Swal.fire({
-      title: "Funcionalidad no Implementada",
-      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
-      icon: "info",
-      showCancelButton: false,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Aceptar",
-    })
+      document.getElementById("productForm").reset()
+      document.getElementById("productModalLabel").textContent = "Añadir Producto"
+      
+      // Asegurarse de que el código de producto esté vacío para nuevos productos
+      if (document.getElementById("productCode")) {
+        document.getElementById("productCode").value = ""
+        document.getElementById("productCode").removeAttribute("readonly") // Permitir editar código para nuevos productos
+      }
+      
+      // Declare jQuery if it's not already declared
+      if (typeof jQuery === "undefined") {
+        console.error("jQuery is not loaded!")
+        showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error")
+        return
+      }
+      jQuery("#productModal").modal("show")
     
     })
   } else {
     console.warn("Add product button not found")
   }
-  const productForm = document.getElementById("productForm")
-  if (productForm) {
-    productForm.addEventListener("submit", saveProduct)
-  } else {
-    console.warn("Product form not found")
-  }
+  
   
   // Añadir evento al botón de guardar dentro del modal
   const saveProductBtn = document.getElementById("saveProductBtn")
@@ -1013,7 +1196,7 @@ function testApiConnectivity() {
 function validateProductForm() {
   const requiredFields = [
     { id: "productCode", name: "Código del producto" },
-    { id: "productName", name: "Nombre del producto" },
+    { id: "productDescription", name: "Descripción del producto" },
     { id: "productPrice", name: "Precio" },
     { id: "productCost", name: "Costo" },
     { id: "productDepartment", name: "Departamento" },
@@ -1056,15 +1239,14 @@ function handleDepartmentChange() {
   if (departmentSelect && categorySelect) {
     departmentSelect.addEventListener("change", function() {
       const departmentId = this.value
-      
+      const departmentName = this.options[this.selectedIndex].text
       // Limpiar las opciones actuales
       categorySelect.innerHTML = '<option value="">Seleccionar categoría</option>'
       
       if (!departmentId) return
-      
       // Filtrar las categorías del departamento seleccionado
       const departmentCategories = productCategories.filter(
-        category => category.DepartmentID === departmentId
+        category => category.Department === departmentName
       )
       
       // Agregar las categorías filtradas
