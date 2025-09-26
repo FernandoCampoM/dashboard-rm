@@ -4,6 +4,11 @@
 let productDepartments = []
 let productCategories = []
 let productsMaintenanceTable
+// Variable global para guardar los datos de movimiento por mes
+let monthlyData = [];
+
+// Variable global para guardar la instancia del gráfico y poder destruirla/actualizarla
+let productChart = null;
 
 // Function to format currency
 function formatCurrency(number) {
@@ -264,6 +269,8 @@ function loadProductsData() {
                 const productBarCode = $(this).data("barcode");
               const productName = $(this).data("name");
               const productCode = $(this).data("id");
+              document.getElementById('movementContainer').classList.add('d-none');
+              document.getElementById('ProdMovementChart').classList.add('d-none');
               document.getElementById('unidadesProductoGroup').classList.add('d-none'); // oculta
               document.getElementById('codigoProducto').innerText = productCode;
               document.getElementById('nombreProducto').innerText = productName;
@@ -307,6 +314,9 @@ function loadProductsData() {
                   document.getElementById('unidadesProducto').appendChild(option);
                 });
               });
+              loadChart(productCode);
+              document.getElementById('movementContainer').classList.remove('d-none');
+              document.getElementById('ProdMovementChart').classList.remove('d-none');
               document.getElementById('unidadesProductoGroup').classList.remove('d-none'); // muestra
               document.getElementById('codigoProducto').innerText = productCode;
               document.getElementById('nombreProducto').innerText = productName;
@@ -367,6 +377,208 @@ $('#productsMaintenanceTable tbody').on('click', 'td.editable', function (event)
     .finally(() => {
       toggleLoading(false)
     })
+}
+async function loadChart(itemCode) {
+    try {
+        const response = await fetch(`api_proxy.php?endpoint=ProdMovementChart&ItemCode=${itemCode}`);
+        const data = await response.json();
+        
+        if(!data || data.length === 0){
+            // Manejo de error o no data
+            document.getElementById('ProdMovementChart').classList.add('d-none');
+            document.getElementById('ProdMovementChartMessage').classList.remove('d-none');
+            document.getElementById('ProdMovementChartMessage').innerText = 'No hay datos de movimiento para este producto.';
+            return;
+        }
+
+        // 1. **Guardar los datos completos en la variable global**
+        monthlyData = data; 
+        
+        // --- Lógica del Gráfico (manteniendo lo que ya tenías) ---
+        
+        const labels = data.map(d => d.MonthName); 
+        const sales = data.map(d => d.NetSalesQuantity); 
+        const receipts = data.map(d => d.ReceiptsQuantity);
+
+        const ctx = document.getElementById("ProdMovementChart").getContext("2d");
+
+        // Destruir la instancia anterior del gráfico si existe
+        if (productChart) {
+            productChart.destroy();
+        }
+        productChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Ventas",
+                        data: sales,
+                        backgroundColor: "rgba(0, 123, 255, 0.8)" 
+                    },
+                    {
+                        label: "Recibos",
+                        data: receipts,
+                        backgroundColor: "rgba(220, 53, 69, 0.8)" 
+                    }
+                ]
+            },
+            options: {
+                 animation: {
+    onComplete: (animation) => {
+      const chart = animation.chart;   // ✅ aquí sí tienes el chart
+      const ctx = chart.ctx;
+
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((bar, index) => {
+          const value = dataset.data[index];
+          ctx.fillStyle = "black";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "bottom";
+          // 👇 aquí ajustas la fuente con negrilla
+          ctx.font = "bold 12px Arial";  
+          ctx.fillText(value, bar.x, bar.y - 5);
+        });
+      });
+    }
+  }
+            },// <-- activar el plugin
+        });
+
+        // 2. **Generar los botones de meses y añadir listeners**
+        generateMonthButtons(data);
+        
+        // 3. **Mostrar el resumen del primer mes (o el que quieras por defecto)**
+        // Asume que la data ya está ordenada por fecha.
+        if (data.length > 0) {
+            updateMonthlySummary(data[0].MonthName); 
+        }
+        // Calcular y mostrar el resumen anual y orden sugerida 
+        calculateAndDisplayAnnualSummary(data);
+    } catch (error) {
+        console.error("Error cargando gráfico:", error);
+    }
+}
+function calculateAndDisplayAnnualSummary(data) {
+    if (!data || data.length === 0) {
+        console.warn("No hay datos para calcular el resumen anual.");
+        return;
+    }
+
+    // --- Resumen Anual ---
+    let totalSalesUnits = 0;
+    let totalGrossSales = 0; // Valor bruto de ventas
+    let totalCosts = 0;
+    let totalProfit = 0;
+
+    data.forEach(month => {
+        totalSalesUnits += month.NetSalesQuantity || 0;
+        totalGrossSales += month.GrossSalesValue || 0; // Asumiendo que 'SalesValue' es el valor bruto de ventas
+        totalCosts += month.CurrentCost || 0; // Asumiendo que 'CostValue' es el costo
+        // Si ProfitValue no viene directamente, lo calculamos
+        totalProfit += month.ProfitValue || (month.GrossSalesValue - month.CurrentCost) || 0;
+    });
+
+    // Actualizar elementos HTML del Resumen Anual
+    document.getElementById('annual-total-sales-units').textContent = totalSalesUnits.toString();
+    document.getElementById('annual-gross-sales-value').textContent = `${formatCurrency(totalGrossSales)}`;
+    document.getElementById('annual-total-costs').textContent = `${formatCurrency(totalCosts)}`;
+    document.getElementById('annual-total-profit').textContent = `${formatCurrency(totalProfit)}`;
+
+
+    // --- Demanda (basada en los últimos 3 meses) ---
+    const lastThreeMonthsSales = data
+        .slice(-3) // Obtener los últimos 3 elementos (meses)
+        .reduce((sum, month) => sum + (month.NetSalesQuantity || 0), 0);
+
+    const avgMonthlySalesLast3Months = lastThreeMonthsSales / 3;
+    const avgWeeklySalesLast3Months = avgMonthlySalesLast3Months / 4; //4 semanas por mes
+
+    document.getElementById('demand-weekly').textContent = avgWeeklySalesLast3Months.toFixed(2);
+    document.getElementById('demand-monthly').textContent = avgMonthlySalesLast3Months.toFixed(2);
+
+    // --- Orden Sugerida ---
+    const monthsOfCoverage = data[0].CurrentStock / avgMonthlySalesLast3Months; // "producto en exceso para cubrir 6 meses"
+    const suggestedOrderQuantity = Math.max(0, (avgMonthlySalesLast3Months * monthsOfCoverage) - data[0].CurrentStock);
+    
+    // Si la orden sugerida es 0 o negativa, significa que tenemos exceso de inventario.
+    // El texto "producto en exceso para cubrir 6 meses" debería aparecer si suggestedOrderQuantity <= 0
+    let suggestedOrderText = suggestedOrderQuantity > 0 
+        ? suggestedOrderQuantity.toFixed(0) // Redondear a entero
+        : "0000"; // Como en tu imagen, "0000" para exceso
+
+    let excessMessage = '';
+    if (data[0].CurrentStock > avgMonthlySalesLast3Months) {
+        // Calcular cuántos meses cubre el inventario actual si no se necesita ordenar
+        excessMessage = `*producto en exceso para cubrir ${monthsOfCoverage.toFixed(0)} meses `;
+    }
+
+    document.getElementById('suggested-order-quantity').textContent = suggestedOrderText;
+    document.getElementById('suggested-order-excess-message').textContent = excessMessage;
+    console.log("Current Stock:", data[0].CurrentStock);
+    document.getElementById('current-inventory').textContent = String(data[0].CurrentStock); // Formato 0075
+}
+// Función para generar los botones de meses
+function generateMonthButtons(data) {
+    const buttonContainer = document.getElementById('monthButtonsContainer'); // Debes añadir este ID a tu contenedor
+    buttonContainer.innerHTML = ''; // Limpiar botones anteriores
+
+    data.forEach((monthData, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-secondary rounded-pill month-button'; // Clases para estilizar el botón
+        button.textContent = monthData.MonthName;
+        button.setAttribute('data-month', monthData.MonthName);
+        
+        // Si es el primer mes, hacerlo el botón activo/seleccionado
+        if (index === 0) {
+             button.classList.remove('btn-secondary');
+             button.classList.add('btn-primary'); // O la clase de color que uses para 'activo', como se ve en la imagen
+        }
+
+        button.addEventListener('click', function() {
+            // Desactivar el botón activo actual
+            document.querySelectorAll('.month-button').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            });
+
+            // Activar el botón clickeado
+            this.classList.remove('btn-secondary');
+            this.classList.add('btn-primary');
+
+            // Actualizar la tabla
+            updateMonthlySummary(monthData.MonthName);
+        });
+
+        buttonContainer.appendChild(button);
+    });
+}
+
+// Función para actualizar la tabla de resumen
+function updateMonthlySummary(monthName) {
+    // 1. Buscar los datos del mes seleccionado
+    console.log("Updating summary for month:", monthName);
+    console.log("Monthly data available:", monthlyData);
+    const dataForMonth = monthlyData.find(d => d.MonthName === monthName);
+    console.log("Data for selected month:", dataForMonth);
+    if (!dataForMonth) {
+        console.error(`Datos no encontrados para el mes: ${monthName}`);
+        return;
+    }
+
+
+    // 3. Actualizar los elementos de la tabla
+    // **NOTA:** Necesitas asignar IDs a las celdas de tu tabla, por ejemplo: 
+    // <span id="summary-ventas"></span>, <span id="summary-costo"></span>, etc.
+
+    document.getElementById('summary-ventas').textContent = formatCurrency(dataForMonth.GrossSalesValue); 
+    document.getElementById('summary-costo').textContent = formatCurrency(dataForMonth.CurrentCost);
+    // Asumo que tu JSON tiene la propiedad para el Profit
+    document.getElementById('summary-profit').textContent = formatCurrency(dataForMonth.ProfitValue || (dataForMonth.GrossSalesValue - dataForMonth.CurrentCost)); 
+    document.getElementById('summary-recibos').textContent = dataForMonth.ReceiptsQuantity;
+    document.getElementById('summary-vendidos').textContent = dataForMonth.NetSalesQuantity;
+
 }
 
 // Function to load product departments

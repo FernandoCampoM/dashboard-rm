@@ -1252,28 +1252,28 @@ $username = $_SESSION['Username'];
 
                                         <input type="hidden" class="form-control" id="clientId" readonly>
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 ">
                                                 <label for="clientName" class="form-label">Nombre</label>
                                                 <input type="text" class="form-control" id="clientName" required>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label for="clientLastName" class="form-label">Apellido</label>
+                                            <div class="col-md-6 d-none" id="apellidoDiv">
+                                                <label for="clientLastName" class="form-label ">Apellido</label>
                                                 <input type="text" class="form-control" id="clientLastName">
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 d-none">
                                             <div class="col-md-12">
-                                                <label for="clientAddress1" class="form-label">Dirección 1</label>
+                                                <label for="clientAddress1" class="form-label ">Dirección 1</label>
                                                 <input type="text" class="form-control" id="clientAddress1">
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 d-none">
                                             <div class="col-md-12">
-                                                <label for="clientAddress2" class="form-label">Dirección 2</label>
+                                                <label for="clientAddress2" class="form-label ">Dirección 2</label>
                                                 <input type="text" class="form-control" id="clientAddress2">
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
+                                        <div class="row mb-3 d-none">
                                             <div class="col-md-4">
                                                 <label for="clientCity" class="form-label">Ciudad</label>
                                                 <input type="text" class="form-control" id="clientCity">
@@ -1317,11 +1317,11 @@ $username = $_SESSION['Username'];
                                                 <label for="clientCreditLimit" class="form-label">Limite de Credito</label>
                                                 <input type="text" class="form-control" id="clientCreditLimit">
                                             </div>
-                                            <div class="col-md-4" id="clientBalanceDiv">
+                                            <div class="col-md-4 d-none" id="clientBalanceDiv">
                                                 <label for="clientBalance" class="form-label">Balance</label>
                                                 <input type="text" class="form-control" id="clientBalance" readonly>
                                             </div>
-                                            <div class="col-md-4" id="clientLastPurchaseDateDiv">
+                                            <div class="col-md-4 d-none" id="clientLastPurchaseDateDiv">
                                                 <label for="clientLastPurchaseDate" class="form-label">Última Compra</label>
                                                 <input type="text" class="form-control" id="clientLastPurchaseDate" readonly>
                                             </div>
@@ -1667,6 +1667,8 @@ $username = $_SESSION['Username'];
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
 
     <!-- Custom JavaScript -->
     <script>

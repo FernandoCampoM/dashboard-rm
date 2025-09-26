@@ -350,8 +350,6 @@ function editClient(clientId) {
   
   // Intentar diferentes formatos de endpoint de API
   const apiEndpoints = [
-    `api_proxy.php?endpoint=GetClient&ClientID=${encodeURIComponent(clientId)}`,
-    `api_proxy.php?endpoint=GetClientDetails&ClientID=${encodeURIComponent(clientId)}`,
     `api_proxy.php?endpoint=Clients&ClientID=${encodeURIComponent(clientId)}`
   ];
   
@@ -429,11 +427,14 @@ function editClient(clientId) {
   
   // Función auxiliar para poblar el formulario con datos del cliente
   function populateClientForm(client) {
+
     // Resetear el formulario
     document.getElementById("clientForm").reset();
+    
     document.getElementById("clientBalanceDiv").classList.remove("d-none");
     document.getElementById("clientLastPurchaseDateDiv").classList.remove("d-none");
     document.getElementById("saveClientBtn").classList.add("d-none");
+    document.getElementById("apellidoDiv").classList.remove("d-none");
     // Mapear los nombres de campo de la API a los IDs de campo del formulario
     const fieldMappings = {
       ClientID: "clientId",
@@ -452,15 +453,13 @@ function editClient(clientId) {
       Balance: "clientBalance",
       LastPurchaseDate: "clientLastPurchaseDate"
     };
-    
-    
-    // Establecer valores del formulario basados en los mapeos
-    for (const [apiField, formField] of Object.entries(fieldMappings)) {
+    loadClientCategories( async () => {
+      for (const [apiField, formField] of Object.entries(fieldMappings)) {
       const formElement = document.getElementById(formField);
       if (formElement && client[apiField] !== undefined) {
         switch(apiField) {
           case "IsActive":
-            formElement.value = client[apiField] === "Si" ? "Active" : "Inactive";
+            formElement.value = client[apiField] === "No" ? "N" : "S";
             break;
           case "LastPurchaseDate":
             formElement.value = formatDate(client[apiField] || "");
@@ -471,11 +470,18 @@ function editClient(clientId) {
           case "CreditLimit":
             formElement.value = formatCurrency(client[apiField] || 0);
             break;
+          case "Category":
+            formElement.value = await buscarIdCategoria(client[apiField]);
+            break;
           default:
             formElement.value = client[apiField] || "";
         }
       }
     }
+    })
+    
+    // Establecer valores del formulario basados en los mapeos
+    
     
     // Mostrar formulario
     document.getElementById("clientModalLabel").textContent = "Editar Cliente";
@@ -488,6 +494,57 @@ function editClient(clientId) {
     }
     
     jQuery("#clientModal").modal("show");
+    toggleLoading(false);
+  }
+}
+async function buscarIdCategoria(categoryName) {
+  toggleLoading(true);
+
+  // Timeout manual
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort(); // Cancela la petición
+    toggleLoading(false);
+    showToast("Error", "La solicitud de categorías ha tardado demasiado tiempo.", "error");
+  }, 30000);
+
+  try {
+    const apiUrl = "api_proxy.php?endpoint=ClientCategories";
+    const response = await fetch(apiUrl, { signal: controller.signal });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`¡Error HTTP! Estado: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const categories = logApiResponse("ClientCategories", data);
+
+    if (categories && categories.length > 0) {
+      clientCategories = categories;
+
+      // Buscar la categoría
+      const category = categories.find(c => c.CategoryName === categoryName);
+
+      if (category) {
+        return category.CategoryID; // ✅ Devuelve directamente el ID
+      }
+    }
+
+    showToast("Error", "No se encontraron categorías de clientes", "error");
+    return null;
+
+  } catch (error) {
+    if (error.name === "AbortError") {
+      console.error("Error: solicitud abortada por timeout");
+    } else {
+      console.error("Error cargando categorías de clientes:", error);
+      showToast("Error", "No se pudieron cargar las categorías: " + error.message, "error");
+    }
+    return null;
+
+  } finally {
     toggleLoading(false);
   }
 }
@@ -758,6 +815,7 @@ function initClientMaintenance() {
       document.getElementById("clientBalanceDiv").classList.add("d-none");
     document.getElementById("clientLastPurchaseDateDiv").classList.add("d-none");
     document.getElementById("saveClientBtn").classList.remove("d-none");
+    document.getElementById("apellidoDiv").classList.add("d-none");
       // Verificar si jQuery está definido
       if (typeof jQuery === "undefined") {
         console.error("¡jQuery no está cargado!");
