@@ -177,6 +177,15 @@ $username = $_SESSION['Username'];
                                 <span>Inventario</span>
                             </a>
                         </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="horario-link" data-section="horario-section"
+                               data-bs-toggle="tooltip" data-bs-placement="right" title="Horario">
+                                <i class="fas fa-boxes"></i>
+                                <span>Horario</span>
+                            </a>
+
+                        </li>
 
                         <!-- Añadir después de la sección de inventario en el sidebar -->
                         <li class="nav-item">
@@ -1147,6 +1156,29 @@ $username = $_SESSION['Username'];
                         </div>
                     </div>
                 </section>
+                
+                <!-- Horario Section -->
+                <section id="horario-section" class="dashboard-section d-none">
+                    <!--
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                        <h2><i class="fas fa-boxes me-2"></i>Gestión de Horario</h2>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshInventory">
+                                    <i class="fas fa-sync-alt me-1"></i> Actualizar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-file-export me-1"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>-->
+                    <!-- Aquí se carga el contenido de horario.php -->
+                    <?php include 'horario.php'; ?>
+                   
+                </section>
+                
 
                 <!-- Añadir antes del footer en el main content -->
                 <section id="clients-section" class="dashboard-section d-none">
@@ -4888,6 +4920,10 @@ const departmentFilterObj = document.getElementById('departmentFilter');
     <script src="js/maintenance.js"></script>
     <script src="../js/sidebar.js"></script>
     <?php include 'scripts.php'; ?>
+    
+    <script src="js/horario.js"></script>
+
+    
 </body>
 
 </html>
