@@ -49,6 +49,7 @@ $editMode = isset($_GET['edit']);
         </div>
         <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
     </div>
+    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

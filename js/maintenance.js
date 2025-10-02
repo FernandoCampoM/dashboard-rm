@@ -385,11 +385,15 @@ async function loadChart(itemCode) {
         
         if(!data || data.length === 0){
             // Manejo de error o no data
+            document.getElementById('movementContainer').classList.add('d-none');
             document.getElementById('ProdMovementChart').classList.add('d-none');
             document.getElementById('ProdMovementChartMessage').classList.remove('d-none');
             document.getElementById('ProdMovementChartMessage').innerText = 'No hay datos de movimiento para este producto.';
+            calculateAndDisplayAnnualSummary([]);
+            monthlyData = [];
             return;
         }
+        document.getElementById('movementContainer').classList.remove('d-none');
 
         // 1. **Guardar los datos completos en la variable global**
         monthlyData = data; 
@@ -463,6 +467,15 @@ async function loadChart(itemCode) {
 function calculateAndDisplayAnnualSummary(data) {
     if (!data || data.length === 0) {
         console.warn("No hay datos para calcular el resumen anual.");
+        document.getElementById('annual-total-sales-units').textContent = '0';
+        document.getElementById('annual-gross-sales-value').textContent = '$0.00';
+        document.getElementById('annual-total-costs').textContent = '$0.00';
+        document.getElementById('annual-total-profit').textContent = '$0.00';
+        document.getElementById('demand-weekly').textContent = '0.00';
+        document.getElementById('demand-monthly').textContent = '0.00';
+        document.getElementById('suggested-order-quantity').textContent = '0000';
+    document.getElementById('suggested-order-excess-message').textContent = '';
+    document.getElementById('current-inventory').textContent = '0';
         return;
     }
 
@@ -500,21 +513,32 @@ function calculateAndDisplayAnnualSummary(data) {
 
     // --- Orden Sugerida ---
     const monthsOfCoverage = data[0].CurrentStock / avgMonthlySalesLast3Months; // "producto en exceso para cubrir 6 meses"
-    const suggestedOrderQuantity = Math.max(0, (avgMonthlySalesLast3Months * monthsOfCoverage) - data[0].CurrentStock);
-    
-    // Si la orden sugerida es 0 o negativa, significa que tenemos exceso de inventario.
+        // --- Orden Sugerida ---
+    fetch('api_proxy.php?endpoint=inventoryMonthsOfCover')
+    .then(response => response.json())
+    .then(inventoryMonthsOfCover => {
+      const inventoryMonthsOfCoverData = inventoryMonthsOfCover;
+      console.log("Inventory Months of Cover Data:", inventoryMonthsOfCoverData);
+       console.log("Inventory Months of Cover Data:", inventoryMonthsOfCoverData['inventoryMonthsOfCover']);
+      const suggestedOrderQuantity = Math.max(0, (avgMonthlySalesLast3Months * inventoryMonthsOfCoverData['inventoryMonthsOfCover']));
+      // Si la orden sugerida es 0 o negativa, significa que tenemos exceso de inventario.
     // El texto "producto en exceso para cubrir 6 meses" debería aparecer si suggestedOrderQuantity <= 0
-    let suggestedOrderText = suggestedOrderQuantity > 0 
+    let suggestedOrderText = suggestedOrderQuantity.toFixed(0) > 0 
         ? suggestedOrderQuantity.toFixed(0) // Redondear a entero
         : "0000"; // Como en tu imagen, "0000" para exceso
+      document.getElementById('suggested-order-quantity').textContent = suggestedOrderText;
+    })
+    .catch(error => {
+      console.error('Error fetching inventoryMonthsOfCover:', error);
+    });
+    
 
     let excessMessage = '';
     if (data[0].CurrentStock > avgMonthlySalesLast3Months) {
         // Calcular cuántos meses cubre el inventario actual si no se necesita ordenar
         excessMessage = `*producto en exceso para cubrir ${monthsOfCoverage.toFixed(0)} meses `;
     }
-
-    document.getElementById('suggested-order-quantity').textContent = suggestedOrderText;
+   
     document.getElementById('suggested-order-excess-message').textContent = excessMessage;
     console.log("Current Stock:", data[0].CurrentStock);
     document.getElementById('current-inventory').textContent = String(data[0].CurrentStock); // Formato 0075

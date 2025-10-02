@@ -1640,6 +1640,15 @@ $username = $_SESSION['Username'];
                 </div>
                 <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
             </div>
+            <h2>Configuración de Inventario</h2>
+            <div class="card card-config p-4">
+                <div class="form-group mb-3">
+                    <label for="inventoryMonthsOfCover" class="form-label text-start d-block">Meses de cobertura Orden Sugerida:</label>
+                    <input type="number" step="0.1" id="inventoryMonthsOfCover" class="form-control" placeholder="1.35" value="<?= htmlspecialchars($config['inventoryMonthsOfCover'] ?? '') ?>">
+                </div>
+                
+                <button id="save-config-inventario" class="btn btn-primary w-100 mt-3">Guardar</button>
+            </div>
         </div>
 
       </div>
@@ -2037,6 +2046,38 @@ document.getElementById("save-config").addEventListener("click", function () {
         });
     } else {
         alert("Por favor ingresa IP y puerto.");
+    }
+});
+document.getElementById("save-config-inventario").addEventListener("click", function () {
+    const monthsOfCover = document.getElementById("inventoryMonthsOfCover").value.trim();
+
+    if (monthsOfCover) {
+        const config = { inventoryMonthsOfCover: monthsOfCover };
+
+        fetch("setup/save_config.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config)
+        })
+        .then(res => {
+            console.log("Raw response:", res); // Depuración
+            return res.json();
+        })
+        .then(data => {
+            console.log("Response data:", data); // Depuración
+            if (data.status === "ok") {
+                alert("Configuración guardada correctamente.");
+                bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+            } else {
+                alert("Error al guardar la configuración en el servidor.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ocurrió un error de red al intentar guardar la configuración.");
+        });
+    } else {
+        alert("Por favor ingresa meses de cobertura.");
     }
 });
 document.getElementById("btn-configuracion").addEventListener("click", function (e) {

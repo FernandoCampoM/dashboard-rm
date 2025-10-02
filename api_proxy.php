@@ -8,7 +8,10 @@
 
 // Incluir el archivo de configuración que contiene funciones y constantes
 require_once 'config.php';
+require_once 'setup/config_functions.php';
 session_start();
+$configBackend = get_configBackend();
+
 // 2. Si el usuario ha iniciado sesión, el script continúa
 // A partir de aquí, puedes acceder a los datos de la sesión:
 $userID = -1;
@@ -31,6 +34,7 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'inventoryMonthsOfCover', 
     'ProdMovementChart',
     'ProdCreateNewItem',
     'ProdPreOrdChange',
@@ -103,6 +107,13 @@ try {
             
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'userId' => $userID]);
+            exit;
+            
+        }
+        if($endpoint === 'inventoryMonthsOfCover') {
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'inventoryMonthsOfCover' => $configBackend['inventoryMonthsOfCover'] ?? 0]);
             exit;
             
         }
