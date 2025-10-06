@@ -1,7 +1,7 @@
 
 
 <?php
-##TODO COMPARAR LOS DOS AÑOS EN EL PANEL GENERAL UNO DEBAJO DEL OTRO
+
 session_start();
 // Incluir configuración
 require_once 'config.php';
@@ -762,11 +762,23 @@ $username = $_SESSION['Username'];
                                     <div class="col-12 mb-4">
                                         <div class="card ">
                                             <div class="card-header">
-                                                <h5 class="card-title mb-0">Tendencia de Ventas Mensuales (Últimos 2 Años)</h5>
+                                                <h5 class="card-title mb-0" id="titleCurrentSalesTrendChart">Tendencia de Ventas Mensuales (Año Actual)</h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="chart-container" style="height: 400px;">
                                                     <canvas id="salesTrendChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-4">
+                                        <div class="card ">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0" id="titlePreviousSalesTrendChart">Tendencia de Ventas Mensuales (Año Anterior)</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container" style="height: 400px;">
+                                                    <canvas id="salesTrendChartPrevious"></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -2781,7 +2793,58 @@ return dataTableInstance;
                 console.error('Error loading company info:', error);
             }
         }
+        
+        function fillMissingMonths(yearData, year) {
+            // 1. Definir la secuencia completa (Enero a Diciembre)
+            // Nota: JavaScript usa 0 para Enero y 11 para Diciembre.
+            const MONTH_NAMES = [
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 10, 11, 12
+            ];
+            const MONTH_LABELS = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
 
+            // 2. Mapear los datos existentes para facilitar la búsqueda
+            // Creamos un mapa: {"01/2025": {TotalSales: 100, TotalProfit: 50}, ...}
+            const dataMap = yearData.reduce((acc, item) => {
+                acc[item.Month] = item;
+                return acc;
+            }, {});
+
+            // Arrays de salida que contendrán el año completo
+            const filledLabels = [];
+            const filledSales = [];
+            const filledProfit = [];
+
+            // 3. Construir el array completo
+            MONTH_NAMES.forEach(month => {
+                
+                
+
+                // Buscar el dato en el mapa
+                const item = dataMap[month];
+                
+                if (item) {
+                    // Si el mes existe, usa los valores reales
+                    filledLabels.push(item.monthYear);
+                    filledSales.push(item.TotalSales);
+                    filledProfit.push(item.TotalProfit);
+                } else {
+                    // Si el mes NO existe, rellena con 0
+                    filledSales.push(0);
+                    filledProfit.push(0);
+                    filledLabels.push(MONTH_LABELS[month-1]+' '+year);
+                }
+            });
+
+            return {
+                labels: filledLabels,
+                sales: filledSales,
+                profit: filledProfit
+            };
+        }
         // Load sales totals
         async function loadSalesTotals() {
             try {
@@ -2930,6 +2993,8 @@ return dataTableInstance;
 
 
                             return {
+                                Year: year,
+                                Month: month,
                                 date: date,
                                 monthYear: monthName,
                                 TotalSales: totalSales,
@@ -2938,14 +3003,40 @@ return dataTableInstance;
                         })
                         .sort((a, b) => a.date.valueOf() - b.date.valueOf()); // Ordenar por fecha
 
-
+                    console.log("Formatted Data after mapping and sorting:", formattedData);
                     // Extraer los datos para la gráfica
-                    const labels = formattedData.map(item => item.monthYear);
-                    const salesData = formattedData.map(item => item.TotalSales);
-                    const profitData = formattedData.map(item => item.TotalProfit); // Usar la ganancia correcta
+                    const currentYear = new Date().getFullYear();
+                    const lastYear = currentYear - 1;
+                    document.getElementById('titleCurrentSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Actual ${currentYear})`;
+                    document.getElementById('titlePreviousSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Pasado ${lastYear})`;
+                    console.log("Current Year:", currentYear, "Last Year:", lastYear);
+                    console.log("COMPARACION DE DATOS:", currentYear===formattedData[formattedData.length-1].Year);
+                    console.log("Formatted Data:", formattedData[formattedData.length-1].Year);
+                    // ----------------------------------------------------
+                    // BLOQUE 1: Datos del Año Actual (Current Year)
+                    // ----------------------------------------------------
+
+                    // 2. Filtrar los datos solo para el año actual (usando el atributo 'Year')
+                    const currentYearData = formattedData.filter(item => item.Year === currentYear);
+                    const dataCurrentYear =fillMissingMonths(currentYearData, currentYear);  
+                    const currentYearLabels = dataCurrentYear.labels;
+                    const currentYearSales = dataCurrentYear.sales;
+                    const currentYearProfit=dataCurrentYear.profit;
+
+                    // ----------------------------------------------------
+                    // BLOQUE 2: Datos del Año Pasado (Last Year)
+                    // ----------------------------------------------------
+
+                    // 4. Filtrar los datos solo para el año pasado
+                    const lastYearData = formattedData.filter(item => item.Year === lastYear);
+                    const dataLastYear = fillMissingMonths(lastYearData, lastYear);
+                    // 5. Generar las listas de datos para el AÑO PASADO
+                    const lastYearLabels = dataLastYear.labels;
+                    const lastYearSales = dataLastYear.sales;
+                    const lastYearProfit = dataLastYear.profit;
 
                     // Verificar que los datos de ventas y ganancia son diferentes
-                    const dataIsDifferent = salesData.some((value, index) => value !== profitData[index]);
+                    const dataIsDifferent = currentYearSales.some((value, index) => value !== currentYearProfit[index]);
                     if (!dataIsDifferent) {
                         console.warn('ADVERTENCIA: Los datos de ventas y ganancia son idénticos. Es posible que los costos no estén siendo reportados correctamente por la API.');
                     }
@@ -2956,16 +3047,20 @@ return dataTableInstance;
                     if (charts.salesTrendChart) {
                         charts.salesTrendChart.destroy();
                     }
+                    if(charts.salesTrendChartPrevious){
+                        charts.salesTrendChartPrevious.destroy();
+                    }
 
                     const ctxTrend = document.getElementById('salesTrendChart').getContext('2d');
+                    const ctxTrendPrevious = document.getElementById('salesTrendChartPrevious').getContext('2d');
                     charts.salesTrendChart = new Chart(ctxTrend, {
                         type: 'line',
                         data: {
-                            labels: labels,
+                            labels: currentYearLabels,
                             datasets: [
                                 {
                                     label: 'Ventas',
-                                    data: salesData,
+                                    data: currentYearSales,
                                     borderColor: '#0057b8',
                                     backgroundColor: 'rgba(0, 87, 184, 0.1)',
                                     borderWidth: 2,
@@ -2974,7 +3069,71 @@ return dataTableInstance;
                                 },
                                 {
                                     label: 'Ganancia',
-                                    data: profitData, // Usar la ganancia correcta
+                                    data: currentYearProfit, // Usar la ganancia correcta
+                                    borderColor: '#00a651',
+                                    backgroundColor: 'rgba(0, 166, 81, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += formatCurrencyP(context.parsed.y);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return formatCurrencyP(value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    charts.ctxTrendPrevious = new Chart(ctxTrendPrevious, {
+                        type: 'line',
+                        data: {
+                            labels: lastYearLabels,
+                            datasets: [
+                                {
+                                    label: 'Ventas',
+                                    data: lastYearSales,
+                                    borderColor: '#0057b8',
+                                    backgroundColor: 'rgba(0, 87, 184, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4
+                                },
+                                {
+                                    label: 'Ganancia',
+                                    data: lastYearProfit, // Usar la ganancia correcta
                                     borderColor: '#00a651',
                                     backgroundColor: 'rgba(0, 166, 81, 0.1)',
                                     borderWidth: 2,
