@@ -1690,6 +1690,8 @@ $username = $_SESSION['Username'];
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
+    <!-- Scripts personalizados -->
+    <script src="js/config.js"></script>
 
     <!-- Custom JavaScript -->
     <script>
@@ -2831,8 +2833,10 @@ return dataTableInstance;
         // Load company information
         async function loadCompanyInfo() {
             try {
-                const response = await fetch('api_proxy.php?endpoint=InfoCompany');
-                const data = await response.json();
+                
+                //const response = await fetch('api_proxy.php?endpoint=InfoCompany');
+                const response = await  fetchData('InfoCompany');
+                const data = response;
 
                 if (data && data.Name) {
                     document.getElementById('companyName').textContent = data.Name;
@@ -2898,8 +2902,8 @@ return dataTableInstance;
             try {
                 toggleLoading(true);
 
-                const response = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                
+                const data = await fetchData('SalesTotals', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 // Crear un objeto moment para "hoy" al inicio del día
                 const todayMoment = moment().startOf('day');
                 // Crear un objeto moment para la fecha "hasta" al inicio del día
@@ -2907,8 +2911,8 @@ return dataTableInstance;
                 const dateFromMoment = moment(currentDateFrom).startOf('day');
                 if (dateToMoment.isSame(todayMoment, 'day') && dateFromMoment.isSame(todayMoment, 'day')) {
                     const yesterdayMoment = moment().subtract(1, 'days').format('YYYY-MM-DD');
-                    const response = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${yesterdayMoment}&DateTo=${yesterdayMoment}`);
-                    const yesterdayData = await response.json();
+
+                    const yesterdayData = await fetchData('SalesTotals', { DateFrom: yesterdayMoment, DateTo: yesterdayMoment });
                     if (yesterdayData && yesterdayData[0] && data && data[0]) {
                         // Asegurarse de que el elemento existe antes de actualizarlo
                         const trendElement = document.getElementById('salesTrend');
@@ -3011,14 +3015,9 @@ return dataTableInstance;
                 // Solicitar datos de los últimos 2 años para asegurar que tenemos suficientes datos
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
-                const response = await fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`);
+                
 
-                // Comprobar la respuesta HTTP
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-                }
-
-                const data = await response.json();
+                const data = await  fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
 
                 if (data && data.length > 0) {
                     // Ordenar los datos por fecha para asegurar que están en orden cronológico
@@ -3261,12 +3260,9 @@ return dataTableInstance;
             // Solicitar datos de los últimos 2 años
             const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
             const today = moment().format('YYYY-MM-DD');
-
-            fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        // Verificar la estructura del primer elemento
+            const data = fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
+            if (data && data.length > 0) {
+                // Verificar la estructura del primer elemento
                         const firstItem = data[0];
 
 
@@ -3288,9 +3284,7 @@ return dataTableInstance;
                             console.warn('ADVERTENCIA: La API parece no estar devolviendo valores de costo correctos');
                         }
                     }
-                })
-                .catch(error => console.error('Error al depurar datos:', error));
-        }
+                }
 
         async function loadSalesPerDayDataForChart() {
             const today = new Date();
@@ -3317,38 +3311,17 @@ return dataTableInstance;
             viernes.setDate(lunes.getDate() + 4);
             const sabado = new Date(lunes);
             sabado.setDate(lunes.getDate() + 5);
-            console.log("Lunes de esta semana:", formatDateToInput(lunes));
-            console.log("Martes de esta semana:", formatDateToInput(martes));
-            console.log("Miercoles de esta semana:", formatDateToInput(miercoles));
-            console.log("Jueves de esta semana:", formatDateToInput(jueves));
-            console.log("Viernes de esta semana:", formatDateToInput(viernes));
-            console.log("Sabado de esta semana:", formatDateToInput(sabado));
-            console.log("Domingo de esta semana:", formatDateToInput(domingo));
-            const responseLunes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(lunes)}&DateTo=${formatDateToInput(lunes)}`);
-            const dataLunes = await responseLunes.json();
+            const dataLunes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(lunes), DateTo: formatDateToInput(lunes) });
 
-            const responseMartes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(martes)}&DateTo=${formatDateToInput(martes)}`);
-            const dataMartes = await responseMartes.json();
-            const responseMiercoles = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(miercoles)}&DateTo=${formatDateToInput(miercoles)}`);
-            const dataMiercoles = await responseMiercoles.json();
-            const responseJueves = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(jueves)}&DateTo=${formatDateToInput(jueves)}`);
-            const dataJueves = await responseJueves.json();
-            const responseViernes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(viernes)}&DateTo=${formatDateToInput(viernes)}`);
-            const dataViernes = await responseViernes.json();
-            const responseSabado = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(sabado)}&DateTo=${formatDateToInput(sabado)}`);
-            const dataSabado = await responseSabado.json();
-            const responseDomingo = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDateToInput(domingo)}&DateTo=${formatDateToInput(domingo)}`);
-            const dataDomingo = await responseDomingo.json();
+            const dataMartes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
+            const dataMiercoles = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(miercoles), DateTo: formatDateToInput(miercoles) });
+            const dataJueves = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(jueves), DateTo: formatDateToInput(jueves) });
+            const dataViernes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
+            const dataSabado = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
+            const dataDomingo = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
             if(charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
-            console.log("Data Lunes:", dataLunes);
-            console.log("Data Martes:", dataMartes);
-            console.log("Data Miercoles:", dataMiercoles);
-            console.log("Data Jueves:", dataJueves);
-            console.log("Data Viernes:", dataViernes);
-            console.log("Data Sabado:", dataSabado);
-            console.log("Data Domingo:", dataDomingo);
             const salesDataForChart = [
                 dataLunes[0]?.TotalSales || 0,
                 dataMartes[0]?.TotalSales || 0,
@@ -3415,10 +3388,9 @@ return dataTableInstance;
             });
         }
         async function calculateAvgSalesEstisticsPerHour() {
-            const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-    const dataArray = await response.json();
-   
-
+            const dataArray = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
+            
+            console.log("Data Array:", dataArray);
     if (dataArray && dataArray.length !== 0) {
          // Sumar todos los 'TotalSales'
         const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
@@ -3441,16 +3413,14 @@ return dataTableInstance;
         document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerSale);
         document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
     }
-    const response1 = await fetch(`api_proxy.php?endpoint=GetEmployees`);
-    const dataArray1 = await response1.json();
+    const dataArray1 = await fetchData('GetEmployees');
     if (dataArray1 && dataArray1.length !== 0) {
         document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
     }
 }
 
         async function loadTopCategory() {
-    const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-    const data = await response.json(); // 'data' es el array de objetos con tus categorías
+    const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
     
     if (data && data.length > 0) {
@@ -3513,8 +3483,7 @@ return dataTableInstance;
     }
 }
 async function loadLowInventory() {
-    const response = await fetch(`api_proxy.php?endpoint=LowLevelItems`); // El endpoint LowLevelItems parece no necesitar fechas en este caso
-    const data = await response.json(); // 'data' es el array de objetos con tus ítems de bajo inventario
+    const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
 
     if (data && data.length > 0) {
         // Reinicializar DataTables con los NUEVOS datos
@@ -3722,8 +3691,7 @@ async function loadLowInventory() {
         async function loadSalesByDepartment() {
            
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByDepartment&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
                     // Prepare data for the chart
@@ -3802,8 +3770,7 @@ async function loadLowInventory() {
         // Load sales by hour
         async function loadSalesByHour() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                const data = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 console.log('Datos de ventas por hora recibidos de la API:');
                 console.log(data);
                 if (data && data.length > 0) {
@@ -3930,8 +3897,7 @@ async function loadLowInventory() {
         // Load sales by payment method
         async function loadSalesByMethod() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByMethod&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                const data = await fetchData('SalesByMethod', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
 
@@ -4035,8 +4001,7 @@ async function loadLowInventory() {
         // Load inventory value
         async function loadInventoryValue() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=InventoryValue`);
-                const data = await response.json();
+                const data = await fetchData('InventoryValue');
 
                 if (data && data.length > 0) {
 
@@ -4273,8 +4238,7 @@ async function loadLowInventory() {
         // Load sales by category
         async function loadSalesByCategory() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
                     // Update the category sales table
@@ -4308,8 +4272,7 @@ async function loadLowInventory() {
         // Load low level items
         async function loadLowLevelItems() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=LowLevelItems`);
-                const data = await response.json();
+                const data = await fetchData('LowLevelItems');
 
                 if (data && data.length > 0) {
                     // Update low level items table
@@ -4396,15 +4359,15 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                 const department = document.getElementById('departmentFilter')?.value || '';
 
                 // Build query parameters
-                let queryParams = `DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`;
-                
-                if (category) queryParams += `&Category=${encodeURIComponent(category)}`;
-                if (department) queryParams += `&Department=${encodeURIComponent(department)}`;
+                let queryParams = { DateFrom: currentDateFrom, DateTo: currentDateTo };
 
-                const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
-                const responseLeast = await fetch(`api_proxy.php?endpoint=LowSellProducts&${queryParams}`);
-                const data = await response.json();
-                const dataLeast = await responseLeast.json();
+                if (category) queryParams.Category = category;
+                if (department) queryParams.Department = department;
+
+                
+                const data = await fetchData('TopSellProducts', queryParams);
+                console.log('Top Selling Products:', data);
+                const dataLeast = await fetchData('LowSellProducts', queryParams);
                 llenarFiltros(data);
                 //para TOP PRODUCTOS
                 // Verificar que la tabla existe antes de intentar inicializarla

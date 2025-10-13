@@ -34,6 +34,8 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'validez',
+    'LogInDashboard',
     'inventoryMonthsOfCover', 
     'ProdMovementChart',
     'ProdCreateNewItem',
@@ -155,11 +157,17 @@ try {
         }
         // Realizar la llamada a la API
         $response = callAPI($endpoint, $params);
-        
+
         // Log de la respuesta para depuración
         $responseLogMessage = date('Y-m-d H:i:s') . " - Success: {$endpoint}";
         file_put_contents(__DIR__ . '/logs/api_requests.log', $responseLogMessage . PHP_EOL, FILE_APPEND);
-        
+        if ($response && isset($response['status']) && $response['status'] === 403) {
+            // Si la licencia falló, enviamos el código 403 y el JSON de respuesta.
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        }
         // Si la respuesta es false, hubo un error en la API
         if ($response === false) {
             // Try to load mock data for easier development and testing

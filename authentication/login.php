@@ -35,15 +35,16 @@ $responseUsers = [];
 $userID =-1;
 $apiErrorDuringEmployeeFetch = false;
 // Llamada a la API para obtener los empleados y listarlos en autenticación/login.php
-$responseUsers = callAPI('GetEmployees', []); // Llamada a la API para obtener los empleados
+$responseUsers = callAPI('LogInDashboard', []); // Llamada a la API para obtener los empleados
 if($responseUsers === false) {
     $apiErrorDuringEmployeeFetch = true; // Indicar que hubo un error al obtener los empleados
     // Manejar el error de la llamada a la API
     $error_message = "Error al conectar con el servidor de la API. Por favor, inténtelo de nuevo más tarde.";
 } else {
     // Verificar si la llamada a la API fue exitosa y si se obtuvieron datos
-    
-    if (!empty($responseUsers) && is_array($responseUsers)) {
+    if ($responseUsers && isset($responseUsers['status']) && $responseUsers['status'] === 403) {
+        $error_message =$responseUsers['message'];
+    }else if (!empty($responseUsers) && is_array($responseUsers)) {
         $error_message = "";
         
     }else{
@@ -246,6 +247,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         Cambiar IP y puerto del servidor
     </a>
 </p>
+
+
         </form>
         </div>
     </div>

@@ -14,13 +14,33 @@ if (!$config) {
     header("Location: /dashboard-rm/setup/setup-backend.php");
     exit;
 }
+
 define('API_BASE_URL', "http://{$config['backend_ip']}:{$config['backend_port']}/cse.api.v1/");
 define('API_USERNAME', 'testserver'); // Cambiar por tu usuario real
 define('API_PASSWORD', 'testserver'); // Cambiar por tu contraseña real
 define('DEBUG_MODE', true); // Activar para ver errores en pantalla
 
+function get_licence_validity() {
+    $response= callAPI('validez', []);
+    $licenceDays = 0;
+    if($response['success'] == true) {
+        $licenceDays = (int)$response['message'];
+        $licenceDays = 10;
+    }
+    return $licenceDays;
+}
 // Función para hacer peticiones a la API
 function callAPI($endpoint, $params = []) {
+
+    if( $endpoint != 'validez' && get_licence_validity() <= 0) {
+        // Si hay un error de conexión o la respuesta no es válida, usar datos mock
+        $rta = [
+            "success" => false,
+            "message" => "Gracias por usar los servicios de RetailManager. Notamos un inconveniente con su licencia. Por favor, llámenos al 787-466-2091 o escribanos al correo info@retailmanagerpr.com para resolverlo.",
+            "status" => 403
+        ];
+        return $rta;
+    }
     $url = API_BASE_URL . $endpoint;
     
     // Agregar parámetros a la URL
