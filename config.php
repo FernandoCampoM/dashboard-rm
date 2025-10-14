@@ -25,7 +25,7 @@ function get_licence_validity() {
     $licenceDays = 0;
     if($response['success'] == true) {
         $licenceDays = (int)$response['message'];
-        $licenceDays = 10;
+        //$licenceDays = 10;
     }
     return $licenceDays;
 }
