@@ -111,30 +111,17 @@ function loadProductsData() {
   })
 
   // Construir parámetros de consulta
-  let queryParams = ""
-  if (codeFilter) queryParams += `&ItemCode=${encodeURIComponent(codeFilter)}`
-  if (nameFilter) queryParams += `&Description=${encodeURIComponent(nameFilter)}`
-  if (departmentFilter) queryParams += `&Department=${encodeURIComponent(departmentFilter)}`
-  if (categoryFilter) queryParams += `&Category=${encodeURIComponent(categoryFilter)}`
+  let queryParams = {}
+
+  if (codeFilter) queryParams.ItemCode = encodeURIComponent(codeFilter)
+  if (nameFilter) queryParams.Description = encodeURIComponent(nameFilter)
+  if (departmentFilter) queryParams.Department = encodeURIComponent(departmentFilter)
+  if (categoryFilter) queryParams.Category = encodeURIComponent(categoryFilter)
 
   const apiUrl = `api_proxy.php?endpoint=GetAllProducts${queryParams}`
-  
 
-  // Use a timeout to prevent hanging requests
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  fetch(apiUrl)
-    .then((response) => {
-      clearTimeout(timeoutId) // Clear the timeout
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      return response.json()
-    })
+  fetchData("GetAllProducts", queryParams)
+   
     .then((data) => {
       const products = logApiResponse("GetAllProducts", data)
 
@@ -380,8 +367,7 @@ $('#productsMaintenanceTable tbody').on('click', 'td.editable', function (event)
 }
 async function loadChart(itemCode) {
     try {
-        const response = await fetch(`api_proxy.php?endpoint=ProdMovementChart&ItemCode=${itemCode}`);
-        const data = await response.json();
+        const data = await fetchData('ProdMovementChart', { ItemCode: itemCode });
         
         if(!data || data.length === 0){
             // Manejo de error o no data
@@ -518,8 +504,6 @@ function calculateAndDisplayAnnualSummary(data) {
     .then(response => response.json())
     .then(inventoryMonthsOfCover => {
       const inventoryMonthsOfCoverData = inventoryMonthsOfCover;
-      console.log("Inventory Months of Cover Data:", inventoryMonthsOfCoverData);
-       console.log("Inventory Months of Cover Data:", inventoryMonthsOfCoverData['inventoryMonthsOfCover']);
       const suggestedOrderQuantity = Math.max(0, (avgMonthlySalesLast3Months * inventoryMonthsOfCoverData['inventoryMonthsOfCover']));
       // Si la orden sugerida es 0 o negativa, significa que tenemos exceso de inventario.
     // El texto "producto en exceso para cubrir 6 meses" debería aparecer si suggestedOrderQuantity <= 0
@@ -608,27 +592,10 @@ function updateMonthlySummary(monthName) {
 // Function to load product departments
 function loadProductDepartments(callback) {
   
-  toggleLoading(true)
-
-  // Use a timeout to prevent hanging requests
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud de departamentos ha tardado demasiado tiempo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  const apiUrl = "api_proxy.php?endpoint=InventoryDepartments&Short=yes"
-  
-
-  fetch(apiUrl)
-    .then((response) => {
-      clearTimeout(timeoutId) // Clear the timeout
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      return response.json()
-    })
+  toggleLoading(true);
+  fetchData('InventoryDepartments', { Short: 'yes' })
     .then((data) => {
+      toggleLoading(false);
       const departments = logApiResponse("InventoryDepartments", data)
 
       if (departments && departments.length > 0) {
@@ -698,25 +665,8 @@ function loadProductCategories(callback) {
   
   toggleLoading(true)
 
-  // Use a timeout to prevent hanging requests
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud de categorías ha tardado demasiado tiempo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  const apiUrl = "api_proxy.php?endpoint=InventoryCategories"
-  
-
-  fetch(apiUrl)
-    .then((response) => {
-      clearTimeout(timeoutId) // Clear the timeout
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      return response.json()
-    })
-    .then((data) => {
+  fetchData('InventoryCategories')
+   .then((data) => {
       const categories = logApiResponse("InventoryCategories", data)
 
       if (categories && categories.length > 0) {
@@ -1042,12 +992,9 @@ function deleteProduct(productCode) {
   }
 }
 function receiveInventory(userId, productCode, QuantityReceived) {
-  fetch(`api_proxy.php?endpoint=RecReceiveInventory&ItemCode=${encodeURIComponent(productCode)}&QuantityReceived=${QuantityReceived}&UserID=${userId}`, {
-      method: "GET",
-    })
-      .then((result) => {
-        if(result.ok){
-          result.json().then(data => {
+  let params={ItemCode:productCode,QuantityReceived:QuantityReceived,UserID:userId};
+  fetchData(`RecReceiveInventory`, params)
+      .then(data => {
             if ( data.success) {
               Swal.fire({
                 title: "Éxito",
@@ -1065,10 +1012,7 @@ function receiveInventory(userId, productCode, QuantityReceived) {
               showToast("Error", data.message || "No se pudo RECIBIR el producto", "error")
             }
           })
-        }
-        
-      })
-      .catch((error) => {
+          .catch((error) => {
         console.error("Error receiving product:", error)
         showToast("Error", "No se pudo RECIBIR el producto: " + error.message, "error")
       })
@@ -1078,12 +1022,9 @@ function receiveInventory(userId, productCode, QuantityReceived) {
 }
 
 function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
-  fetch(`api_proxy.php?endpoint=ProdPreOrdChange&ItemCode=${encodeURIComponent(productCode)}&PreOrdeQty=${PreOrdeQty}&UserID=${userId}&UnitID=${UnitID}`, {
-      method: "GET",
-    })
-      .then((result) => {
-        if(result.ok){
-          result.json().then(data => {
+  let params={ItemCode:productCode,PreOrdeQty:PreOrdeQty,UserID:userId,UnitID:UnitID};
+  fetchData(`ProdPreOrdChange`, params)
+          .then(data => {
             if ( data.success) {
               Swal.fire({
                 title: "Éxito",
@@ -1101,10 +1042,7 @@ function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
               showToast("Error", data.message || "No se pudo cambiar la Pre - Orden", "error")
             }
           })
-        }
-        
-      })
-      .catch((error) => {
+          .catch((error) => {
         console.error("Error changing pre-order:", error)
         showToast("Error", "No se pudo cambiar la Pre - Orden: " + error.message, "error")
       })
@@ -1113,12 +1051,9 @@ function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
       })
 }
 function productLabelPrint(productCode) {
-  fetch(`api_proxy.php?endpoint=ProdLabelPrint&ItemCode=${encodeURIComponent(productCode)}`, {
-      method: "GET",
-    })
-      .then((result) => {
-        if(result.ok){
-          result.json().then(data => {
+
+  fetchData(`ProdLabelPrint`, {ItemCode:productCode})
+      .then(data => {
             if ( data.success) {
               Swal.fire({
                 title: "Éxito",
@@ -1135,11 +1070,7 @@ function productLabelPrint(productCode) {
             } else {
               showToast("Error", data.message || "No se pudo imprimir las etiquetas", "error")
             }
-          })
-        }
-        
-      })
-      .catch((error) => {
+          }).catch((error) => {
         console.error("Error printing labels:", error)
         showToast("Error", "No se pudo imprimir las etiquetas: " + error.message, "error")
       })
@@ -1150,16 +1081,7 @@ function productLabelPrint(productCode) {
 
 
 function getUnitsByProduct(productCode) {
-  return fetch(`api_proxy.php?endpoint=ProdUnits&ItemCode=${encodeURIComponent(productCode)}`, {
-  method: "GET",
-})
-  .then((result) => {
-    if (result.ok) {
-      return result.json(); // importante: retorna el .json() para encadenar
-    } else {
-      return []; // Retorna un array vacío en caso de error HTTP
-    }
-  })
+  return fetchData(`ProdUnits`, {ItemCode:productCode})
   .then((data) => {
     if (Array.isArray(data)) {
       return data; // ✅ Caso en que la API devuelve un array
@@ -1201,26 +1123,23 @@ function saveProduct(event) {
   }
   // Determine endpoint based on whether it's a new product or an update
   const endpoint = isNewProduct ? "ProdCreateNewItem" : "UpdateProduct"
-  var params="ItemCode="+productData.productCode+"&BarCode="+productData.productBarcode+"&Description="+encodeURIComponent(productData.productDescription)+"&Price="+productData.productPrice+"&Cost="+productData.productCost+"&DepartmentNum="+productData.productDepartment+"&CategoryNum="+productData.productCategory+"&Supplier="+encodeURIComponent(productData.productSupplier)+"&Tax1="+productData.productTax1+"&Tax2="+productData.productTax2;
+  let paramsObject = {
+    ItemCode: productData.productCode,
+    BarCode: productData.productBarcode,
+    Description: encodeURIComponent(productData.productDescription),
+    Price: productData.productPrice,
+    Cost: productData.productCost,
+    DepartmentNum: productData.productDepartment,
+    CategoryNum: productData.productCategory,
+    Supplier: encodeURIComponent(productData.productSupplier),
+    Tax1: productData.productTax1,
+    Tax2: productData.productTax2
+  }
   toggleLoading(true)
 
-  fetch(`api_proxy.php?endpoint=${endpoint}&${params}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      return response.json()
-    })
-    .then((result) => {
-      
-
+  fetchData('ProdCreateNewItem', paramsObject)
+  .then((result) => {
       if (result.success) {
-        
         Swal.fire({
           title: "Éxito",
           text: `Producto ${isNewProduct ? "creado" : "actualizado"} correctamente`,
@@ -1801,42 +1720,35 @@ window.addEventListener("unhandledrejection", (event) => {
       if(result && result.success && result.success == true){
         userId = result.userId
       }
-      let apiUrlRequest = ``
+      let paramsObj={};
+      let apiEndPoint = ``
     switch (column) {
       case 1:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdNameChange&ItemCode=${itemCode}&NewName=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdNameChange'
+        paramsObj = {ItemCode:itemCode,NewName:newValue,UserID:userId};
         break;
       case 2:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdBarcodeChange&ItemCode=${itemCode}&NewBarcode=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdBarcodeChange'
+        paramsObj = {ItemCode:itemCode,NewBarcode:newValue,UserID:userId};
         break;
       case 4:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdCostChange&ItemCode=${itemCode}&NewCost=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdCostChange'
+        paramsObj = {ItemCode:itemCode,NewCost:newValue,UserID:userId};
         break;
       case 3:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdPriceChange&ItemCode=${itemCode}&NewPrice=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdPriceChange'
+        paramsObj = {ItemCode:itemCode,NewPrice:newValue,UserID:userId};
         break;
       case 5:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdDepartmentChange&ItemCode=${itemCode}&NewDepartment=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdDepartmentChange'
+        paramsObj = {ItemCode:itemCode,NewDepartment:newValue,UserID:userId};
         break;
       case 6:
-        apiUrlRequest= `api_proxy.php?endpoint=ProdCategoryChange&ItemCode=${itemCode}&NewCategory=${newValue}&UserID=${userId}`
+        apiEndPoint = 'ProdCategoryChange'
+        paramsObj = {ItemCode:itemCode,NewCategory:newValue,UserID:userId};
         break;
     }
-    // Use a timeout to prevent hanging requests
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  fetch(apiUrlRequest)
-    .then((response) => {
-      clearTimeout(timeoutId) // Clear the timeout
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      return response.json()
-    })
+  fetchData(apiEndPoint, paramsObj)
     .then((data) => {
       const result = data
       if(result && result.success && result.success == true && result.status==200){

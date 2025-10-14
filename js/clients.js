@@ -98,27 +98,13 @@ function loadClientsData() {
  
 
   // Construir parámetros de consulta
-  let queryParams = "";
-  if (nameFilter) queryParams += `&Name=${encodeURIComponent(nameFilter)}`;
-  if (categoryFilter) queryParams += `&Category=${encodeURIComponent(categoryFilter)}`;
-  if (cityFilter) queryParams += `&City=${encodeURIComponent(cityFilter)}`;
+  let queryParams = {};
+  if (nameFilter) queryParams.Name = encodeURIComponent(nameFilter);
+  if (categoryFilter) queryParams.Category = encodeURIComponent(categoryFilter);
+  if (cityFilter) queryParams.City = encodeURIComponent(cityFilter);
 
-  const apiUrl = `api_proxy.php?endpoint=Clients${queryParams}`;
-
-  // Usar un timeout para evitar solicitudes colgadas
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false);
-    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error");
-  }, 30000); // 30 segundos de timeout
-
-  fetch(apiUrl)
-    .then((response) => {
-      clearTimeout(timeoutId); // Limpiar el timeout
-      if (!response.ok) {
-        throw new Error(`¡Error HTTP! Estado: ${response.status}`);
-      }
-      return response.json();
-    })
+  
+  fetchData("Clients", queryParams)
     .then((data) => {
       const clients = logApiResponse("Clients", data);
 
@@ -256,22 +242,7 @@ function loadClientsData() {
 function loadClientCategories(callback) {
   toggleLoading(true);
 
-  // Usar un timeout para evitar solicitudes colgadas
-  const timeoutId = setTimeout(() => {
-    toggleLoading(false);
-    showToast("Error", "La solicitud de categorías ha tardado demasiado tiempo.", "error");
-  }, 30000); // 30 segundos de timeout
-
-  const apiUrl = "api_proxy.php?endpoint=ClientCategories";
-
-  fetch(apiUrl)
-    .then((response) => {
-      clearTimeout(timeoutId); // Limpiar el timeout
-      if (!response.ok) {
-        throw new Error(`¡Error HTTP! Estado: ${response.status}`);
-      }
-      return response.json();
-    })
+  fetchData("ClientCategories")
     .then((data) => {
       const categories = logApiResponse("ClientCategories", data);
 
@@ -353,18 +324,19 @@ function editClient(clientId) {
     `api_proxy.php?endpoint=Clients&ClientID=${encodeURIComponent(clientId)}`
   ];
   
-  
+  console.log("Probando endpoint antes del primero:"+apiEndpoints[0]);
   // Probar cada endpoint en secuencia
   tryNextEndpoint(0);
   
   function tryNextEndpoint(index) {
+    console.log("Probando endpoint:"+index, apiEndpoints[index]);
     if (index >= apiEndpoints.length) {
       console.error("Todos los endpoints de API fallaron");
       toggleLoading(false);
       showToast("Error", "No se pudo cargar los detalles del cliente después de intentar múltiples endpoints", "error");
       return;
     }
-    
+    console.log("eNDPOINT A PROBAR:"+index, apiEndpoints[index]);
     const apiUrl = apiEndpoints[index];
     
     fetch(apiUrl)
@@ -375,7 +347,7 @@ function editClient(clientId) {
         return response.json();
       })
       .then((data) => {
-        
+        console.log(`Datos recibidos del endpoint ${index}:`, data);
         // Si data es false o vacío, probar el siguiente endpoint
         if (!data || (typeof data === "object" && Object.keys(data).length === 0)) {
           tryNextEndpoint(index + 1);
@@ -384,7 +356,7 @@ function editClient(clientId) {
         
         // Intentar extraer el cliente de diferentes estructuras de datos
         const client = extractClientFromResponse(data, clientId);
-        
+        console.log(`Cliente con id ${clientId} extraído del endpoint ${index}:`, client);
         if (client) {
           populateClientForm(client);
         } else {
@@ -399,6 +371,7 @@ function editClient(clientId) {
   
   // Función auxiliar para extraer cliente de diferentes estructuras de respuesta
   function extractClientFromResponse(data, clientId) {
+    console.log("Extrayendo tipo dato:", Array.isArray(data)?"Array":"Objeto");
     // Caso 1: data.RESULT es un array de clientes
     if (data.RESULT && Array.isArray(data.RESULT)) {
       // Si es un array de arrays, tomar el primer array
@@ -412,9 +385,10 @@ function editClient(clientId) {
     
     // Caso 2: data es un array de clientes
     if (Array.isArray(data)) {
-      return data.find((c) => c.ClientID === clientId);
+      const clientF=data.find((c) => c.ClientID == clientId);
+      
+      return clientF;
     }
-    
     // Caso 3: data es el objeto cliente en sí
     if (typeof data === "object" && data !== null) {
       if (data.ClientID === clientId) {
@@ -500,27 +474,10 @@ function editClient(clientId) {
 async function buscarIdCategoria(categoryName) {
   toggleLoading(true);
 
-  // Timeout manual
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort(); // Cancela la petición
-    toggleLoading(false);
-    showToast("Error", "La solicitud de categorías ha tardado demasiado tiempo.", "error");
-  }, 30000);
 
   try {
-    const apiUrl = "api_proxy.php?endpoint=ClientCategories";
-    const response = await fetch(apiUrl, { signal: controller.signal });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`¡Error HTTP! Estado: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await fetchData('ClientCategories');
     const categories = logApiResponse("ClientCategories", data);
-
     if (categories && categories.length > 0) {
       clientCategories = categories;
 
@@ -585,33 +542,24 @@ function deleteClient(clientId) {
 // Función para guardar un cliente (crear o actualizar)
 function saveClient(event) {
   event.preventDefault();
-  console.log("Guardando cliente...");
-  const urlApiNewClient = "api_proxy.php?endpoint=GetNewClientID";
-   const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  
+ 
   const clientId = document.getElementById("clientId").value;
   const isNewClient = !clientId;
   console.log("ID del cliente:", clientId, "Es nuevo:", isNewClient);
   if (isNewClient) {
-    fetch(urlApiNewClient)
-    .then((response) => {
-       clearTimeout(timeoutId) // Clear the timeout
-      response.json().then(data => {
+    fetchData('GetNewClientID')
+    .then(data => {
         console.log("Nuevo ID de cliente obtenido:", data.userId);
-        console.log("Status:", data.success);
         if(data.success){
-          let queryParams='&Number='+data.userId;
-          queryParams+='&Name='+document.getElementById("clientName").value;
-          queryParams+='&Phone='+document.getElementById("clientPhone").value;
-          queryParams+='&Email='+document.getElementById("clientEmail").value;
-          queryParams+='&Category='+document.getElementById("clientCategory").value;
-          queryParams+='&Salesman=1';
-          queryParams+='&CreditLimit='+document.getElementById("clientCreditLimit").value;
-
+          let queryParams={Number:data.userId,
+            Name: document.getElementById("clientName").value,
+            Phone: document.getElementById("clientPhone").value,
+            Email: document.getElementById("clientEmail").value,
+            Category: document.getElementById("clientCategory").value,
+            Salesman: 1,
+            CreditLimit: document.getElementById("clientCreditLimit").value
+          }; 
+          
           const clientData = {
             ClientID: data.userId || "",
             FirstName: document.getElementById("clientName").value,
@@ -631,16 +579,11 @@ function saveClient(event) {
           
           toggleLoading(true);
           
-          fetch(`api_proxy.php?endpoint=${endpoint}`+queryParams, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json"
-            }
-          })
+          fetchData(endpoint, queryParams)
             .then((result) => {
-              console.log("Response status antes de comprobar:", result.ok);
-              if (result.ok === false) {
-                throw new Error(`¡Error HTTP! Estado: ${result.status}`);
+              console.log("Response status antes de comprobar:", result);
+              if (result.status === false || result.status !=201) {
+                throw new Error(`¡Error HTTP! Estado: ${result.message}`);
               }else{
                 //showToast("Éxito", `Cliente ${isNewClient ? "creado" : "actualizado"} correctamente`, "success");
                 Swal.fire({
@@ -670,10 +613,7 @@ function saveClient(event) {
             });
         }
       });
-    })
-    .catch((error) => {
-      console.error("Error llamando a GetNewClientID:", error);
-    });
+    
   }else{
 
   // Recopilar datos del formulario
@@ -739,16 +679,9 @@ function saveClient(event) {
   }
 }
 function GetNewClientID() {
-  const urlApiNewClient = "api_proxy.php?endpoint=GetNewClientID";
-   const timeoutId = setTimeout(() => {
-    toggleLoading(false)
-    showToast("Error", "La solicitud ha tardado demasiado tiempo. Por favor, inténtelo de nuevo.", "error")
-  }, 30000) // 30 seconds timeout
-
-  fetch(urlApiNewClient)
-    .then((response) => {
-       clearTimeout(timeoutId) // Clear the timeout
-      response.json().then(data => {
+  
+  fetchData('GetNewClientID')
+    .then(data => {
         const inputClientId = document.getElementById("clientId");
         if (inputClientId) {
           inputClientId.value = data.userId || "";
@@ -757,10 +690,7 @@ function GetNewClientID() {
           console.error("Elemento input para clientId no encontrado");
         }
       });
-    })
-    .catch((error) => {
-      console.error("Error llamando a GetNewClientID:", error);
-    });
+    
 }
 // Función para inicializar la sección de mantenimiento de clientes
 function initClientMaintenance() {

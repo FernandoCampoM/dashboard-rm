@@ -2913,6 +2913,7 @@ return dataTableInstance;
                     const yesterdayMoment = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
                     const yesterdayData = await fetchData('SalesTotals', { DateFrom: yesterdayMoment, DateTo: yesterdayMoment });
+                    
                     if (yesterdayData && yesterdayData[0] && data && data[0]) {
                         // Asegurarse de que el elemento existe antes de actualizarlo
                         const trendElement = document.getElementById('salesTrend');
@@ -3016,7 +3017,7 @@ return dataTableInstance;
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
                 
-
+                toggleLoading(true);
                 const data = await  fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
 
                 if (data && data.length > 0) {
@@ -3249,6 +3250,8 @@ return dataTableInstance;
                         chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos de tendencia: ${error.message}</div>`;
                     }
                 });
+            }finally {
+                toggleLoading(false);
             }
         }
 
@@ -3311,6 +3314,7 @@ return dataTableInstance;
             viernes.setDate(lunes.getDate() + 4);
             const sabado = new Date(lunes);
             sabado.setDate(lunes.getDate() + 5);
+            toggleLoading(true);
             const dataLunes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(lunes), DateTo: formatDateToInput(lunes) });
 
             const dataMartes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
@@ -3319,6 +3323,7 @@ return dataTableInstance;
             const dataViernes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
             const dataSabado = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
             const dataDomingo = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
+            toggleLoading(false);
             if(charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
@@ -3388,6 +3393,7 @@ return dataTableInstance;
             });
         }
         async function calculateAvgSalesEstisticsPerHour() {
+            toggleLoading(true);
             const dataArray = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
             
             console.log("Data Array:", dataArray);
@@ -3414,14 +3420,16 @@ return dataTableInstance;
         document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
     }
     const dataArray1 = await fetchData('GetEmployees');
+    toggleLoading(false);
     if (dataArray1 && dataArray1.length !== 0) {
         document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
     }
 }
 
         async function loadTopCategory() {
+            toggleLoading(true);
     const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-
+    toggleLoading(false);
     
     if (data && data.length > 0) {
         // Obtenemos la instancia de DataTables si ya existe
@@ -3483,8 +3491,9 @@ return dataTableInstance;
     }
 }
 async function loadLowInventory() {
+    toggleLoading(true);
     const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
-
+toggleLoading(false);
     if (data && data.length > 0) {
         // Reinicializar DataTables con los NUEVOS datos
         $('#lowInventoryTable').DataTable({
@@ -3691,6 +3700,7 @@ async function loadLowInventory() {
         async function loadSalesByDepartment() {
            
             try {
+                toggleLoading(true);
                 const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
@@ -3764,12 +3774,15 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by department:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by hour
         async function loadSalesByHour() {
             try {
+                toggleLoading(true);
                 const data = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 console.log('Datos de ventas por hora recibidos de la API:');
                 console.log(data);
@@ -3891,12 +3904,15 @@ async function loadLowInventory() {
                 if (msgElement) {
                     msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                 }
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by payment method
         async function loadSalesByMethod() {
             try {
+                toggleLoading(true);
                 const data = await fetchData('SalesByMethod', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
@@ -3994,6 +4010,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by payment method:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
@@ -4001,6 +4019,7 @@ async function loadLowInventory() {
         // Load inventory value
         async function loadInventoryValue() {
             try {
+                toggleLoading(true);
                 const data = await fetchData('InventoryValue');
 
                 if (data && data.length > 0) {
@@ -4232,12 +4251,15 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading inventory value:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by category
         async function loadSalesByCategory() {
             try {
+                toggleLoading(true);
                 const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
@@ -4266,12 +4288,15 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by category:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load low level items
         async function loadLowLevelItems() {
             try {
+                toggleLoading(true);
                 const data = await fetchData('LowLevelItems');
 
                 if (data && data.length > 0) {
@@ -4320,6 +4345,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading low level items:', error);
+            }finally{
+                toggleLoading(false);
             }
         }
         // Función para llenar los filtros dinámicamente

@@ -23,27 +23,27 @@ async function fetchData(endpoint, params) {
             
             // 2. Mostrar el Swal.fire usando el mensaje del backend
             // Swal.fire devuelve una Promesa. Usamos .then() para capturar el resultado.
-        Swal.fire({
-            icon: 'error',
-            title: 'Licencia Expirada',
-            text: errorData.message,
-            footer: 'Llámenos al 787-466-2091'
-        }).then((result) => {
-            // El objeto 'result' contiene información sobre cómo se cerró la alerta.
-            
-            if (result.isConfirmed) {
-                window.location.href = BASE_URL+"authentication/logout.php";
-            } else {
-                window.location.replace(BASE_URL+"authentication/logout.php");
-            }
-        });
+            Swal.fire({
+                icon: 'error',
+                title: 'Licencia Expirada',
+                text: errorData.message,
+                footer: 'Llámenos al 787-466-2091'
+            }).then((result) => {
+                // El objeto 'result' contiene información sobre cómo se cerró la alerta.
+                
+                if (result.isConfirmed) {
+                    window.location.href = BASE_URL+"authentication/logout.php";
+                } else {
+                    window.location.replace(BASE_URL+"authentication/logout.php");
+                }
+            });
             
             return null; // Detener el procesamiento
         }
 
         if (!response.ok) {
             // Manejar otros errores HTTP (400, 500, etc.)
-            throw new Error(`Error HTTP: ${response.status}`);
+            throw new Error(`Error HTTP: ${response.status}` + ' ' + response.statusText);
         }
 
         return await response.json();
