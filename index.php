@@ -4444,7 +4444,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         item.Category || '',
                         safeToLocaleString(item.TotalQuantitySold),
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.TotalProfit || 0),
                         formatCurrencyP(item.AveragePrice || 0),
                         safeToLocaleString(item.ProfitMarginPercentage) + '%',
                         safeToLocaleString(item.CurrentStock)
@@ -4718,7 +4718,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         item.Category || '',
                         safeToLocaleString(item.TotalQuantitySold),
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.TotalProfit || 0),
                         formatCurrencyP(item.AveragePrice || 0),
                         safeToLocaleString(item.ProfitMarginPercentage) + '%',
                         safeToLocaleString(item.CurrentStock)
