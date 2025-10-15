@@ -1174,8 +1174,8 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                     </div>-->
-                    <!-- Aquí se carga el contenido de horario.php -->
-                    <?php include 'horario.php'; ?>
+                    <!-- Aquí se carga el contenido de schedule.php -->
+                    <?php include 'view/components/schedule/schedule.php'; ?>
                    
                 </section>
                 
@@ -4921,7 +4921,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
     <script src="../js/sidebar.js"></script>
     <?php include 'scripts.php'; ?>
     
-    <script src="js/horario.js"></script>
+    <script src="js/schedule.js"></script>
 
     
 </body>

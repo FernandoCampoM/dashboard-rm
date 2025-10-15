@@ -7,17 +7,13 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- FontAwesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-
-        <link rel="stylesheet" type="text/css" href="css/horario.css" />
-
+        
+        <link rel="stylesheet" type="text/css" href="css/schedule.css" />  
+        
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-        
     </head>
     <body class="bg-light">
 
@@ -28,8 +24,15 @@
 
             <!-- Botones de acción -->
             <div class="mb-3">
-                <button class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Agregar Horario</button>
-                <button class="btn btn-sm btn-secondary"><i class="fas fa-sync-alt me-1"></i>Actualizar</button>
+                <!-- 🔹 Este botón abre el modal -->
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
+                  <i class="fas fa-plus me-1"></i>Agregar Horario
+                </button>
+
+                <button id="btn-refresh" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-sync-alt me-1"></i>Actualizar
+                </button>
+
             </div>
 
             <!-- Tabla de horarios -->
@@ -38,8 +41,10 @@
 
 
         </div>
-
+        <?php include 'form-schedule.php'; ?>
+        
 
     </body>
+   
     
 </html>
