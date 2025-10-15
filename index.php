@@ -1,7 +1,7 @@
 
 
 <?php
-##TODO COMPARAR LOS DOS AÑOS EN EL PANEL GENERAL UNO DEBAJO DEL OTRO
+
 session_start();
 // Incluir configuración
 require_once 'config.php';
@@ -771,11 +771,23 @@ $username = $_SESSION['Username'];
                                     <div class="col-12 mb-4">
                                         <div class="card ">
                                             <div class="card-header">
-                                                <h5 class="card-title mb-0">Tendencia de Ventas Mensuales (Últimos 2 Años)</h5>
+                                                <h5 class="card-title mb-0" id="titleCurrentSalesTrendChart">Tendencia de Ventas Mensuales (Año Actual)</h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="chart-container" style="height: 400px;">
                                                     <canvas id="salesTrendChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-4">
+                                        <div class="card ">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0" id="titlePreviousSalesTrendChart">Tendencia de Ventas Mensuales (Año Anterior)</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container" style="height: 400px;">
+                                                    <canvas id="salesTrendChartPrevious"></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -1672,6 +1684,15 @@ $username = $_SESSION['Username'];
                 </div>
                 <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
             </div>
+            <h2>Configuración de Inventario</h2>
+            <div class="card card-config p-4">
+                <div class="form-group mb-3">
+                    <label for="inventoryMonthsOfCover" class="form-label text-start d-block">Meses de cobertura Orden Sugerida:</label>
+                    <input type="number" step="0.1" id="inventoryMonthsOfCover" class="form-control" placeholder="1.35" value="<?= htmlspecialchars($config['inventoryMonthsOfCover'] ?? '') ?>">
+                </div>
+                
+                <button id="save-config-inventario" class="btn btn-primary w-100 mt-3">Guardar</button>
+            </div>
         </div>
 
       </div>
@@ -1701,6 +1722,8 @@ $username = $_SESSION['Username'];
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
+    <!-- Scripts personalizados -->
+    <script src="js/config.js"></script>
 
     <!-- Custom JavaScript -->
     <script>
@@ -2071,6 +2094,38 @@ document.getElementById("save-config").addEventListener("click", function () {
         alert("Por favor ingresa IP y puerto.");
     }
 });
+document.getElementById("save-config-inventario").addEventListener("click", function () {
+    const monthsOfCover = document.getElementById("inventoryMonthsOfCover").value.trim();
+
+    if (monthsOfCover) {
+        const config = { inventoryMonthsOfCover: monthsOfCover };
+
+        fetch("setup/save_config.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config)
+        })
+        .then(res => {
+            console.log("Raw response:", res); // Depuración
+            return res.json();
+        })
+        .then(data => {
+            console.log("Response data:", data); // Depuración
+            if (data.status === "ok") {
+                alert("Configuración guardada correctamente.");
+                bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+            } else {
+                alert("Error al guardar la configuración en el servidor.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ocurrió un error de red al intentar guardar la configuración.");
+        });
+    } else {
+        alert("Por favor ingresa meses de cobertura.");
+    }
+});
 document.getElementById("btn-configuracion").addEventListener("click", function (e) {
     e.preventDefault(); // Evita recargar la página
 
@@ -2173,16 +2228,64 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
 
         // **NUEVA FUNCIÓN:** Actualiza los campos de input de fecha en el HTML
         function updateDateInputs() {
+            
             const fromInput = document.getElementById('dateFrom');
             const toInput = document.getElementById('dateTo');
 
             if (fromInput) {
-                fromInput.value = currentDateFrom;
+                fromInput.value = formatDateToInput(currentDateFrom);
             }
             if (toInput) {
-                toInput.value = currentDateTo;
+                toInput.value = formatDateToInput(currentDateTo);
             }
         }
+        /**
+         * Convierte un objeto Date a la cadena "yyyy-MM-dd" requerida por los inputs HTML.
+         * @param {Date} dateObj - El objeto Date a formatear.
+         * @returns {string} La fecha formateada o cadena vacía si no es un objeto Date válido.
+         */
+        function formatDateToInput(dateObj) {
+            if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+                return dateObj.toString().substring(0,10);
+            }
+
+            // 1. Obtiene el año (yyyy)
+            const year = dateObj.getFullYear();
+            
+            // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
+            // getMonth() devuelve 0 para Enero, por eso se suma 1.
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            
+            // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            // 4. Combina en el formato yyyy-MM-dd
+            return `${year}-${month}-${day}`;
+        }
+        /**
+         * Convierte un objeto Date a la cadena "yyyy/MM/dd" requerida por los inputs HTML.
+         * @param {Date} dateObj - El objeto Date a formatear.
+         * @returns {string} La fecha formateada o cadena vacía si no es un objeto Date válido.
+         */
+        function formatDateToAPI(dateObj) {
+            if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+                return dateObj.toString().substring(0,10);
+            }
+
+            // 1. Obtiene el año (yyyy)
+            const year = dateObj.getFullYear();
+            
+            // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
+            // getMonth() devuelve 0 para Enero, por eso se suma 1.
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            
+            // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            // 4. Combina en el formato yyyy-MM-dd
+            return `${year}-${month}-${day}`;
+        }
+
 
         // **NUEVA FUNCIÓN:** Gestiona el estado 'active' de los botones de filtro
         function setActiveFilterButton(activeButtonId) {
@@ -2762,8 +2865,10 @@ return dataTableInstance;
         // Load company information
         async function loadCompanyInfo() {
             try {
-                const response = await fetch('api_proxy.php?endpoint=InfoCompany');
-                const data = await response.json();
+                
+                //const response = await fetch('api_proxy.php?endpoint=InfoCompany');
+                const response = await  fetchData('InfoCompany');
+                const data = response;
 
                 if (data && data.Name) {
                     document.getElementById('companyName').textContent = data.Name;
@@ -2772,14 +2877,65 @@ return dataTableInstance;
                 console.error('Error loading company info:', error);
             }
         }
+        
+        function fillMissingMonths(yearData, year) {
+            // 1. Definir la secuencia completa (Enero a Diciembre)
+            // Nota: JavaScript usa 0 para Enero y 11 para Diciembre.
+            const MONTH_NAMES = [
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 10, 11, 12
+            ];
+            const MONTH_LABELS = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
 
+            // 2. Mapear los datos existentes para facilitar la búsqueda
+            // Creamos un mapa: {"01/2025": {TotalSales: 100, TotalProfit: 50}, ...}
+            const dataMap = yearData.reduce((acc, item) => {
+                acc[item.Month] = item;
+                return acc;
+            }, {});
+
+            // Arrays de salida que contendrán el año completo
+            const filledLabels = [];
+            const filledSales = [];
+            const filledProfit = [];
+
+            // 3. Construir el array completo
+            MONTH_NAMES.forEach(month => {
+                
+                
+
+                // Buscar el dato en el mapa
+                const item = dataMap[month];
+                
+                if (item) {
+                    // Si el mes existe, usa los valores reales
+                    filledLabels.push(item.monthYear);
+                    filledSales.push(item.TotalSales);
+                    filledProfit.push(item.TotalProfit);
+                } else {
+                    // Si el mes NO existe, rellena con 0
+                    filledSales.push(0);
+                    filledProfit.push(0);
+                    filledLabels.push(MONTH_LABELS[month-1]+' '+year);
+                }
+            });
+
+            return {
+                labels: filledLabels,
+                sales: filledSales,
+                profit: filledProfit
+            };
+        }
         // Load sales totals
         async function loadSalesTotals() {
             try {
                 toggleLoading(true);
 
-                const response = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                
+                const data = await fetchData('SalesTotals', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 // Crear un objeto moment para "hoy" al inicio del día
                 const todayMoment = moment().startOf('day');
                 // Crear un objeto moment para la fecha "hasta" al inicio del día
@@ -2787,8 +2943,9 @@ return dataTableInstance;
                 const dateFromMoment = moment(currentDateFrom).startOf('day');
                 if (dateToMoment.isSame(todayMoment, 'day') && dateFromMoment.isSame(todayMoment, 'day')) {
                     const yesterdayMoment = moment().subtract(1, 'days').format('YYYY-MM-DD');
-                    const response = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${yesterdayMoment}&DateTo=${yesterdayMoment}`);
-                    const yesterdayData = await response.json();
+
+                    const yesterdayData = await fetchData('SalesTotals', { DateFrom: yesterdayMoment, DateTo: yesterdayMoment });
+                    
                     if (yesterdayData && yesterdayData[0] && data && data[0]) {
                         // Asegurarse de que el elemento existe antes de actualizarlo
                         const trendElement = document.getElementById('salesTrend');
@@ -2891,14 +3048,9 @@ return dataTableInstance;
                 // Solicitar datos de los últimos 2 años para asegurar que tenemos suficientes datos
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
-                const response = await fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`);
-
-                // Comprobar la respuesta HTTP
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-                }
-
-                const data = await response.json();
+                
+                toggleLoading(true);
+                const data = await  fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
 
                 if (data && data.length > 0) {
                     // Ordenar los datos por fecha para asegurar que están en orden cronológico
@@ -2921,6 +3073,8 @@ return dataTableInstance;
 
 
                             return {
+                                Year: year,
+                                Month: month,
                                 date: date,
                                 monthYear: monthName,
                                 TotalSales: totalSales,
@@ -2929,34 +3083,66 @@ return dataTableInstance;
                         })
                         .sort((a, b) => a.date.valueOf() - b.date.valueOf()); // Ordenar por fecha
 
-
+                    console.log("Formatted Data after mapping and sorting:", formattedData);
                     // Extraer los datos para la gráfica
-                    const labels = formattedData.map(item => item.monthYear);
-                    const salesData = formattedData.map(item => item.TotalSales);
-                    const profitData = formattedData.map(item => item.TotalProfit); // Usar la ganancia correcta
+                    const currentYear = new Date().getFullYear();
+                    const lastYear = currentYear - 1;
+                    document.getElementById('titleCurrentSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Actual ${currentYear})`;
+                    document.getElementById('titlePreviousSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Pasado ${lastYear})`;
+                    console.log("Current Year:", currentYear, "Last Year:", lastYear);
+                    console.log("COMPARACION DE DATOS:", currentYear===formattedData[formattedData.length-1].Year);
+                    console.log("Formatted Data:", formattedData[formattedData.length-1].Year);
+                    // ----------------------------------------------------
+                    // BLOQUE 1: Datos del Año Actual (Current Year)
+                    // ----------------------------------------------------
+
+                    // 2. Filtrar los datos solo para el año actual (usando el atributo 'Year')
+                    const currentYearData = formattedData.filter(item => item.Year === currentYear);
+                    const dataCurrentYear =fillMissingMonths(currentYearData, currentYear);  
+                    const currentYearLabels = dataCurrentYear.labels;
+                    const currentYearSales = dataCurrentYear.sales;
+                    const currentYearProfit=dataCurrentYear.profit;
+
+                    // ----------------------------------------------------
+                    // BLOQUE 2: Datos del Año Pasado (Last Year)
+                    // ----------------------------------------------------
+
+                    // 4. Filtrar los datos solo para el año pasado
+                    const lastYearData = formattedData.filter(item => item.Year === lastYear);
+                    const dataLastYear = fillMissingMonths(lastYearData, lastYear);
+                    // 5. Generar las listas de datos para el AÑO PASADO
+                    const lastYearLabels = dataLastYear.labels;
+                    const lastYearSales = dataLastYear.sales;
+                    const lastYearProfit = dataLastYear.profit;
 
                     // Verificar que los datos de ventas y ganancia son diferentes
-                    const dataIsDifferent = salesData.some((value, index) => value !== profitData[index]);
+                    const dataIsDifferent = currentYearSales.some((value, index) => value !== currentYearProfit[index]);
                     if (!dataIsDifferent) {
                         console.warn('ADVERTENCIA: Los datos de ventas y ganancia son idénticos. Es posible que los costos no estén siendo reportados correctamente por la API.');
                     }
 
                     
-
+                    console.log("Charts:", charts);
                     // También actualizar el gráfico de tendencia de ventas en la sección de ventas
                     if (charts.salesTrendChart) {
+                        console.log("Destroying existing salesTrendChart instance");
                         charts.salesTrendChart.destroy();
+                    }
+                    if(charts.salesTrendChartPrevious){
+                        console.log("Destroying existing salesTrendChartPrevious instance");
+                        charts.salesTrendChartPrevious.destroy();
                     }
 
                     const ctxTrend = document.getElementById('salesTrendChart').getContext('2d');
+                    const ctxTrendPrevious = document.getElementById('salesTrendChartPrevious').getContext('2d');
                     charts.salesTrendChart = new Chart(ctxTrend, {
                         type: 'line',
                         data: {
-                            labels: labels,
+                            labels: currentYearLabels,
                             datasets: [
                                 {
                                     label: 'Ventas',
-                                    data: salesData,
+                                    data: currentYearSales,
                                     borderColor: '#0057b8',
                                     backgroundColor: 'rgba(0, 87, 184, 0.1)',
                                     borderWidth: 2,
@@ -2965,7 +3151,71 @@ return dataTableInstance;
                                 },
                                 {
                                     label: 'Ganancia',
-                                    data: profitData, // Usar la ganancia correcta
+                                    data: currentYearProfit, // Usar la ganancia correcta
+                                    borderColor: '#00a651',
+                                    backgroundColor: 'rgba(0, 166, 81, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += formatCurrencyP(context.parsed.y);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return formatCurrencyP(value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    charts.salesTrendChartPrevious = new Chart(ctxTrendPrevious, {
+                        type: 'line',
+                        data: {
+                            labels: lastYearLabels,
+                            datasets: [
+                                {
+                                    label: 'Ventas',
+                                    data: lastYearSales,
+                                    borderColor: '#0057b8',
+                                    backgroundColor: 'rgba(0, 87, 184, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4
+                                },
+                                {
+                                    label: 'Ganancia',
+                                    data: lastYearProfit, // Usar la ganancia correcta
                                     borderColor: '#00a651',
                                     backgroundColor: 'rgba(0, 166, 81, 0.1)',
                                     borderWidth: 2,
@@ -3016,7 +3266,7 @@ return dataTableInstance;
                 } else {
                     console.warn('No se recibieron datos para la tendencia de ventas mensuales');
                     // Mostrar mensaje de error en los contenedores de gráficos
-                    ['monthlySalesChart', 'salesTrendChart'].forEach(chartId => {
+                    ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
                         const chartElement = document.getElementById(chartId);
                         if (chartElement && chartElement.parentNode) {
                             chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de ventas disponibles para mostrar la tendencia</div>';
@@ -3026,12 +3276,14 @@ return dataTableInstance;
             } catch (error) {
                 console.error('Error loading monthly sales trend:', error);
                 // Mostrar mensaje de error en los contenedores de gráficos
-                ['monthlySalesChart', 'salesTrendChart'].forEach(chartId => {
+                ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
                     const chartElement = document.getElementById(chartId);
                     if (chartElement && chartElement.parentNode) {
                         chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos de tendencia: ${error.message}</div>`;
                     }
                 });
+            }finally {
+                toggleLoading(false);
             }
         }
 
@@ -3043,12 +3295,9 @@ return dataTableInstance;
             // Solicitar datos de los últimos 2 años
             const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
             const today = moment().format('YYYY-MM-DD');
-
-            fetch(`api_proxy.php?endpoint=SaleTrendByMonth&DateFrom=${twoYearsAgo}&DateTo=${today}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        // Verificar la estructura del primer elemento
+            const data = fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
+            if (data && data.length > 0) {
+                // Verificar la estructura del primer elemento
                         const firstItem = data[0];
 
 
@@ -3070,9 +3319,7 @@ return dataTableInstance;
                             console.warn('ADVERTENCIA: La API parece no estar devolviendo valores de costo correctos');
                         }
                     }
-                })
-                .catch(error => console.error('Error al depurar datos:', error));
-        }
+                }
 
         async function loadSalesPerDayDataForChart() {
             const today = new Date();
@@ -3099,20 +3346,16 @@ return dataTableInstance;
             viernes.setDate(lunes.getDate() + 4);
             const sabado = new Date(lunes);
             sabado.setDate(lunes.getDate() + 5);
-            const responseLunes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(lunes)}&DateTo=${formatDate(lunes)}`);
-            const dataLunes = await responseLunes.json();
-            const responseMartes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(martes)}&DateTo=${formatDate(martes)}`);
-            const dataMartes = await responseMartes.json();
-            const responseMiercoles = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(miercoles)}&DateTo=${formatDate(miercoles)}`);
-            const dataMiercoles = await responseMiercoles.json();
-            const responseJueves = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(jueves)}&DateTo=${formatDate(jueves)}`);
-            const dataJueves = await responseJueves.json();
-            const responseViernes = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(viernes)}&DateTo=${formatDate(viernes)}`);
-            const dataViernes = await responseViernes.json();
-            const responseSabado = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(sabado)}&DateTo=${formatDate(sabado)}`);
-            const dataSabado = await responseSabado.json();
-            const responseDomingo = await fetch(`api_proxy.php?endpoint=SalesTotals&DateFrom=${formatDate(domingo)}&DateTo=${formatDate(domingo)}`);
-            const dataDomingo = await responseDomingo.json();
+            toggleLoading(true);
+            const dataLunes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(lunes), DateTo: formatDateToInput(lunes) });
+
+            const dataMartes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
+            const dataMiercoles = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(miercoles), DateTo: formatDateToInput(miercoles) });
+            const dataJueves = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(jueves), DateTo: formatDateToInput(jueves) });
+            const dataViernes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
+            const dataSabado = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
+            const dataDomingo = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
+            toggleLoading(false);
             if(charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
@@ -3126,9 +3369,10 @@ return dataTableInstance;
                 dataDomingo[0]?.TotalSales || 0
             ]; // Ejemplo de datos
 
+            console.log("Sales Data for Chart:", salesDataForChart);
 
         const maxSales = Math.max(...salesDataForChart);
-
+            console.log("Max Sales Value:", maxSales);
         // 2. Encontrar el índice (posición) de ese valor máximo
         const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
         // Ajustar el índice del día actual para que Lunes sea 0 y Domingo sea 6
@@ -3181,10 +3425,10 @@ return dataTableInstance;
             });
         }
         async function calculateAvgSalesEstisticsPerHour() {
-            const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-    const dataArray = await response.json();
-   
-
+            toggleLoading(true);
+            const dataArray = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
+            
+            console.log("Data Array:", dataArray);
     if (dataArray && dataArray.length !== 0) {
          // Sumar todos los 'TotalSales'
         const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
@@ -3207,17 +3451,17 @@ return dataTableInstance;
         document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerSale);
         document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
     }
-    const response1 = await fetch(`api_proxy.php?endpoint=GetEmployees`);
-    const dataArray1 = await response1.json();
+    const dataArray1 = await fetchData('GetEmployees');
+    toggleLoading(false);
     if (dataArray1 && dataArray1.length !== 0) {
         document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
     }
 }
 
         async function loadTopCategory() {
-    const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-    const data = await response.json(); // 'data' es el array de objetos con tus categorías
-
+            toggleLoading(true);
+    const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
+    toggleLoading(false);
     
     if (data && data.length > 0) {
         // Obtenemos la instancia de DataTables si ya existe
@@ -3279,9 +3523,9 @@ return dataTableInstance;
     }
 }
 async function loadLowInventory() {
-    const response = await fetch(`api_proxy.php?endpoint=LowLevelItems`); // El endpoint LowLevelItems parece no necesitar fechas en este caso
-    const data = await response.json(); // 'data' es el array de objetos con tus ítems de bajo inventario
-
+    toggleLoading(true);
+    const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
+toggleLoading(false);
     if (data && data.length > 0) {
         // Reinicializar DataTables con los NUEVOS datos
         $('#lowInventoryTable').DataTable({
@@ -3488,8 +3732,8 @@ async function loadLowInventory() {
         async function loadSalesByDepartment() {
            
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByDepartment&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
                     // Prepare data for the chart
@@ -3562,14 +3806,16 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by department:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by hour
         async function loadSalesByHour() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByHour&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 console.log('Datos de ventas por hora recibidos de la API:');
                 console.log(data);
                 if (data && data.length > 0) {
@@ -3690,14 +3936,16 @@ async function loadLowInventory() {
                 if (msgElement) {
                     msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                 }
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by payment method
         async function loadSalesByMethod() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByMethod&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('SalesByMethod', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
 
@@ -3794,6 +4042,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by payment method:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
@@ -3801,8 +4051,8 @@ async function loadLowInventory() {
         // Load inventory value
         async function loadInventoryValue() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=InventoryValue`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('InventoryValue');
 
                 if (data && data.length > 0) {
 
@@ -4033,14 +4283,16 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading inventory value:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load sales by category
         async function loadSalesByCategory() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=SalesByCategory&DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
                 if (data && data.length > 0) {
                     // Update the category sales table
@@ -4068,14 +4320,16 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by category:', error);
+            }finally {
+                toggleLoading(false);
             }
         }
 
         // Load low level items
         async function loadLowLevelItems() {
             try {
-                const response = await fetch(`api_proxy.php?endpoint=LowLevelItems`);
-                const data = await response.json();
+                toggleLoading(true);
+                const data = await fetchData('LowLevelItems');
 
                 if (data && data.length > 0) {
                     // Update low level items table
@@ -4123,6 +4377,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading low level items:', error);
+            }finally{
+                toggleLoading(false);
             }
         }
         // Función para llenar los filtros dinámicamente
@@ -4162,15 +4418,15 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                 const department = document.getElementById('departmentFilter')?.value || '';
 
                 // Build query parameters
-                let queryParams = `DateFrom=${currentDateFrom}&DateTo=${currentDateTo}`;
-                
-                if (category) queryParams += `&Category=${encodeURIComponent(category)}`;
-                if (department) queryParams += `&Department=${encodeURIComponent(department)}`;
+                let queryParams = { DateFrom: currentDateFrom, DateTo: currentDateTo };
 
-                const response = await fetch(`api_proxy.php?endpoint=TopSellProducts&${queryParams}`);
-                const responseLeast = await fetch(`api_proxy.php?endpoint=LowSellProducts&${queryParams}`);
-                const data = await response.json();
-                const dataLeast = await responseLeast.json();
+                if (category) queryParams.Category = category;
+                if (department) queryParams.Department = department;
+
+                
+                const data = await fetchData('TopSellProducts', queryParams);
+                console.log('Top Selling Products:', data);
+                const dataLeast = await fetchData('LowSellProducts', queryParams);
                 llenarFiltros(data);
                 //para TOP PRODUCTOS
                 // Verificar que la tabla existe antes de intentar inicializarla
@@ -4220,9 +4476,9 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         item.Category || '',
                         safeToLocaleString(item.TotalQuantitySold),
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.TotalProfit || 0),
                         formatCurrencyP(item.AveragePrice || 0),
-                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`,
+                        safeToLocaleString(item.ProfitMarginPercentage) + '%',
                         safeToLocaleString(item.CurrentStock)
                     ]);
 
@@ -4494,9 +4750,9 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         item.Category || '',
                         safeToLocaleString(item.TotalQuantitySold),
                         formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
+                        formatCurrencyP(item.TotalProfit || 0),
                         formatCurrencyP(item.AveragePrice || 0),
-                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`,
+                        safeToLocaleString(item.ProfitMarginPercentage) + '%',
                         safeToLocaleString(item.CurrentStock)
                     ]);
 

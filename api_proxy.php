@@ -8,7 +8,10 @@
 
 // Incluir el archivo de configuración que contiene funciones y constantes
 require_once 'config.php';
+require_once 'setup/config_functions.php';
 session_start();
+$configBackend = get_configBackend();
+
 // 2. Si el usuario ha iniciado sesión, el script continúa
 // A partir de aquí, puedes acceder a los datos de la sesión:
 $userID = -1;
@@ -31,6 +34,9 @@ $endpoint = $_GET['endpoint'];
 
 // Lista de endpoints permitidos para solicitudes GET
 $allowedGetEndpoints = [
+    'validez',
+    'LogInDashboard',
+    'inventoryMonthsOfCover', 
     'ProdMovementChart',
     'ProdCreateNewItem',
     'ProdPreOrdChange',
@@ -106,6 +112,13 @@ try {
             exit;
             
         }
+        if($endpoint === 'inventoryMonthsOfCover') {
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'inventoryMonthsOfCover' => $configBackend['inventoryMonthsOfCover'] ?? 0]);
+            exit;
+            
+        }
         if($endpoint === 'GetNewClientID') {
             $newClientID = '0000';
             //Obtenemos todos los clientes para determinar el siguiente ID
@@ -144,11 +157,17 @@ try {
         }
         // Realizar la llamada a la API
         $response = callAPI($endpoint, $params);
-        
+
         // Log de la respuesta para depuración
         $responseLogMessage = date('Y-m-d H:i:s') . " - Success: {$endpoint}";
         file_put_contents(__DIR__ . '/logs/api_requests.log', $responseLogMessage . PHP_EOL, FILE_APPEND);
-        
+        if ($response && isset($response['status']) && $response['status'] === 403) {
+            // Si la licencia falló, enviamos el código 403 y el JSON de respuesta.
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        }
         // Si la respuesta es false, hubo un error en la API
         if ($response === false) {
             // Try to load mock data for easier development and testing
