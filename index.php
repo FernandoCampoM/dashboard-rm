@@ -4720,7 +4720,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                         formatCurrencyP(item.TotalSales || 0),
                         formatCurrencyP((item.TotalSales || 0) - (item.TotalCost || 0)),
                         formatCurrencyP(item.AveragePrice || 0),
-                        `${(((item.TotalSales || 0) - (item.TotalCost || 0)) / (item.TotalSales || 1) * 100).toFixed(1)}%`,
+                        safeToLocaleString(item.ProfitMarginPercentage) + '%',
                         safeToLocaleString(item.CurrentStock)
                     ]);
 
