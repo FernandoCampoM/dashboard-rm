@@ -4,6 +4,17 @@ let selectedEvent = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     
+    let containerEl = document.getElementById('external-events');
+    new FullCalendar.Draggable(containerEl, {
+      itemSelector: '.fc-event',
+      eventData: function (eventEl) {
+        return {
+          title: eventEl.getAttribute('data-title'),
+          duration: '02:00' // duración por defecto de 1 hora
+        };
+      }
+    });
+    
     var calendarEl = document.getElementById("calendar");
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek', 
@@ -11,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         selectable: true,
         editable: true,
         expandRows: true,
+        droppable: true,
         allDaySlot: false,
         slotMinTime: "07:00:00",
         slotMaxTime: "22:00:00",
@@ -103,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 info.revert(); // 👈 Revierte el cambio en el calendario
               });
         },
-        
         
         eventResize: function (info) {
             const event = info.event;
