@@ -1,7 +1,13 @@
+import { getAll, remove, create, update } from "./services/scheduleService.js";
+import { toScheduleCalendarDto } from "./factory/scheduleFactory.js";
+
 /* global FullCalendar */
 let calendar;
 let selectedEvent = null; 
 
+/**
+ * Calendar
+ */
 document.addEventListener("DOMContentLoaded", function () {
     
     let containerEl = document.getElementById('external-events');
@@ -35,16 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
         events: [],
 
         select: function (info) {
-          /*let title = prompt('Nombre de la actividad:');
-          if (title) {
-            calendar.addEvent({
-              title: title,
-              start: info.startStr,
-              end: info.endStr,
-              allDay: false 
-            });
-          }
-          calendar.unselect();*/
             // Guardamos las fechas seleccionadas en inputs del formulario
             document.getElementById("eventStart").value = info.startStr.slice(0, 16); // yyyy-MM-ddTHH:mm
             document.getElementById("eventEnd").value = info.endStr.slice(0, 16);
@@ -62,9 +58,6 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         eventClick: function (info) {
-          /*if (confirm("¿Eliminar este evento?")) {
-            info.event.remove();
-          }*/
             selectedEvent = info.event; // Guardamos el evento seleccionado
 
             // Precargamos datos en el formulario
@@ -150,6 +143,10 @@ document.addEventListener("DOMContentLoaded", function () {
     reloadCalendarEvents();
 });
 
+/**
+ * Renderiza el calendario
+ * @returns {undefined}
+ */
 function showHorario() {
   const section = document.getElementById("horario-section");
   section.classList.remove("d-none");
@@ -161,6 +158,102 @@ function showHorario() {
   }, 50);
 }
 
+document.getElementById("horario-link").addEventListener("click", function () {
+  showHorario();
+});
+
+/**
+ * Crea y Actualiza
+ */
+const eventForm = document.getElementById("eventForm");
+
+eventForm.addEventListener("submit", function (e) {
+    e.preventDefault(); 
+
+    const schedule = getSchedule();
+
+    if (!schedule.title || !schedule.start || !schedule.end) {
+      alert("Por favor completa todos los campos obligatorios.");
+      return;
+    }
+
+    if (selectedEvent) {
+        selectedEvent.setProp("title", schedule.title);
+        selectedEvent.setStart(schedule.start);
+        selectedEvent.setEnd(schedule.end);
+        selectedEvent.setProp("backgroundColor", schedule.color);
+        
+        update(selectedEvent.id, toScheduleCalendarDto(schedule))
+        .then(data=> {
+            console.log("Evento actualizado:", data);
+            closeModal();
+        });
+    } 
+    else {
+        create(toScheduleCalendarDto(schedule))
+        .then(data => {
+            schedule.id = data ? data.id : null;
+            calendar.addEvent(schedule);
+            console.log("Evento creado:", data);
+            closeModal();
+        });
+  }
+});
+
+function getSchedule(){
+    const title = document.getElementById("eventTitle").value.trim();
+    const start = document.getElementById("eventStart").value;
+    const end = document.getElementById("eventEnd").value;
+    const color = document.getElementById("eventColor").value;
+    
+    return {
+        id: selectedEvent ? selectedEvent.id : null,
+        title,
+        start,
+        end,
+        color,
+        employeeID: 1
+    };
+}
+
+
+/**
+ * Elimina un scheduleCalendar
+ */
+const deleteBtn = document.getElementById("deleteEventBtn");
+
+document.getElementById("eventModal").addEventListener("show.bs.modal", () => {
+  deleteBtn.classList.toggle("d-none", !selectedEvent);
+});
+
+deleteBtn.addEventListener("click", () => {
+    if (selectedEvent && confirm("¿Seguro que deseas eliminar este evento?")) {
+        console.log(selectedEvent);
+        remove(selectedEvent.id)
+        .then(res => {
+            if (res){
+                selectedEvent.remove();
+                closeModal();
+            }
+        })
+        .catch(err => console.error("Error:", err)); 
+    }
+});
+
+/**
+ * obtiene todos los scheduleCalendar
+ */
+document.getElementById("btn-refresh").addEventListener("click", reloadCalendarEvents);
+
+async function reloadCalendarEvents() {
+    calendar.removeAllEvents();
+    const schedule = await getAll();
+    schedule.forEach(ev => calendar.addEvent(ev));
+}
+
+/**
+ * Otros metodos
+ */
 function closeModal() {
   const modalElement = document.getElementById("eventModal");
   const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -173,144 +266,4 @@ function closeModal() {
   }
 
   selectedEvent = null; // Limpiamos el estado
-}
-
-document.getElementById("horario-link").addEventListener("click", function () {
-  showHorario();
-});
-
-const eventForm = document.getElementById("eventForm");
-
-eventForm.addEventListener("submit", function (e) {
-    e.preventDefault(); // Evita el reload del formulario
-
-    // Obtener valores del formulario
-    const title = document.getElementById("eventTitle").value.trim();
-    const start = document.getElementById("eventStart").value;
-    const end = document.getElementById("eventEnd").value;
-    const color = document.getElementById("eventColor").value;
-
-    if (!title || !start || !end) {
-      alert("Por favor completa todos los campos obligatorios.");
-      return;
-    }
-
-    if (selectedEvent) {
-        selectedEvent.setProp("title", title);
-        selectedEvent.setStart(start);
-        selectedEvent.setEnd(end);
-        selectedEvent.setProp("backgroundColor", color);
-
-        // PUT al backend
-        fetch(`http://localhost:50003/api/schedule/${selectedEvent.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: selectedEvent.id,
-            title,
-            dateStart: start.replace("T", " ") + ":00",
-            dateEnd: end.replace("T", " ") + ":00",
-            color,
-            employeeID: 1
-          })
-        })
-        .then(res => {
-          if (!res.ok) throw new Error("Error al actualizar evento");
-          return res.json();
-        })
-        .then(data => {
-          console.log("Evento actualizado:", data);
-          closeModal();
-        })
-        .catch(err => console.error("Error:", err));
-    } 
-    // Caso: crear nuevo evento
-    else {
-        const newEvent = {
-          title,
-          start,
-          end,
-          color
-        };
-
-        calendar.addEvent(newEvent);
-
-        fetch("http://localhost:50003/api/schedule", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title,
-            dateStart: start.replace("T", " ") + ":00",
-            dateEnd: end.replace("T", " ") + ":00",
-            color,
-            employeeID: 1
-          })
-        })
-        .then(res => {
-          if (!res.ok) throw new Error("Error al guardar evento");
-          return res.json();
-        })
-        .then(data => {
-          console.log("Evento creado:", data);
-          closeModal();
-        })
-        .catch(err => console.error("Error:", err));
-  }
-});
-
-const deleteBtn = document.getElementById("deleteEventBtn");
-
-document.getElementById("eventModal").addEventListener("show.bs.modal", () => {
-  deleteBtn.classList.toggle("d-none", !selectedEvent);
-});
-
-deleteBtn.addEventListener("click", () => {
-  if (selectedEvent && confirm("¿Seguro que deseas eliminar este evento?")) {
-    fetch(`http://localhost:50003/api/schedule/${selectedEvent.id}`, {
-      method: "DELETE"
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Error al eliminar evento");
-        selectedEvent.remove();
-        closeModal();
-      })
-      .catch(err => console.error("Error:", err));
-  }
-});
-
-
-document.getElementById("btn-refresh").addEventListener("click", function () {
-  reloadCalendarEvents();
-});
-
-function reloadCalendarEvents() {
-  fetch("http://localhost:50003/api/schedule")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error al cargar los eventos: ${response.status} ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Limpiar eventos actuales
-      calendar.removeAllEvents();
-
-      // Mapear los eventos del API al formato que espera FullCalendar
-      const mappedEvents = data.map(ev => ({
-        id: ev.id,
-        title: ev.title,
-        start: ev.dateStart.replace(" ", "T"),
-        end: ev.dateEnd.replace(" ", "T"),
-        color: ev.color || "#0d6efd"
-      }));
-
-      // Agregar los nuevos eventos
-      mappedEvents.forEach(ev => calendar.addEvent(ev));
-
-      console.log("✅ Calendario actualizado con nuevos eventos:", mappedEvents);
-    })
-    .catch(error => {
-      console.error("❌ Error al refrescar el calendario:", error.message);
-      alert("No se pudieron recargar los eventos.");
-    });
 }

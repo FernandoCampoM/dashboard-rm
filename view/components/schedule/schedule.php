@@ -39,6 +39,7 @@
                 <div class="col-md-2">
                     <h5>Horarios disponibles</h5>
                     <div id="external-events">
+                        
                       <div class="fc-event" data-title="Reunión">Reunión</div>
                       <div class="fc-event" data-title="Clase">Clase</div>
                       <div class="fc-event" data-title="Examen">Examen</div>
