@@ -1,8 +1,4 @@
-/**
- * Parsea la entity a dto
- * @param {type} entity
- * @returns {toDto.scheduleCalendarFactoryAnonym$0}
- */
+
 export function toScheduleCalendarDto(entity){
     return {
         id: entity.id,

@@ -23,6 +23,13 @@
               <label class="form-label">Color</label>
               <input type="color" class="form-control form-control-color" id="eventColor" value="#1e90ff">
             </div>
+              
+            <div class="mb-3">
+              <label class="form-label">Empleado</label>
+              <select class="form-select" id="employeeID2" required>
+                <option value="">Seleccione un empleado</option>
+              </select>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

@@ -24,7 +24,7 @@
             <div class="mb-3">
                 <!-- 🔹 Este botón abre el modal -->
                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
-                  <i class="fas fa-plus me-1"></i>Agregar Horario
+                  <i class="fas fa-plus me-1"></i>Agregar Calendario
                 </button>
 
                 <button id="btn-refresh" class="btn btn-sm btn-secondary">
@@ -38,24 +38,20 @@
             <div class="row">
                 <div class="col-md-2">
                     <h5>Horarios disponibles</h5>
-                    <div id="external-events">
-                        
-                      <div class="fc-event" data-title="Reunión">Reunión</div>
-                      <div class="fc-event" data-title="Clase">Clase</div>
-                      <div class="fc-event" data-title="Examen">Examen</div>
-                      <div class="fc-event" data-title="Asesoría">Asesoría</div>
-                    </div>
+                    <div id="external-events"></div>
+                     <!-- Botón para agregar un nuevo horario -->
+                    <button id="btn-add" class="btn btn-sm btn-primary mt-2 w-100">
+                      <i class="fas fa-plus"></i> Agregar horario
+                    </button>
                 </div>
 
                 <div class="col-md-10">
                   <div id="calendar"></div>
                 </div>
             </div>
-
-
-
         </div>
         <?php include 'form-schedule.php'; ?>
+        <?php include 'form-available-schedule.php'; ?>
         
 
     </body>

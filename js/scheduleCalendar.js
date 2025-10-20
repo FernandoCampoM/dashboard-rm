@@ -1,24 +1,44 @@
 import { getAll, remove, create, update } from "./services/scheduleService.js";
-import { toScheduleCalendarDto } from "./factory/scheduleFactory.js";
+import { getAllUsers } from "./services/userService.js"; 
+import { getAllAvailableSchedule, createAvailableSchedule, updateAvailableSchedule, removeAvailableSchedule } from "./services/availableSchedule.js";
+import { toScheduleCalendarDto } from "./factory/scheduleCalendarFactory.js";
+import { toAvailableScheduleDto } from "./factory/availableScheduleFactory.js";
 
 /* global FullCalendar */
 let calendar;
 let selectedEvent = null; 
-
+let listUsers = null;
 /**
  * Calendar
  */
 document.addEventListener("DOMContentLoaded", function () {
+    getAllUsers()
+    .then(users => {
+        listUsers = users;
+        console.log("Users: ",listUsers);
+        loadCalendar();
+    });
+    
+});
+
+function loadCalendar(){
+    
+    reloadAvailableSchedule();
+    
+     // Agregar un nuevo horario
+    document.getElementById("btn-add").addEventListener("click", () => {
+        abrirModalHorario();
+    });
     
     let containerEl = document.getElementById('external-events');
     new FullCalendar.Draggable(containerEl, {
-      itemSelector: '.fc-event',
-      eventData: function (eventEl) {
-        return {
-          title: eventEl.getAttribute('data-title'),
-          duration: '02:00' // duración por defecto de 1 hora
-        };
-      }
+        itemSelector: '.fc-event',
+        eventData: function (eventEl) {
+            return {
+                title: eventEl.getAttribute('data-title'),
+                duration: eventEl.getAttribute('data-duration') 
+            };
+        }
     });
     
     var calendarEl = document.getElementById("calendar");
@@ -141,7 +161,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
     calendar.render();
     reloadCalendarEvents();
-});
+}
+
+
+function reloadAvailableSchedule(){
+    getAllAvailableSchedule()
+    .then(horarios => {
+        console.log("Horario: ",horarios);
+        const container = document.getElementById("external-events");
+        container.innerHTML = ""; // limpiar contenedor
+        horarios.forEach(h => {
+            addExternalEvents(h);
+        });
+    });
+}
+
+function getNameUser(id){
+    if (listUsers){
+        for (var user of listUsers) {
+            if (user.id === id){
+                return user.name;
+            }
+        }
+    }
+    return "";
+}
+
+function addExternalEvents(h){
+    const container = document.getElementById("external-events");
+    
+    const div = document.createElement("div");
+    div.classList.add("fc-event", "border", "p-2", "mb-2", "rounded");
+    div.textContent = getNameUser(h.employeeID);
+    div.setAttribute("data-id", h.id);
+    div.setAttribute("data-title", h.title);
+    div.setAttribute("data-duration", h.duration);
+    div.setAttribute("data-employee", h.employeeID);
+
+    // Click: abrir modal de edición
+    div.addEventListener("click", () => editarHorario(h));
+
+    container.appendChild(div);
+}
 
 /**
  * Renderiza el calendario
@@ -256,6 +317,111 @@ async function reloadCalendarEvents() {
  */
 function closeModal() {
   const modalElement = document.getElementById("eventModal");
+  const modalInstance = bootstrap.Modal.getInstance(modalElement);
+  modalInstance.hide();
+
+  document.body.classList.remove("modal-open");
+  const backdrops = document.getElementsByClassName("modal-backdrop");
+  while (backdrops.length > 0) {
+    backdrops[0].parentNode.removeChild(backdrops[0]);
+  }
+
+  selectedEvent = null; // Limpiamos el estado
+}
+
+function cargarListaEmpleados() {
+  const select = document.getElementById("employeeID");
+  select.innerHTML = '<option value="">Seleccione un empleado</option>';
+
+  listUsers.forEach(user => {
+    const option = document.createElement("option");
+    option.value = user.id;
+    option.textContent = user.name;
+    select.appendChild(option);
+  });
+}
+
+
+function cargarListaEmpleados2() {
+  const select = document.getElementById("employeeID2");
+  select.innerHTML = '<option value="">Seleccione un empleado</option>';
+
+  listUsers.forEach(user => {
+    const option = document.createElement("option");
+    option.value = user.id;
+    option.textContent = user.name;
+    select.appendChild(option);
+  });
+}
+
+
+function abrirModalHorario(horario = null) {
+    cargarListaEmpleados();
+    const modal = new bootstrap.Modal(document.getElementById("modalHorario"));
+    document.getElementById("formHorario").reset();
+    document.getElementById("asId").value = horario?.asId || "";
+    document.getElementById("title").value = horario?.title || "";
+    document.getElementById("duration").value = horario?.duration || "";
+    document.getElementById("employeeID").value = horario?.employeeID || "";
+    document.getElementById("btn-delete").style.display = horario ? "inline-block" : "none";
+    modal.show();
+
+    // Guardar o actualizar
+    document.getElementById("btn-save").onclick = () => guardarHorario(horario);
+    // Eliminar
+    document.getElementById("btn-delete").onclick = () => eliminarHorario(horario.id);
+}
+
+function editarHorario(h) {
+  abrirModalHorario(h);
+}
+
+// Guardar o actualizar
+function guardarHorario(horario) {
+    const datos = {
+      asId: document.getElementById("asId").value,
+      title: document.getElementById("title").value,
+      duration: document.getElementById("duration").value,
+      employeeID: document.getElementById("employeeID").value
+    };
+    
+    if (!datos.title || !datos.duration || !datos.employeeID) {
+      alert("Por favor completa todos los campos obligatorios.");
+      return;
+    }
+    
+    if (horario){
+        console.log("horario edit: ", horario);
+        console.log("datos: ", datos);
+        updateAvailableSchedule(horario.id, datos)
+        .then(() => {
+            reloadAvailableSchedule();
+            closeModalAvailableSchedule(); 
+        });
+    }else{
+        console.log("horario save: ", horario);
+        console.log("datos: ", datos);
+        createAvailableSchedule(datos)
+        .then(() => {
+            reloadAvailableSchedule();
+            closeModalAvailableSchedule();
+        });
+    }
+}
+
+// Eliminar
+function eliminarHorario(id) {
+    if (!confirm("¿Deseas eliminar este horario?")) return;
+    removeAvailableSchedule(id)
+    .then(() => {
+        reloadAvailableSchedule();
+        closeModalAvailableSchedule();
+    });
+}
+
+
+function closeModalAvailableSchedule() {
+  const modalElement = document.getElementById("modalHorario");
   const modalInstance = bootstrap.Modal.getInstance(modalElement);
   modalInstance.hide();
 

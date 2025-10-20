@@ -5177,7 +5177,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
     <script src="../js/sidebar.js"></script>
     <?php include 'scripts.php'; ?>
     
-    <script type="module" src="js/schedule.js"></script>
+    <script type="module" src="js/scheduleCalendar.js"></script>
 
     
 </body>
