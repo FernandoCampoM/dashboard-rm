@@ -1,0 +1,16 @@
+#calendar {
+  max-width: 100%;
+  margin: 0 auto;
+  height: 600px; /* ajusta según tu necesidad */
+  width: 100%;
+}
+
+.modal-backdrop.show {
+  opacity: 0.2; /* valor más bajo = más transparente */
+}
+
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+}
