@@ -9,11 +9,14 @@ export async function getAll() {
     if (!response.ok) throw new Error(`Error al cargar: ${response.status}`);
     const data = await response.json();
     return data.map(ev => ({
-      id: ev.id,
-      title: ev.title,
-      start: ev.dateStart.replace(" ", "T"),
-      end: ev.dateEnd.replace(" ", "T"),
-      color: ev.color || "#0d6efd"
+        id: ev.id,
+        title: ev.title,
+        start: ev.dateStart.replace(" ", "T"),
+        end: ev.dateEnd.replace(" ", "T"),
+        color: ev.color || "#0d6efd",
+        extendedProps: {
+          employeeID: ev.employeeID
+        }
     }));
   } catch (error) {
     console.error("Error en getAll:", error);

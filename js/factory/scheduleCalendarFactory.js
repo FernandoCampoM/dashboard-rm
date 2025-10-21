@@ -6,6 +6,6 @@ export function toScheduleCalendarDto(entity){
         dateStart: entity.start.replace("T", " ") + ":00",
         dateEnd: entity.end.replace("T", " ") + ":00",
         color: entity.color,
-        employeeID: 1
+        employeeID: entity.employeeID
     };
 }

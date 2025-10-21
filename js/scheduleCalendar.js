@@ -36,7 +36,10 @@ function loadCalendar(){
         eventData: function (eventEl) {
             return {
                 title: eventEl.getAttribute('data-title'),
-                duration: eventEl.getAttribute('data-duration') 
+                duration: eventEl.getAttribute('data-duration'),
+                extendedProps: {
+                  employeeID: eventEl.getAttribute('data-employee')
+                }
             };
         }
     });
@@ -61,6 +64,9 @@ function loadCalendar(){
         events: [],
 
         select: function (info) {
+            cargarListaEmpleados2();
+            document.getElementById("employeeID2").value = "";
+            
             // Guardamos las fechas seleccionadas en inputs del formulario
             document.getElementById("eventStart").value = info.startStr.slice(0, 16); // yyyy-MM-ddTHH:mm
             document.getElementById("eventEnd").value = info.endStr.slice(0, 16);
@@ -78,13 +84,14 @@ function loadCalendar(){
         },
 
         eventClick: function (info) {
+            cargarListaEmpleados2();
             selectedEvent = info.event; // Guardamos el evento seleccionado
-
             // Precargamos datos en el formulario
             document.getElementById("eventTitle").value = selectedEvent.title;
             document.getElementById("eventStart").value = selectedEvent.startStr.slice(0, 16);
             document.getElementById("eventEnd").value = selectedEvent.endStr ? selectedEvent.endStr.slice(0, 16) : "";
             document.getElementById("eventColor").value = selectedEvent.backgroundColor || "#1e90ff";
+            document.getElementById("employeeID2").value = selectedEvent.extendedProps.employeeID;
 
             // Abrimos el modal
             const modalElement = document.getElementById("eventModal");
@@ -94,9 +101,7 @@ function loadCalendar(){
         
         eventDrop: function (info) {
             const event = info.event;
-
-            console.log(info.event.startStr.slice(0, 19));
-
+            
             // Datos actualizados
             const updatedEvent = {
               id: event.id,
@@ -104,29 +109,20 @@ function loadCalendar(){
               dateStart: event.startStr.slice(0, 19).replace("T", " "),
               dateEnd: event.endStr ? event.endStr.slice(0, 19).replace("T", " ") : "",
               color: event.backgroundColor || "#1e90ff",
-              employeeID: 1
+              employeeID: event.extendedProps.employeeID
             };
 
             console.log("Evento movido:", updatedEvent);
-
-            // Llamada PUT al API para guardar los cambios
-            fetch(`http://localhost:50003/api/schedule/${event.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(updatedEvent)
-            })
-              .then(res => {
-                if (!res.ok) throw new Error("Error al actualizar evento");
-                return res.json();
-              })
-              .then(data => {
+            
+            update(event.id, updatedEvent)
+            .then((data)=>{
                 console.log("Evento actualizado en backend:", data);
-              })
-              .catch(err => {
+            })
+            .catch(err => {
                 console.error("Error al actualizar:", err);
                 alert("No se pudo actualizar el evento. Se revertirá el cambio.");
                 info.revert(); // 👈 Revierte el cambio en el calendario
-              });
+            });
         },
         
         eventResize: function (info) {
@@ -138,24 +134,43 @@ function loadCalendar(){
               dateStart: event.startStr.slice(0, 19).replace("T", " "),
               dateEnd: event.endStr.slice(0, 19).replace("T", " "),
               color: event.backgroundColor || "#1e90ff",
-              employeeID: 1
+              employeeID: event.extendedProps.employeeID
             };
 
-            fetch(`http://localhost:50003/api/schedule/${event.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(updatedEvent)
+            update(event.id, updatedEvent)
+            .then((data)=>{
+                console.log("Evento actualizado en backend:", data);
             })
-              .then(res => {
-                if (!res.ok) throw new Error("Error al actualizar duración del evento");
-                return res.json();
-              })
-              .then(data => console.log("Evento redimensionado actualizado:", data))
-              .catch(err => {
-                console.error("Error:", err);
-                alert("No se pudo actualizar el evento.");
-                info.revert();
-              });
+            .catch(err => {
+                console.error("Error al actualizar:", err);
+                alert("No se pudo actualizar el evento. Se revertirá el cambio.");
+                info.revert(); // 👈 Revierte el cambio en el calendario
+            });
+        },
+        
+        eventReceive: function(info) {
+            let event = info.event;
+            
+            
+            const createEvent = {
+                title: event.title,
+                dateStart: event.startStr.slice(0, 19).replace("T", " "),
+                dateEnd: event.endStr.slice(0, 19).replace("T", " "),
+                color: event.backgroundColor || "#1e90ff",
+                employeeID: event.extendedProps.employeeID
+            };
+            console.log(createEvent);
+            
+            create(createEvent)
+            .then((data)=>{
+                console.log("Evento creado en backend:", data);
+                reloadCalendarEvents();
+            })
+            .catch(err => {
+                console.error("Error al actualizar:", err);
+                alert("No se pudo actualizar el evento. Se revertirá el cambio.");
+                info.revert(); // 👈 Revierte el cambio en el calendario
+            });
         }
     });
 
@@ -176,17 +191,6 @@ function reloadAvailableSchedule(){
     });
 }
 
-function getNameUser(id){
-    if (listUsers){
-        for (var user of listUsers) {
-            if (user.id === id){
-                return user.name;
-            }
-        }
-    }
-    return "";
-}
-
 function addExternalEvents(h){
     const container = document.getElementById("external-events");
     
@@ -202,6 +206,17 @@ function addExternalEvents(h){
     div.addEventListener("click", () => editarHorario(h));
 
     container.appendChild(div);
+}
+
+function getNameUser(id){
+    if (listUsers){
+        for (var user of listUsers) {
+            if (user.id === id){
+                return user.name;
+            }
+        }
+    }
+    return "";
 }
 
 /**
@@ -233,7 +248,7 @@ eventForm.addEventListener("submit", function (e) {
 
     const schedule = getSchedule();
 
-    if (!schedule.title || !schedule.start || !schedule.end) {
+    if (!schedule.title || !schedule.start || !schedule.end || !schedule.employeeID) {
       alert("Por favor completa todos los campos obligatorios.");
       return;
     }
@@ -266,6 +281,7 @@ function getSchedule(){
     const start = document.getElementById("eventStart").value;
     const end = document.getElementById("eventEnd").value;
     const color = document.getElementById("eventColor").value;
+    const employeeID = document.getElementById("employeeID2").value;
     
     return {
         id: selectedEvent ? selectedEvent.id : null,
@@ -273,7 +289,7 @@ function getSchedule(){
         start,
         end,
         color,
-        employeeID: 1
+        employeeID: employeeID
     };
 }
 

@@ -22,10 +22,10 @@
 
             <!-- Botones de acción -->
             <div class="mb-3">
-                <!-- 🔹 Este botón abre el modal -->
+                <!-- 🔹 Este botón abre el modal 
                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
                   <i class="fas fa-plus me-1"></i>Agregar Calendario
-                </button>
+                </button>-->
 
                 <button id="btn-refresh" class="btn btn-sm btn-secondary">
                     <i class="fas fa-sync-alt me-1"></i>Actualizar
