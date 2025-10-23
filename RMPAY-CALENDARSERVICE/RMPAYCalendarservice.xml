@@ -3,10 +3,10 @@
     <name>RMPAY Calendar Service</name>
     <description>Servicio para la API REST de RMPAY Calendar (Spring Boot).</description>
 
-    <executable>C:\Program Files\Java\jdk-20\bin\java.exe</executable>
+    <executable>%BASE%\jdk-20\bin\java.exe</executable>
     <arguments>-Xmx512m -jar "C:\RMPAY-CALENDARSERVICE/RMPAYCalendarservice.jar"</arguments>
 
-    <env name="JAVA_HOME" value="C:\Program Files\Java\jdk-20"/>
+    <env name="JAVA_HOME" value="%BASE%\jdk-20"/>
 
     <workingdirectory>%BASE%</workingdirectory>
 
