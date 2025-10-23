@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:50003/api/availableSchedules";
+const API_URL = "http://localhost:9192/api/availableSchedules";
 
 /**
  * Obtiene todos los horarios
