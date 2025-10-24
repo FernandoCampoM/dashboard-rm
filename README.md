@@ -1,11 +1,11 @@
-# RMPAY Calendar Service
+# RMPAY Dashboard
 
-Este repositorio contiene el servicio de calendario para la plataforma RMPAY.
+Este repositorio contiene el dashboard para la plataforma RMPAY.
 
 ---
 
-## 🚀 Ejecución del Servicio (Windows)
-
+## 🚀 Ejecución del Servicio del Calendario (Windows)
+**Nota:** La Ejecucion de este servicio es necesario para el correcto fucnionamiento del Dashboard
 Para poner en marcha el servicio de calendario en tu sistema, sigue estos sencillos pasos:
 
 1.  **Navega a la carpeta de instalación:**
