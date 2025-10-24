@@ -1,6 +1,8 @@
 @echo off
 SET SERVICE_EXE=RMPAYCalendarservice.exe
 SET SERVICE_NAME=RMPAYCALENDAR
+SET JAVA_ZIP_FILE=jdk-20.zip
+SET JAVA_INSTALL_DIR=jdk-20
 
 echo.
 echo ===================================================
@@ -8,15 +10,42 @@ echo  Automatizando re-instalacion e inicio del servicio
 echo ===================================================
 echo.
 
-REM 0. INTENTAR DESINSTALAR LA VERSION EXISTENTE (Limpieza)
+REM 0. LIMPIEZA PREVIA
 echo 0. Intentando DETENER y DESINSTALAR el servicio anterior...
-REM Intentar detener primero (solo funciona si existe y esta corriendo)
 %SERVICE_EXE% stop > nul 2>&1
 timeout /t 3 /nobreak > nul
-REM Intentar desinstalar (solo funciona si existe)
 %SERVICE_EXE% uninstall > nul 2>&1
 timeout /t 3 /nobreak > nul
-echo    * Limpieza previa completada.
+echo    * Limpieza previa del servicio completada.
+
+REM ----------------------------------------------------------------------------------
+REM SECCIÓN CONDICIONAL: DESCOMPRIMIR JAVA SOLO SI NO EXISTE LA CARPETA
+REM ----------------------------------------------------------------------------------
+echo.
+echo ** Verificando JDK 20 **
+IF NOT EXIST "%JAVA_INSTALL_DIR%" (
+    
+    echo 0.5. Directorio "%JAVA_INSTALL_DIR%" NO encontrado. Procediendo a descomprimir Java.
+    echo 0.6. Descomprimiendo %JAVA_ZIP_FILE% en ./%JAVA_INSTALL_DIR%...
+    REM El parametro -C "%JAVA_INSTALL_DIR%" desempaca en la subcarpeta jdk-20
+    tar -xf "%JAVA_ZIP_FILE%" -C "."
+    REM Verificacion de error de tar
+    if errorlevel 1 (
+        echo.
+        echo ERROR: Fallo la descompresion del JDK. Verifica el archivo %JAVA_ZIP_FILE%.
+        echo.
+        pause
+        exit /b 1
+    )
+    echo    * JDK 20 descomprimido exitosamente.
+
+) ELSE (
+
+    echo 0.5. Directorio "%JAVA_INSTALL_DIR%" encontrado. Saltando la descompresion del JDK.
+    
+)
+echo.
+REM ----------------------------------------------------------------------------------
 
 REM 1. INSTALAR EL SERVICIO
 echo 1. Instalando el nuevo servicio...
@@ -35,5 +64,5 @@ sc query "%SERVICE_NAME%" | find "STATE"
 echo.
 echo Proceso de RE-INSTALACION Y ARRANQUE finalizado.
 echo.
- 
+
 pause
