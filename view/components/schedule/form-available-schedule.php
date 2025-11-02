@@ -22,6 +22,13 @@
                 <option value="">Seleccione un empleado</option>
               </select>
             </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Color</label>
+                <select class="form-select" id="color" required>
+                    <option value="">Seleccione un color</option>
+                </select>
+            </div>
 
         </form>
       </div>

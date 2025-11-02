@@ -12,7 +12,8 @@ export async function getAllAvailableSchedule() {
       id: ev.asId,
       title: ev.title,
       duration: ev.duration,
-      employeeID: ev.employeeID
+      employeeID: ev.employeeID,
+      color: ev.color || "#0d6efd"
     }));
   } catch (error) {
     console.error("Error en getAll:", error);

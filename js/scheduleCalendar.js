@@ -39,7 +39,8 @@ function loadCalendar(){
                 duration: eventEl.getAttribute('data-duration'),
                 extendedProps: {
                   employeeID: eventEl.getAttribute('data-employee')
-                }
+                },
+                color: eventEl.getAttribute('data-color')
             };
         }
     });
@@ -47,14 +48,17 @@ function loadCalendar(){
     var calendarEl = document.getElementById("calendar");
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek', 
+        slotLabelFormat: {
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true
+        },
         locale: 'es',
         selectable: true,
         editable: true,
         expandRows: true,
         droppable: true,
         allDaySlot: false,
-        slotMinTime: "07:00:00",
-        slotMaxTime: "22:00:00",
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',
@@ -62,7 +66,20 @@ function loadCalendar(){
         },
 
         events: [],
+        eventContent: function(arg) {
+            // Creamos elementos HTML personalizados
+            const titleEl = document.createElement('div');
+            titleEl.textContent = arg.event.title;
 
+            const userEl = document.createElement('div');
+            userEl.textContent = getNameUser(arg.event.extendedProps.employeeID);
+            userEl.style.fontSize = '0.85em';
+            userEl.style.color = '#fff';
+            userEl.style.opacity = '0.9';
+
+            // Retornamos ambos
+            return { domNodes: [titleEl, userEl] };
+        },
         select: function (info) {
             cargarListaEmpleados2();
             document.getElementById("employeeID2").value = "";
@@ -189,11 +206,50 @@ function reloadAvailableSchedule(){
             addExternalEvents(h);
         });
     });
+    
+    const colors = [
+        { name: 'Azul principal', value: '#0d6efd' },
+        { name: 'Azul cielo', value: '#357cd2' },
+        { name: 'Verde esmeralda', value: '#1ca955' },
+        { name: 'Verde oliva', value: '#7fa900' },
+        { name: 'Naranja brillante', value: '#f57f16' },
+        { name: 'Turquesa', value: '#03bdae' },
+        { name: 'Rojo coral', value: '#ea7a57' }
+    ];
+    
+    const select = document.getElementById('color');
+    
+    select.innerHTML = '<option value="">Seleccione un color</option>';
+
+    colors.forEach(color => {
+        const option = document.createElement('option');
+        option.value = color.value;
+        option.textContent = color.name;
+        option.style.backgroundColor = color.value;
+        option.style.color = getContrastColor(color.value);
+        select.appendChild(option);
+    });
+
+    select.addEventListener('change', () => {
+        const color = select.value || '#ced4da'; // color por defecto (Bootstrap)
+        select.style.borderColor = color;
+        select.style.boxShadow = color === '#ced4da' ? '' : `0 0 0 0.2rem ${color}40`;
+    });
+  
+}
+
+// Función para calcular color de texto según fondo (mejor contraste)
+function getContrastColor(hex) {
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128 ? 'black' : 'white';
 }
 
 function addExternalEvents(h){
     const container = document.getElementById("external-events");
-    
+
     const div = document.createElement("div");
     div.classList.add("fc-event", "border", "p-2", "mb-2", "rounded");
     div.textContent = getNameUser(h.employeeID);
@@ -201,6 +257,15 @@ function addExternalEvents(h){
     div.setAttribute("data-title", h.title);
     div.setAttribute("data-duration", h.duration);
     div.setAttribute("data-employee", h.employeeID);
+    div.setAttribute("data-color", h.color);
+    
+    if (h.color) {
+        div.style.backgroundColor = h.color;
+        div.style.color = getContrastColor(h.color); // texto legible
+        div.style.borderColor = h.color; // opcional: borde del mismo tono
+    }
+    
+    div.style.cursor = "pointer";
 
     // Click: abrir modal de edición
     div.addEventListener("click", () => editarHorario(h));
@@ -357,7 +422,6 @@ function cargarListaEmpleados() {
   });
 }
 
-
 function cargarListaEmpleados2() {
   const select = document.getElementById("employeeID2");
   select.innerHTML = '<option value="">Seleccione un empleado</option>';
@@ -379,6 +443,7 @@ function abrirModalHorario(horario = null) {
     document.getElementById("title").value = horario?.title || "";
     document.getElementById("duration").value = horario?.duration || "";
     document.getElementById("employeeID").value = horario?.employeeID || "";
+    document.getElementById("color").value = horario?.color || "";
     document.getElementById("btn-delete").style.display = horario ? "inline-block" : "none";
     modal.show();
 
@@ -398,10 +463,11 @@ function guardarHorario(horario) {
       asId: document.getElementById("asId").value,
       title: document.getElementById("title").value,
       duration: document.getElementById("duration").value,
-      employeeID: document.getElementById("employeeID").value
+      employeeID: document.getElementById("employeeID").value,
+      color: document.getElementById("color").value
     };
     
-    if (!datos.title || !datos.duration || !datos.employeeID) {
+    if (!datos.title || !datos.duration || !datos.employeeID || !datos.color) {
       alert("Por favor completa todos los campos obligatorios.");
       return;
     }
