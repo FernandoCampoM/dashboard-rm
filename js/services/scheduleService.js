@@ -1,10 +1,28 @@
-const API_URL = "http://localhost:9192/api/schedule";
+async function getApiUrl() {
+  try {
+    const res = await fetch("setup/get_config.php");
+    const data = await res.json();
+
+    if (data.status === "ok" && data.config) {
+      const ip = data.config.backend_ip || '';
+      const port = data.config.backend_port || '';
+      return `http://${ip}:9192/api/availableSchedules`;
+    } else {
+      return "http://localhost:9192/api/availableSchedules";
+    }
+  } catch (err) {
+    console.error("Error al leer configuración del servidor:", err);
+    return null;
+  }
+}
 
 /**
  * Obtiene todos los horarios
  */
 export async function getAll() {
   try {
+    const API_URL = await getApiUrl();
+
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error(`Error al cargar: ${response.status}`);
     const data = await response.json();
@@ -31,6 +49,7 @@ export async function getAll() {
  */
 export async function remove(id) {
   try {
+    const API_URL = await getApiUrl();
     const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!response.ok) throw new Error("Error al eliminar evento");
     return true;
@@ -47,6 +66,7 @@ export async function remove(id) {
  */
 export async function create(event) {
   try {
+    const API_URL = await getApiUrl();
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -68,6 +88,7 @@ export async function create(event) {
  */
 export async function update(id, event) {
   try {
+    const API_URL = await getApiUrl();
     const response = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
