@@ -6,9 +6,9 @@ async function getApiUrl() {
     if (data.status === "ok" && data.config) {
       const ip = data.config.backend_ip || '';
       const port = data.config.backend_port || '';
-      return `http://${ip}:9192/api/availableSchedules`;
+      return `http://${ip}:9192/api/schedule`;
     } else {
-      return "http://localhost:9192/api/availableSchedules";
+      return "http://localhost:9192/api/schedule";
     }
   } catch (err) {
     console.error("Error al leer configuración del servidor:", err);

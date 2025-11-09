@@ -1,8 +1,9 @@
-async function getApiUrl() {
+export async function getApiUrl() {
   try {
+    console.log("Leyendo configuración del servidor...");
     const res = await fetch("setup/get_config.php");
     const data = await res.json();
-
+    console.log("Configuración del servidor obtenida:", data);
     if (data.status === "ok" && data.config) {
       const ip = data.config.backend_ip || '';
       const port = data.config.backend_port || '';

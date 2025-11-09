@@ -72,17 +72,15 @@ function logApiResponse(endpoint, data) {
 }
 
 // Función para cargar clientes desde la API
-function loadClients() {
+export async function loadClients() {
   
   // Cargar categorías primero para asegurar que las tenemos disponibles
-  loadClientCategories(() => {
-    loadClientsData();
-  });
+  await loadClientCategories();
+  await loadClientsData();
 }
 
 // Función que realmente carga los datos de clientes
-function loadClientsData() {
-  toggleLoading(true);
+async function loadClientsData() {
 
   // Obtener valores de filtros
   const nameFilter = document.getElementById("clientNameFilter") 
@@ -103,10 +101,9 @@ function loadClientsData() {
   if (categoryFilter) queryParams.Category = encodeURIComponent(categoryFilter);
   if (cityFilter) queryParams.City = encodeURIComponent(cityFilter);
 
-  
-  fetchData("Clients", queryParams)
-    .then((data) => {
-      const clients = logApiResponse("Clients", data);
+  try {
+    const data = await fetchData("Clients", queryParams);
+    const clients = logApiResponse("Clients", data);
 
       if (clients && clients.length > 0) {
 
@@ -227,24 +224,19 @@ function loadClientsData() {
         console.error("No se encontraron clientes en los datos:", data);
         showToast("Información", "No se encontraron clientes con los filtros seleccionados", "info");
       }
-    })
-    .catch((error) => {
+    }
+   catch(error) {
       clearTimeout(timeoutId); // Limpiar el timeout
       console.error("Error cargando clientes:", error);
       showToast("Error", "No se pudieron cargar los clientes: " + error.message, "error");
-    })
-    .finally(() => {
-      toggleLoading(false);
-    });
+    }
 }
 
 // Función para cargar categorías de clientes
-function loadClientCategories(callback) {
-  toggleLoading(true);
-
-  fetchData("ClientCategories")
-    .then((data) => {
-      const categories = logApiResponse("ClientCategories", data);
+async function loadClientCategories(callback) {
+ try {
+   const data = await fetchData("ClientCategories");
+   const categories = logApiResponse("ClientCategories", data);
 
       if (categories && categories.length > 0) {
         clientCategories = categories;
@@ -290,8 +282,7 @@ function loadClientCategories(callback) {
           callback();
         }
       }
-    })
-    .catch((error) => {
+    }catch(error) {
       clearTimeout(timeoutId); // Limpiar el timeout
       console.error("Error cargando categorías de clientes:", error);
       showToast("Error", "No se pudieron cargar las categorías: " + error.message, "error");
@@ -300,10 +291,7 @@ function loadClientCategories(callback) {
       if (typeof callback === "function") {
         callback();
       }
-    })
-    .finally(() => {
-      toggleLoading(false);
-    });
+    }
 }
 
 // Función para editar un cliente
@@ -693,11 +681,11 @@ function GetNewClientID() {
     
 }
 // Función para inicializar la sección de mantenimiento de clientes
-function initClientMaintenance() {
+export async function initClientMaintenance() {
   
   // Cargar datos iniciales
-  loadClients();
-  
+  await loadClients();
+
   // Configurar escuchadores de eventos
   const filterForm = document.getElementById("filterClientsForm");
   if (filterForm) {
@@ -781,7 +769,7 @@ function initClientMaintenance() {
   }
 }
 
-// Inicializar cuando el DOM esté listo
+/* // Inicializar cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
   
   // Verificar si estamos en la página de mantenimiento de clientes
@@ -790,7 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.log("Tabla de clientes no encontrada, omitiendo inicialización");
   }
-});
+}); */
 
 // Añadir manejador de errores global
 window.addEventListener("error", (event) => {

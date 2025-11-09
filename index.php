@@ -1431,7 +1431,7 @@ $username = $_SESSION['Username'];
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-12 text-end">
-                                            <button class="btn btn-primary" id="    ">
+                                            <button class="btn btn-primary" id="applyProductFiltersMaintenance">
                                                 <i class="fas fa-search me-1"></i> Buscar
                                             </button>
                                             <button class="btn btn-secondary ms-2" id="resetProductFilters">
@@ -1724,15 +1724,18 @@ $username = $_SESSION['Username'];
 
     <!-- Scripts personalizados -->
     <script src="js/config.js"></script>
-
     <!-- Custom JavaScript -->
-    <script>
-        
+    <script type="module">
+        import { loadCalendarSection } from "./js/scheduleCalendar.js";
+        import { initClientMaintenance,loadClients } from "./js/clients.js";
+        import { initializeProductMaintenance} from "./js/maintenance.js";
+
         // Global variables
         let currentDateFrom = moment().format('YYYY-MM-DD');
         let currentDateTo = moment().format('YYYY-MM-DD');
         let charts = {};
         let tables = {};
+        let lastClickedLink = "overview-section";
 
         // Initialize datepickers with current values
         document.getElementById('dateFrom').value = currentDateFrom;
@@ -2064,6 +2067,101 @@ function setupInventoryPagination(newData) {
     // Muestra la primera página al inicializar
     displayCurrentInventoryPage();
 }
+document.addEventListener("DOMContentLoaded", () => {
+  // Seleccionamos todos los enlaces del menú
+  const menuLinks = document.querySelectorAll(".nav-link");
+
+  // Añadimos evento de clic a cada uno
+  menuLinks.forEach(link => {
+    link.addEventListener("click", async  (event) => {
+      event.preventDefault();
+
+      // 1️⃣ Obtenemos el id de la sección del atributo data-section
+      const sectionId = link.getAttribute("data-section");
+
+      /* // 2️⃣ Ocultamos todas las secciones
+      document.querySelectorAll(".dashboard-section").forEach(sec => {
+        sec.classList.add("d-none");
+        sec.classList.remove("active");
+      }); */
+
+      // 3️⃣ Mostramos la sección correspondiente
+     /*  const sectionToShow = document.getElementById(sectionId);
+      if (sectionToShow) {
+        sectionToShow.classList.remove("d-none");
+        sectionToShow.classList.add("active");
+      } */
+
+      // 4️⃣ Opcional: marcar el botón activo visualmente
+      menuLinks.forEach(item => item.classList.remove("active"));
+      link.classList.add("active");
+      lastClickedLink = sectionId;  
+      // 5️⃣ Aquí puedes cargar los datos específicos según la sección
+      await cargarDatosSeccion(sectionId);
+    });
+  });
+});
+
+// Función que decide qué cargar según la sección
+async function cargarDatosSeccion(sectionId) {
+  switch (sectionId) {
+    case "overview-section":
+      console.log("🛍 Cargando datos de Panel General");
+      document.getElementById("refreshOverview").classList.remove("d-none");
+      await loadOverviewData();
+      break;
+    case "sales-section":
+        document.getElementById("refreshOverview").classList.add("d-none");
+      console.log("📦 Cargando datos de Ventas");
+      toggleLoading(true);
+      await Promise.all([ loadSalesByCategory(),
+            loadSalesByDepartmentForSaleSection()
+      ])
+        toggleLoading(false);
+      break;
+    case "products-section":
+        document.getElementById("refreshOverview").classList.add("d-none");
+        toggleLoading(true);
+      console.log("💰 Cargando datos de productos...");
+      await loadTopProducts();
+      toggleLoading(false);
+      break;
+    case "inventory-section":
+        toggleLoading(true);
+        document.getElementById("refreshOverview").classList.add("d-none");
+      console.log("🏷 Cargando datos de inventario...");
+      await Promise.all([ loadInventoryValue(),
+                 loadLowLevelItems()
+      ])
+      toggleLoading(false);
+      break;
+    case "horario-section":
+        toggleLoading(true);
+        document.getElementById("refreshOverview").classList.add("d-none");
+      console.log("📅 Cargando datos de horario...");
+       loadCalendarSection();
+      toggleLoading(false);
+      break;
+    case "clients-section":
+      console.log("👥 Cargando datos de clientes...");
+      toggleLoading(true);
+      document.getElementById("refreshOverview").classList.add("d-none");
+      await initClientMaintenance();
+      toggleLoading(false);
+      break;
+    case "products-maintenance-section":
+      console.log("🛠 Cargando datos de mantenimiento de productos...");
+      toggleLoading(true);
+      document.getElementById("refreshOverview").classList.add("d-none");
+        await initializeProductMaintenance();
+        console.log("Productos cargados para mantenimiento.");
+      toggleLoading(false);
+      break;
+    default:
+      console.log("📊 Mostrando vista general...");
+      break;
+  }
+}
 document.getElementById("save-config").addEventListener("click", function () {
     const backend_ip = document.getElementById("backend-ip").value.trim();
     const backend_port = document.getElementById("backend-port").value.trim();
@@ -2137,6 +2235,7 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
 
         // Show/Hide loading overlay
         function toggleLoading(show = true) {
+            console.log('toggleLoading called with show =', show);
             const loader = document.getElementById('loadingOverlay');
             if (show) {
                 loader.style.display = 'flex';
@@ -2211,9 +2310,10 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
             if (newDateFrom && newDateTo) {
                 currentDateFrom = newDateFrom;
                 currentDateTo = newDateTo;
-
+                updateDateInputs();
                 // Refresh all data
-                loadAllData();
+                console.log("Applying date filter:", lastClickedLink, currentDateFrom, currentDateTo);
+                cargarDatosSeccion(lastClickedLink);
             } else {
                 alert('Por favor seleccione un rango de fechas válido.');
             }
@@ -3034,7 +3134,6 @@ return dataTableInstance;
             } catch (error) {
                 console.error('Error loading sales totals:', error);
             } finally {
-                toggleLoading(false);
             }
         }
 
@@ -3049,7 +3148,6 @@ return dataTableInstance;
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
                 
-                toggleLoading(true);
                 const data = await  fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
 
                 if (data && data.length > 0) {
@@ -3089,9 +3187,7 @@ return dataTableInstance;
                     const lastYear = currentYear - 1;
                     document.getElementById('titleCurrentSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Actual ${currentYear})`;
                     document.getElementById('titlePreviousSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Pasado ${lastYear})`;
-                    console.log("Current Year:", currentYear, "Last Year:", lastYear);
-                    console.log("COMPARACION DE DATOS:", currentYear===formattedData[formattedData.length-1].Year);
-                    console.log("Formatted Data:", formattedData[formattedData.length-1].Year);
+                    
                     // ----------------------------------------------------
                     // BLOQUE 1: Datos del Año Actual (Current Year)
                     // ----------------------------------------------------
@@ -3283,7 +3379,7 @@ return dataTableInstance;
                     }
                 });
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -3346,7 +3442,6 @@ return dataTableInstance;
             viernes.setDate(lunes.getDate() + 4);
             const sabado = new Date(lunes);
             sabado.setDate(lunes.getDate() + 5);
-            toggleLoading(true);
             const dataLunes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(lunes), DateTo: formatDateToInput(lunes) });
 
             const dataMartes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
@@ -3355,7 +3450,7 @@ return dataTableInstance;
             const dataViernes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
             const dataSabado = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
             const dataDomingo = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
-            toggleLoading(false);
+            
             if(charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
@@ -3452,7 +3547,7 @@ return dataTableInstance;
         document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
     }
     const dataArray1 = await fetchData('GetEmployees');
-    toggleLoading(false);
+    
     if (dataArray1 && dataArray1.length !== 0) {
         document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
     }
@@ -3461,7 +3556,7 @@ return dataTableInstance;
         async function loadTopCategory() {
             toggleLoading(true);
     const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-    toggleLoading(false);
+    
     
     if (data && data.length > 0) {
         // Obtenemos la instancia de DataTables si ya existe
@@ -3525,7 +3620,7 @@ return dataTableInstance;
 async function loadLowInventory() {
     toggleLoading(true);
     const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
-toggleLoading(false);
+
     if (data && data.length > 0) {
         // Reinicializar DataTables con los NUEVOS datos
         $('#lowInventoryTable').DataTable({
@@ -3581,26 +3676,21 @@ toggleLoading(false);
                 const lastUpdateTime = document.getElementById('last-update-time');
                 lastUpdateTime.textContent = `Hoy ${new Date().toLocaleTimeString()}`;
                 // Load overview section data
-                await loadCompanyInfo();
-                await loadSalesTotals();
-                await loadTopCategory();
-                await loadLowInventory()
-                await calculateAvgSalesEstisticsPerHour();
-                await loadSalesPerDayDataForChart();
-                await loadMonthlySalesTrend();
-                await loadSalesByDepartment();
-                await loadSalesByHour();
-                await loadSalesByMethod();
+                await Promise.all([
+                    loadCompanyInfo(),
+                    loadSalesTotals(),
+                    loadTopCategory(),
+                    loadLowInventory(),
+                    calculateAvgSalesEstisticsPerHour(),
+                    loadSalesPerDayDataForChart(),
+                    loadMonthlySalesTrend(),
+                    loadSalesByDepartment(),
+                    loadSalesByHour(),
+                    loadSalesByMethod()
+                    ]);
+                toggleLoading(false);
+
                 
-                // Load sales section data
-                await loadSalesByCategory();
-
-                // Load products section data
-                await loadTopProducts();
-
-                // Load inventory section data
-                await loadInventoryValue();
-                await loadLowLevelItems();
             } catch (error) {
                 console.error('Error loading all data:', error);
             } finally {
@@ -3615,15 +3705,16 @@ toggleLoading(false);
             try {
                  const lastUpdateTime = document.getElementById('last-update-time');
                 lastUpdateTime.textContent = `Hoy ${new Date().toLocaleTimeString()}`;
-                await loadSalesTotals();
-                await loadTopCategory();
-                await loadLowInventory()
-                await calculateAvgSalesEstisticsPerHour();
-                await loadSalesPerDayDataForChart();
-                await loadMonthlySalesTrend();
-                await loadSalesByDepartment();
-                await loadSalesByHour();
-                await loadSalesByMethod();
+                 await Promise.all([ loadSalesTotals(),
+                await loadTopCategory(),
+                await loadLowInventory(),
+                await calculateAvgSalesEstisticsPerHour(),
+                await loadSalesPerDayDataForChart(),
+                await loadMonthlySalesTrend(),
+                await loadSalesByDepartment(),
+                await loadSalesByHour(),
+                await loadSalesByMethod()
+                ]);
                 
             } catch (error) {
                 console.error('Error loading overview data:', error);
@@ -3638,7 +3729,7 @@ toggleLoading(false);
 
             try {
                 await loadMonthlySalesTrend();
-                await loadSalesByDepartment();
+                await loadSalesByDepartmentForSaleSection()
                 await loadSalesByCategory();
                 await loadSalesByMethod();
             } catch (error) {
@@ -3703,16 +3794,37 @@ toggleLoading(false);
                     loadOverviewData();
                 });
 
-                document.getElementById('refreshSales').addEventListener('click', function () {
-                    loadSalesData();
+                document.getElementById('refreshSales').addEventListener('click', async  function () {
+                    toggleLoading(true);
+                    await Promise.all([ loadSalesByCategory(),
+                            loadSalesByDepartmentForSaleSection()
+                    ])
+                        toggleLoading(false);
                 });
-
-                document.getElementById('refreshProducts').addEventListener('click', function () {
-                    loadProductsData();
+                document.getElementById('refreshClients').addEventListener('click', async function () {
+                    
+                    toggleLoading(true);
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    await new Promise(requestAnimationFrame);
+                    await loadClients();
+                    toggleLoading(false);
                 });
-
-                document.getElementById('refreshInventory').addEventListener('click', function () {
-                    loadInventoryData();
+                document.getElementById('refreshProducts').addEventListener('click', async function () {
+                    toggleLoading(true);
+                    await loadTopProducts();
+                    toggleLoading(false);
+                });
+                document.getElementById('refreshProductsMaintenance').addEventListener('click', async function () {
+                    toggleLoading(true);
+                    await initializeProductMaintenance();
+                   toggleLoading(false);
+                });
+                document.getElementById('refreshInventory').addEventListener('click', async function () {
+                    toggleLoading(true);
+                    await Promise.all([ loadInventoryValue(),
+                                loadLowLevelItems()
+                    ])
+                    toggleLoading(false);
                 });
 
                 // Apply product filters
@@ -3728,6 +3840,45 @@ toggleLoading(false);
 
         // Initialize the dashboard when the page loads
         document.addEventListener('DOMContentLoaded', initDashboard);
+        async function loadSalesByDepartmentForSaleSection() {
+             try {
+                toggleLoading(true);
+                const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
+
+                if (data && data.length > 0) {
+                    // Prepare data for the chart
+                    const labels = data.map(item => item.Department || 'Sin Departamento');
+                    const salesData = data.map(item => item.TotalSales || 0);
+                    
+                    
+                    // Update the department sales table
+                    const tableData = data.map(item => [
+                        item.Department || 'Sin Departamento',
+                        formatCurrencyP(item.TotalSales || 0),
+                        formatCurrencyP(item.TotalProfit || 0),
+                        formatPercentage(item.ProfitMarginPercentage || 0),
+                        formatNumber(item.InvoiceCount || 0),
+                        formatNumber(item.QuantitySold || 0),
+                        formatCurrencyP(item.AveragePrice || 0)
+                    ]);
+
+                    const departmentColumns = [
+                        { title: "Departamento", data: 0 },
+                        { title: "Ventas", data: 1 },
+                        { title: "Ganancia", data: 2 },
+                        { title: "Margen", data: 3 },
+                        { title: "Facturas", data: 4 },
+                        { title: "Unidades Vendidas", data: 5 },
+                        { title: "Precio Promedio", data: 6 }
+                    ];
+                    tables.departmentSalesTable = createDataTable('departmentSalesTable', tableData, departmentColumns, [[1, 'desc']]);
+                }
+            } catch (error) {
+                console.error('Error in loadSalesByDepartmentForSaleSection() loading sales by department for sale section:', error);
+            }finally {
+                
+            }
+        }
         // Load sales by department
         async function loadSalesByDepartment() {
            
@@ -3781,33 +3932,11 @@ toggleLoading(false);
                     });
                     currentDataDepartments = data;
                     setupPagination(data);
-
-                    // Update the department sales table
-                    const tableData = data.map(item => [
-                        item.Department || 'Sin Departamento',
-                        formatCurrencyP(item.TotalSales || 0),
-                        formatCurrencyP(item.TotalProfit || 0),
-                        formatPercentage(item.ProfitMarginPercentage || 0),
-                        formatNumber(item.InvoiceCount || 0),
-                        formatNumber(item.QuantitySold || 0),
-                        formatCurrencyP(item.AveragePrice || 0)
-                    ]);
-
-                    const departmentColumns = [
-                        { title: "Departamento", data: 0 },
-                        { title: "Ventas", data: 1 },
-                        { title: "Ganancia", data: 2 },
-                        { title: "Margen", data: 3 },
-                        { title: "Facturas", data: 4 },
-                        { title: "Unidades Vendidas", data: 5 },
-                        { title: "Precio Promedio", data: 6 }
-                    ];
-                    tables.departmentSalesTable = createDataTable('departmentSalesTable', tableData, departmentColumns, [[1, 'desc']]);
-                }
+                    }
             } catch (error) {
-                console.error('Error loading sales by department:', error);
+                console.error('Error in loadSalesByDepartment() loading sales by department:', error);
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -3816,8 +3945,7 @@ toggleLoading(false);
             try {
                 toggleLoading(true);
                 const data = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-                console.log('Datos de ventas por hora recibidos de la API:');
-                console.log(data);
+                
                 if (data && data.length > 0) {
                     // Preparar arrays para todas las horas (0-23)
                     const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
@@ -3937,7 +4065,7 @@ toggleLoading(false);
                     msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                 }
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -4043,7 +4171,7 @@ toggleLoading(false);
             } catch (error) {
                 console.error('Error loading sales by payment method:', error);
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -4284,7 +4412,7 @@ toggleLoading(false);
             } catch (error) {
                 console.error('Error loading inventory value:', error);
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -4321,7 +4449,7 @@ toggleLoading(false);
             } catch (error) {
                 console.error('Error loading sales by category:', error);
             }finally {
-                toggleLoading(false);
+                
             }
         }
 
@@ -4378,7 +4506,7 @@ toggleLoading(false);
             } catch (error) {
                 console.error('Error loading low level items:', error);
             }finally{
-                toggleLoading(false);
+                
             }
         }
         // Función para llenar los filtros dinámicamente
@@ -5172,13 +5300,13 @@ const departmentFilterObj = document.getElementById('departmentFilter');
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
-    <script src="js/clients.js"></script>
-    <script src="js/maintenance.js"></script>
+    <!--<script src="js/clients.js"></script>-->
+    <!--<script src="js/maintenance.js"></script>-->
     <script src="../js/sidebar.js"></script>
     <?php include 'scripts.php'; ?>
     
-    <script type="module" src="js/scheduleCalendar.js"></script>
-
+    
+     
     
 </body>
 

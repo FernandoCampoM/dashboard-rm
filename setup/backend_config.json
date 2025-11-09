@@ -1,5 +1,5 @@
 {
-    "backend_ip": "104.207.132.136",
+    "backend_ip": "192.168.100.196",
     "backend_port": "8180",
     "inventoryMonthsOfCover": "1.35"
 }

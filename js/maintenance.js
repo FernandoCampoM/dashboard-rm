@@ -4,6 +4,7 @@
 let productDepartments = []
 let productCategories = []
 let productsMaintenanceTable
+let productsData = []
 // Variable global para guardar los datos de movimiento por mes
 let monthlyData = [];
 
@@ -71,23 +72,302 @@ function logApiResponse(endpoint, data) {
 }
 
 // Function to load products from the API with enhanced debugging
-function loadProducts() {
-  
-  
-  
+async function loadProducts() {
 
-  // Always reload departments and categories to ensure we have the latest data
-  loadProductDepartments(() => {
-    loadProductCategories(() => {
-      loadProductsData()
-    })
-  })
+  await loadProductDepartments();
+  await loadProductCategories();
+  await loadProductsData();
+  
 }
+async function loadProductsWithFilters() {
 
-// Function that actually loads the product data
-function loadProductsData() {
+  await filterProductsData();
   
-  toggleLoading(true)
+}
+async function filterProductsData() {
+
+
+  // Obtener valores de filtros
+  const codeFilter = document.getElementById("productCodeFilter")
+    ? document.getElementById("productCodeFilter").value
+    : ""
+  const nameFilter = document.getElementById("productNameFilter")
+    ? document.getElementById("productNameFilter").value
+    : ""
+  const departmentSelect = document.getElementById("productDepartmentFilter");
+let departmentFilter = departmentSelect
+  ? departmentSelect.options[departmentSelect.selectedIndex].text
+  : "";
+  const categorySelect = document.getElementById("productCategoryFilter");
+  let categoryFilter = categorySelect
+    ? categorySelect.options[categorySelect.selectedIndex].text
+  : "";
+
+  
+
+  if (departmentFilter && departmentFilter == "Todos los departamentos") departmentFilter = ""
+  if (categoryFilter && categoryFilter == "Todas las categorías") categoryFilter = ""
+console.log("Filter values:", {
+    code: codeFilter,
+    name: nameFilter,
+    department: departmentFilter,
+    category: categoryFilter,
+  })
+  try {
+    let products = productsData.slice() // Copy the global products data
+    products = products.filter(p => {
+      const matchesCode = !codeFilter || p.ProductCode.toLowerCase().trim() == codeFilter.toLowerCase().trim();
+      const matchesName = !nameFilter || p.ProductName.toLowerCase().includes(nameFilter.toLowerCase());
+      const matchesDepartment = !departmentFilter || p.Department.toLowerCase().trim() == departmentFilter.toLowerCase();
+      const matchesCategory = !categoryFilter || p.Category.toLowerCase().trim() == categoryFilter.toLowerCase();
+      return matchesCode && matchesName && matchesDepartment && matchesCategory;
+    });
+    if (products && products.length > 0) {
+
+      // Preparar datos para la tabla
+      const tableData = products.map((product) => {
+        // Log each product for debugging
+
+
+        // Buscar el nombre del departamento
+        const department = productDepartments.find((d) => d.DepartmentName === product.Department)
+
+        const departmentName = department ? department.DepartmentName : product.Department
+
+        // Buscar el nombre de la categoría
+        const category = productCategories.find((c) => c.CategoryName === product.Category)
+
+        const categoryName = category ? category.CategoryName : product.Category
+
+        // Crear botones de acción
+        //const editButton = `<button class="btn btn-sm btn-primary edit-product" data-id="${product.ProductCode}"><i class="fas fa-edit"></i></button>`
+        const deleteButton = `<button class="btn btn-sm btn-danger ms-1 delete-product" data-id="${product.ProductCode}"><i class="fas fa-trash"></i></button>`
+        const recibirInventario = `<button class="btn btn-sm btn-secondary ms-1 receive-inventory" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}"><i class="fas fa-square-plus"></i></button>`
+        const tagButton = `<button class="btn btn-sm btn-secondary ms-1 tag-product" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}"><i class="fas fa-tag"></i></button>`
+        const pre_ordenButton = `<button class="btn btn-sm btn-secondary ms-1 pre-orden" data-id="${product.ProductCode}" data-id="${product.ProductCode}" data-name="${product.ProductName}" data-barcode="${product.BarCode}">Pre-Orden</button>`
+        return [
+          product.ProductCode || "",
+          product.ProductName || "",
+          product.BarCode || "",
+          formatCurrency(product.Price || 0),
+          formatCurrency(product.Cost || 0),
+          safeToLocaleString(product.CurrentStock),
+          departmentName, // Mostrar el nombre del departamento en lugar del ID
+          categoryName, // Mostrar el nombre de la categoría en lugar del ID
+          recibirInventario + tagButton + deleteButton, //+ editButton
+          pre_ordenButton
+        ]
+      })
+
+
+
+      try {
+        // Check if table element exists
+        const tableElement = document.getElementById("productsMaintenanceTable")
+        if (!tableElement) {
+          console.error("Table element not found")
+          showToast("Error", "No se encontró la tabla de productos", "error")
+          return
+        }
+
+
+
+        // Check if jQuery is available
+        if (typeof jQuery === "undefined") {
+          console.error("jQuery is not loaded!")
+          showToast("Error", "jQuery no está cargado. Verifique las dependencias.", "error")
+          return
+        }
+
+        // Use jQuery safely
+        const $ = jQuery
+
+        // Check if DataTables is available
+        if (!$.fn.DataTable) {
+          console.error("DataTables is not loaded!")
+          showToast("Error", "DataTables no está cargado. Verifique las dependencias.", "error")
+          return
+        }
+        // Define columns with proper width and alignment
+        const columns = [
+          { title: "Código", data: 0, width: "10%" },
+          { title: "Descripción", data: 1, width: "15%", className: "editable" },
+          { title: "Código de Barras", data: 2, width: "10%", className: "editable" },
+          { title: "Precio", data: 3, width: "8%", className: "editable" },
+          { title: "Costo", data: 4, width: "8%", className: "editable" },
+          { title: "Stock", data: 5, width: "7%", },
+          { title: "Departamento", data: 6, width: "12%" },
+          { title: "Categoría", data: 7, width: "12%" },
+          { title: "Acciones", data: 8, width: "10%", className: "text-center", orderable: false },
+          { title: "Movimiento", data: 9, width: "8%", className: "text-center", orderable: false },
+        ]
+
+        // Inicializar o actualizar la tabla
+        if ($.fn.DataTable.isDataTable("#productsMaintenanceTable")) {
+
+          $("#productsMaintenanceTable").DataTable().clear().rows.add(tableData).draw()
+        } else {
+
+          productsMaintenanceTable = $("#productsMaintenanceTable").DataTable({
+            data: tableData,
+            columns: columns,
+            language: {
+              url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-AR.json",
+            },
+            responsive: true,
+            autoWidth: false, // Disable auto width calculation
+            columnDefs: [
+              { responsivePriority: 1, targets: [0, 1] }, // These columns are most important
+              { responsivePriority: 2, targets: [3, 8] }, // These columns are next important
+            ],
+            dom:
+              '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+              '<"row"<"col-sm-12"tr>>' +
+              '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            initComplete: function () {
+              // Add some custom styling after table is initialized
+              $(this).closest(".dataTables_wrapper").addClass("card-body p-0")
+            },
+          })
+
+          /* // Añadir eventos a los botones de acción - only add once
+          $(document).off("click", ".edit-product").on("click", ".edit-product", function () {
+            
+            const productCode = $(this).data("id")
+            
+            editProduct(productCode)
+          })
+*/
+          $(document).off("click", ".delete-product").on("click", ".delete-product", function () {
+
+            const productCode = $(this).data("id")
+
+            deleteProduct(productCode)
+          })
+          $(document).off("click", ".receive-inventory").on("click", ".receive-inventory", function () {
+            fetch('modalReceiveInventory.php')
+              .then(response => response.text())
+              .then(html => {
+                document.getElementById('receiveInventoryContainer').innerHTML = html;
+                const productBarCode = $(this).data("barcode");
+                const productName = $(this).data("name");
+                const productCode = $(this).data("id");
+                document.getElementById('movementContainer').classList.add('d-none');
+                document.getElementById('ProdMovementChart').classList.add('d-none');
+                document.getElementById('unidadesProductoGroup').classList.add('d-none'); // oculta
+                document.getElementById('codigoProducto').innerText = productCode;
+                document.getElementById('nombreProducto').innerText = productName;
+                document.getElementById('barcodeProducto').innerText = productBarCode;
+                document.getElementById('recibirProductoLabel').innerText = `Recibir Producto`;
+                var configModal = new bootstrap.Modal(document.getElementById('recibirProductoModal'));
+                configModal.show();
+                // Agregar evento al botón de confirmar
+                document.getElementById('btnRecibirInventario').addEventListener('click', function () {
+                  const QuantityReceived = document.getElementById('cantidadProducto').value;
+                  const userId = $("#userIdSpan").text()
+                  receiveInventory(userId, productCode, QuantityReceived);
+                  configModal.hide();
+                });
+              });
+          });
+          $(document).off("click", ".tag-product").on("click", ".tag-product", function () {
+            const productCode = $(this).data("id");
+            productLabelPrint(productCode);
+          });
+          $(document).off("click", ".pre-orden").on("click", ".pre-orden", function () {
+            fetch('modalReceiveInventory.php')
+              .then(response => response.text())
+              .then(html => {
+
+                document.getElementById('receiveInventoryContainer').innerHTML = html;
+                const productBarCode = $(this).data("barcode");
+                const productName = $(this).data("name");
+                const productCode = $(this).data("id");
+                getUnitsByProduct(productCode).then(units => {
+                  if (!units || units.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = 1;
+                    option.text = 'Unidad- Each';
+                    document.getElementById('unidadesProducto').appendChild(option);
+                  }
+                  units.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.UnitID;
+                    option.text = unit.UnitDescription;
+                    document.getElementById('unidadesProducto').appendChild(option);
+                  });
+                });
+                loadChart(productCode);
+                document.getElementById('movementContainer').classList.remove('d-none');
+                document.getElementById('ProdMovementChart').classList.remove('d-none');
+                document.getElementById('unidadesProductoGroup').classList.remove('d-none'); // muestra
+                document.getElementById('codigoProducto').innerText = productCode;
+                document.getElementById('nombreProducto').innerText = productName;
+                document.getElementById('barcodeProducto').innerText = productBarCode;
+                document.getElementById('recibirProductoLabel').innerText = `Pre-Orden Change`;
+                var configModal = new bootstrap.Modal(document.getElementById('recibirProductoModal'));
+                configModal.show();
+                // Agregar evento al botón de confirmar
+                document.getElementById('btnRecibirInventario').addEventListener('click', function () {
+                  const QuantityReceived = document.getElementById('cantidadProducto').value;
+                  const UnitID = document.getElementById('unidadesProducto').value;
+                  const userId = $("#userIdSpan").text()
+                  productPreOrderChange(userId, productCode, QuantityReceived, UnitID);
+                  configModal.hide();
+                });
+              });
+          });
+
+        }
+        //--------------
+        // 🔹 Agregar modal al hacer un solo clic en una celda
+        $('#productsMaintenanceTable tbody').on('click', 'td.editable', function (event) {
+          let cell = productsMaintenanceTable.cell(this);
+          let oldValue = cell.data();
+          if (cell.index().column === 3 || cell.index().column === 4) {
+            oldValue = oldValue.replace("$", "")
+          }
+          var row = cell.index().row;
+          var valueCol0 = productsMaintenanceTable.cell(row, 0).data()
+          // Llamamos al modal dinámico
+          openDialog2("string", event, {
+            id: cell.index().row,       // fila como referencia
+            column: cell.index().column, // columna
+            oldValue: oldValue, cell: cell, itemCode: valueCol0 // nodo TD
+          });
+
+          // Opcional: pasar el valor actual al input del modal
+          setTimeout(() => {
+            const input = document.querySelector("#datoInput");
+            if (input) input.value = oldValue;
+          }, 0);
+        });
+
+      } catch (error) {
+        console.error("Error initializing DataTable:", error)
+        showToast("Error", "Error al inicializar la tabla de productos: " + error.message, "error")
+      }
+    } else {
+      console.error("No products found in data:", productsData)
+      Swal.fire({
+        icon: 'info',
+        title: 'Información',
+        text: 'No se encontraron productos con los filtros seleccionados',
+        showConfirmButton: true,
+        timer: 3000
+
+      })
+      
+    }
+  }
+  catch (error) {
+    console.error("Error cargando productos:", error)
+    showToast("Error", "No se pudieron cargar los productos: " + error.message, "error")
+  }
+}
+// Function that actually loads the product data
+async function loadProductsData() {
+
 
   // Obtener valores de filtros
   const codeFilter = document.getElementById("productCodeFilter")
@@ -119,16 +399,19 @@ function loadProductsData() {
   if (categoryFilter) queryParams.Category = encodeURIComponent(categoryFilter)
 
   const apiUrl = `api_proxy.php?endpoint=GetAllProducts${queryParams}`
+  try {
+    const data = await fetchData("GetAllProducts", queryParams)
+    const products = logApiResponse("GetAllProducts", data)
+    productsData = products.slice() // Store globally for filtering later
+    if(codeFilter){
+      products = products.filter(p => p.ProductCode.toLowerCase() === codeFilter.toLowerCase())
+    }
+    if(nameFilter){
+      products = products.filter(p => p.Description.toLowerCase() === nameFilter.toLowerCase())
+    }
+    if (products && products.length > 0) {
 
-  fetchData("GetAllProducts", queryParams)
-   
-    .then((data) => {
-      const products = logApiResponse("GetAllProducts", data)
-
-      if (products && products.length > 0) {
-        
-
-        // Preparar datos para la tabla
+      // Preparar datos para la tabla
         const tableData = products.map((product) => {
           // Log each product for debugging
           
@@ -355,15 +638,12 @@ $('#productsMaintenanceTable tbody').on('click', 'td.editable', function (event)
         console.error("No products found in data:", data)
         showToast("Información", "No se encontraron productos con los filtros seleccionados", "info")
       }
-    })
-    .catch((error) => {
+    }
+    catch(error){
       clearTimeout(timeoutId) // Clear the timeout
       console.error("Error cargando productos:", error)
       showToast("Error", "No se pudieron cargar los productos: " + error.message, "error")
-    })
-    .finally(() => {
-      toggleLoading(false)
-    })
+    }
 }
 async function loadChart(itemCode) {
     try {
@@ -590,13 +870,12 @@ function updateMonthlySummary(monthName) {
 }
 
 // Function to load product departments
-function loadProductDepartments(callback) {
-  
-  toggleLoading(true);
-  fetchData('InventoryDepartments', { Short: 'yes' })
-    .then((data) => {
-      toggleLoading(false);
-      const departments = logApiResponse("InventoryDepartments", data)
+async function loadProductDepartments(callback) {
+
+  try {
+    const data = await fetchData('InventoryDepartments', { Short: 'yes' });
+    const departments = logApiResponse("InventoryDepartments", data);
+
 
       if (departments && departments.length > 0) {
         productDepartments = departments
@@ -644,8 +923,8 @@ function loadProductDepartments(callback) {
           callback()
         }
       }
-    })
-    .catch((error) => {
+    }
+    catch(error) {
       clearTimeout(timeoutId) // Clear the timeout
       console.error("Error cargando departamentos de productos:", error)
       showToast("Error", "No se pudieron cargar los departamentos: " + error.message, "error")
@@ -654,20 +933,14 @@ function loadProductDepartments(callback) {
       if (typeof callback === "function") {
         callback()
       }
-    })
-    .finally(() => {
-      toggleLoading(false)
-    })
+    }
 }
 
 // Function to load product categories
-function loadProductCategories(callback) {
-  
-  toggleLoading(true)
-
-  fetchData('InventoryCategories')
-   .then((data) => {
-      const categories = logApiResponse("InventoryCategories", data)
+async function loadProductCategories(callback) {
+  try {
+    const data = await fetchData('InventoryCategories');
+    const categories = logApiResponse("InventoryCategories", data);
 
       if (categories && categories.length > 0) {
         productCategories = categories
@@ -714,8 +987,8 @@ function loadProductCategories(callback) {
           callback()
         }
       }
-    })
-    .catch((error) => {
+    }
+    catch(error) {
       clearTimeout(timeoutId) // Clear the timeout
       console.error("Error cargando categorías de productos:", error)
       showToast("Error", "No se pudieron cargar las categorías: " + error.message, "error")
@@ -724,10 +997,7 @@ function loadProductCategories(callback) {
       if (typeof callback === "function") {
         callback()
       }
-    })
-    .finally(() => {
-      toggleLoading(false)
-    })
+    }
 }
 
 // Function to edit a product
@@ -799,7 +1069,7 @@ function editProduct(productCode) {
   function tryNextEndpoint(index) {
     if (index >= apiEndpoints.length) {
       console.error("All API endpoints failed")
-      toggleLoading(false)
+      
       showToast("Error", "No se pudo cargar los detalles del producto después de intentar múltiples endpoints", "error")
       return
     }
@@ -944,24 +1214,35 @@ function editProduct(productCode) {
       return
     }
     jQuery("#productModal").modal("show")
-    toggleLoading(false)
   }
 }
 
 // Function to delete a product
 function deleteProduct(productCode) {
-  
-
-  if (confirm("¿Está seguro que desea eliminar este producto?")) {
-    Swal.fire({
-      title: "Funcionalidad no Implementada",
-      text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
-      icon: "info",
-      showCancelButton: false,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+  Swal.fire({
+      title: "Confirmar Eliminación",
+      text: "¿Está seguro que desea eliminar este producto? Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Aceptar",
-    })
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+        title: "Funcionalidad no Implementada",
+        text: "La funcionalidad de eliminación de productos no está implementada en este momento.",
+        icon: "info",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Aceptar",
+      });
+      }
+    });
+
+  
+    
     //TODO: COMENTADO PORQUE EL API NO TIENE DELETEPRODUCT, CUANDO EL API LO TENGA, DESCOMENTAR
     /* fetch(`api_proxy.php?endpoint=DeleteProduct&ItemCode=${encodeURIComponent(productCode)}`, {
       method: "POST",
@@ -989,9 +1270,9 @@ function deleteProduct(productCode) {
       .finally(() => {
         toggleLoading(false)
       }) */
-  }
 }
 function receiveInventory(userId, productCode, QuantityReceived) {
+  toggleLoading(true)
   let params={ItemCode:productCode,QuantityReceived:QuantityReceived,UserID:userId};
   fetchData(`RecReceiveInventory`, params)
       .then(data => {
@@ -1022,6 +1303,7 @@ function receiveInventory(userId, productCode, QuantityReceived) {
 }
 
 function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
+  toggleLoading(true);
   let params={ItemCode:productCode,PreOrdeQty:PreOrdeQty,UserID:userId,UnitID:UnitID};
   fetchData(`ProdPreOrdChange`, params)
           .then(data => {
@@ -1051,7 +1333,7 @@ function productPreOrderChange(userId, productCode, PreOrdeQty, UnitID) {
       })
 }
 function productLabelPrint(productCode) {
-
+  toggleLoading(true);
   fetchData(`ProdLabelPrint`, {ItemCode:productCode})
       .then(data => {
             if ( data.success) {
@@ -1081,6 +1363,7 @@ function productLabelPrint(productCode) {
 
 
 function getUnitsByProduct(productCode) {
+  toggleLoading(true);
   return fetchData(`ProdUnits`, {ItemCode:productCode})
   .then((data) => {
     if (Array.isArray(data)) {
@@ -1203,11 +1486,11 @@ function saveProduct(event) {
 }
 
 // Function to initialize the product maintenance section
-function initProductMaintenance() {
+async function initProductMaintenance() {
   
 
   // Load initial data - this will load departments, categories, and then products in sequence
-  loadProducts()
+  await loadProducts()
 
   // Set up event listeners
   const filterForm = document.getElementById("filterProductsForm")
@@ -1219,11 +1502,12 @@ function initProductMaintenance() {
   } else {
     console.warn("Filter form not found")
     // Add direct event listener to the search button as fallback
-    const searchBtn = document.getElementById("applyProductFilters")
+    const searchBtn = document.getElementById("applyProductFiltersMaintenance")
     if (searchBtn) {
-      searchBtn.addEventListener("click", () => {
-        
-        loadProducts()
+      searchBtn.addEventListener("click", async () => {
+        toggleLoading(true)
+        await loadProductsWithFilters()
+        toggleLoading(false)
       })
     }
   }
@@ -1583,14 +1867,11 @@ function setupImagePreview() {
   }
 }
 
-// Initialize when the DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-  
+export async function initializeProductMaintenance(){
 
-  // Check if we're on the products maintenance page
   if (document.getElementById("productsMaintenanceTable")) {
     
-    initProductMaintenance()
+    await initProductMaintenance()
     setupImagePreview()
     handleDepartmentChange()
     
@@ -1608,7 +1889,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.log("Products maintenance table not found, skipping initialization")
   }
-})
+}
 
 // Add a global error handler
 window.addEventListener("error", (event) => {

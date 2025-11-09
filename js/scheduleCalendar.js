@@ -5,21 +5,20 @@ import { toScheduleCalendarDto } from "./factory/scheduleCalendarFactory.js";
 import { toAvailableScheduleDto } from "./factory/availableScheduleFactory.js";
 
 /* global FullCalendar */
-let calendar;
-let selectedEvent = null; 
-let listUsers = null;
+export let calendar;
+export let selectedEvent = null; 
+export let listUsers = null;
 /**
  * Calendar
  */
-document.addEventListener("DOMContentLoaded", function () {
+ export async function loadCalendarSection(){
     getAllUsers()
     .then(users => {
         listUsers = users;
         console.log("Users: ",listUsers);
         loadCalendar();
     });
-    
-});
+}
 
 function loadCalendar(){
     
@@ -294,8 +293,11 @@ function showHorario() {
 
 
   setTimeout(() => {
-    calendar.updateSize();
-    calendar.changeView("timeGridWeek");
+    if(calendar!=null){
+        calendar.updateSize();
+        calendar.changeView("timeGridWeek");
+    }
+    
   }, 50);
 }
 
