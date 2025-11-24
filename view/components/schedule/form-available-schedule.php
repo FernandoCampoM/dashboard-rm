@@ -14,7 +14,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Duración (HH:MM)</label>
-              <input type="text" class="form-control" id="duration" placeholder="01:30" required />
+              <input type="number" class="form-control" id="duration" placeholder="1" required />
             </div>
             <div class="mb-3">
               <label class="form-label">Empleado</label>

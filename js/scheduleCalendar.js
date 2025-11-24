@@ -202,6 +202,7 @@ function reloadAvailableSchedule(){
         const container = document.getElementById("external-events");
         container.innerHTML = ""; // limpiar contenedor
         horarios.forEach(h => {
+            h.duration = h.duration + ':00';
             addExternalEvents(h);
         });
     });
