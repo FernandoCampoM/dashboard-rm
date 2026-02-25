@@ -99,7 +99,7 @@ $username = $_SESSION['Username'];
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle black-text" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" data-section="overview-section">
+                            data-bs-toggle="dropdown" >
                             <i class="fas fa-user-circle me-1"></i>
                             <?php echo htmlspecialchars($_SESSION['EmployeeName'] ?? 'Invitado/a'); ?>
                             <br><?php
@@ -2093,11 +2093,14 @@ document.addEventListener("DOMContentLoaded", () => {
       } */
 
       // 4️⃣ Opcional: marcar el botón activo visualmente
-      menuLinks.forEach(item => item.classList.remove("active"));
-      link.classList.add("active");
-      lastClickedLink = sectionId;  
-      // 5️⃣ Aquí puedes cargar los datos específicos según la sección
-      await cargarDatosSeccion(sectionId);
+      if(sectionId){
+        menuLinks.forEach(item => item.classList.remove("active"));
+        link.classList.add("active");
+        lastClickedLink = sectionId;  
+        // 5️⃣ Aquí puedes cargar los datos específicos según la sección
+        await cargarDatosSeccion(sectionId);
+      }
+      
     });
   });
 });
@@ -2298,7 +2301,10 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
             link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const sectionId = this.getAttribute('data-section');
-                switchSection(sectionId);
+                if(sectionId){
+                    switchSection(sectionId);
+                }
+                
             });
         });
 
