@@ -1,5 +1,3 @@
-
-
 <?php
 
 session_start();
@@ -14,7 +12,7 @@ $config = get_configBackend();
 if (!$config) {
     header("Location: setup/setup-backend.php");
     exit;
-} 
+}
 
 
 
@@ -40,7 +38,7 @@ $username = $_SESSION['Username'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de Ventas RM</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS -->
@@ -55,7 +53,7 @@ $username = $_SESSION['Username'];
     <link rel="stylesheet" type="text/css" href="css/sidebar.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/maintenance.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
-    
+
 
 </head>
 
@@ -99,7 +97,7 @@ $username = $_SESSION['Username'];
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle black-text" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" >
+                            data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-1"></i>
                             <?php echo htmlspecialchars($_SESSION['EmployeeName'] ?? 'Invitado/a'); ?>
                             <br><?php
@@ -128,7 +126,8 @@ $username = $_SESSION['Username'];
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
-                            <li><a id="btn-configuracion" class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                            <li><a id="btn-configuracion" class="dropdown-item" href="#"><i
+                                        class="fas fa-cog me-2"></i>Configuración</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -140,12 +139,10 @@ $username = $_SESSION['Username'];
             </div>
         </div>
     </nav>
+    
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar 
-            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">-->
-            <div class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebarTest" >
+
+            <div class="sidebar" id="sidebarTest">
                 <div class="position-sticky pt-3">
                     <!-- Estructura actualizada de enlaces del sidebar -->
                     <ul class="nav flex-column">
@@ -177,10 +174,10 @@ $username = $_SESSION['Username'];
                                 <span>Inventario</span>
                             </a>
                         </li>
-                        
+
                         <li class="nav-item">
                             <a class="nav-link" href="#" id="horario-link" data-section="horario-section"
-                               data-bs-toggle="tooltip" data-bs-placement="right" title="Horario">
+                                data-bs-toggle="tooltip" data-bs-placement="right" title="Horario">
                                 <i class="fas fa-boxes"></i>
                                 <span>Horario</span>
                             </a>
@@ -196,7 +193,7 @@ $username = $_SESSION['Username'];
                                 <i class="fas fa-cogs"></i>
                                 <span>Mantenimiento</span>
                             </a>
-                            <div class="collapse" id="maintenance-collapse" >
+                            <div class="collapse" id="maintenance-collapse">
                                 <ul class="nav flex-column ms-3">
                                     <li class="nav-item">
                                         <a class="nav-link" href="#" id="clients-link" data-section="clients-section"
@@ -234,7 +231,8 @@ $username = $_SESSION['Username'];
                             </h5>
                         </div>
                         <div class="small">
-                            <p class="mb-1"><i class="fas fa-clock me-2"></i> Actualizado: <span id="last-update-time">Hoy 15:30</span></p>
+                            <p class="mb-1"><i class="fas fa-clock me-2"></i> Actualizado: <span
+                                    id="last-update-time">Hoy 15:30</span></p>
                             <p class="mb-0"><i class="fas fa-user me-2"></i> Usuario: <span id="current-user"><a>
                                         <?php echo htmlspecialchars($_SESSION['EmployeeName'] ?? 'Invitado/a'); ?>
                                         <br><?php
@@ -262,28 +260,37 @@ $username = $_SESSION['Username'];
                                     </a></span></p>
                         </div>
                     </div>
-                </div>
             </div>
-
+            </div>
+    <div class="content">                                   
+    <div class="container-fluid">
+        <div class="row">
+           <div class="col-12">
+                                     
             <!-- Main Content -->
-            <main class="col-md-4 ms-sm-auto col-lg-10 px-md-4 py-4 content">
+            <main class="col-md-4 ms-sm-auto col-lg-10 ps-md-4 py-4">
                 <!-- Date Range Filter -->
                 <div class="date-filters">
                     <div class="row align-items-center">
                         <div class="col-md-6">
-                            <h4 class="mb-0"><i class="fas fa-filter me-2"></i> <?php echo $_SESSION['InfoCompany']['Name'] ?? 'Nombre de la Empresa'; ?></h4>
+                            <h4 class="mb-0"><i class="fas fa-filter me-2"></i>
+                                <?php echo $_SESSION['InfoCompany']['Name'] ?? 'Nombre de la Empresa'; ?></h4>
                         </div>
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <span class="input-group-text" onclick="document.getElementById('dateFrom').showPicker()"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text"
+                                            onclick="document.getElementById('dateFrom').showPicker()"><i
+                                                class="fas fa-calendar"></i></span>
                                         <input type="date" class="form-control" id="dateFrom">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <span class="input-group-text" onclick="document.getElementById('dateTo').showPicker()"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text"
+                                            onclick="document.getElementById('dateTo').showPicker()"><i
+                                                class="fas fa-calendar"></i></span>
                                         <input type="date" class="form-control" id="dateTo">
                                     </div>
                                 </div>
@@ -303,15 +310,13 @@ $username = $_SESSION['Username'];
                                         <button type="button" class="btn btn-sm btn-outline-secondary" id="filterWeek">
                                             <i class="fas fa-calendar-week me-1"></i> SEMANA
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary "
-                                            id="filterMonth">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary " id="filterMonth">
                                             <i class="fas fa-calendar-alt me-1"></i> MES
                                         </button>
                                     </div>
 
                                     <div class="btn-group me-1 ">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                                            id="refreshOverview">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshOverview">
                                             <i class="fas fa-sync-alt me-1"></i> Actualizar
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary">
@@ -327,10 +332,10 @@ $username = $_SESSION['Username'];
                 </div>
                 <div class="row">
                     <!-- Contenedor GRAFICAS-->
-                    
-                        <!-- Overview Section -->
-                        <section id="overview-section" class="dashboard-section active row">
-                            <div class="col-md-6 col-lg-7" >         
+
+                    <!-- Overview Section -->
+                    <section id="overview-section" class="dashboard-section active row">
+                        <div class="col-md-6 col-lg-7">
                             <!-- KPI Cards -->
                             <div class="row" id="kpi-cards">
                                 <div class="col-md-6 col-lg-6   test ">
@@ -427,7 +432,7 @@ $username = $_SESSION['Username'];
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-11 col-lg-11 mb-4 col">
                                     <div class="card dashboard-card-list">
                                         <div class="card-header d-flex align-items-center">
@@ -440,24 +445,24 @@ $username = $_SESSION['Username'];
                                             <div class="chart-container">
                                                 <canvas id="departmentSalesChart"></canvas>
                                             </div>
-                                            
+
                                             <div class="list-container" id="department-sales-list">
-                                                
+
                                             </div>
                                             <nav aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center mt-3">
                                                     <li id="prev-btn-li" class="page-item disabled">
-                                                    <a class="page-link" href="#" aria-label="Previous">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                        </a>
                                                     </li>
                                                     <li id="next-btn-li" class="page-item">
-                                                    <a class="page-link" href="#" aria-label="Next">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Next">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                        </a>
                                                     </li>
                                                 </ul>
-                                                </nav>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -485,7 +490,7 @@ $username = $_SESSION['Username'];
                                                             <td class="text-end">$ 85.54</td>
                                                             <td class="text-end">$ 15.55</td>
                                                         </tr>
-                                                        
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -516,7 +521,7 @@ $username = $_SESSION['Username'];
                                                             <td>Papas Fritas</td>
                                                             <td class="text-end">10</td>
                                                         </tr>
-                                                        
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -541,17 +546,17 @@ $username = $_SESSION['Username'];
                                             <nav aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center mt-3">
                                                     <li id="prev-btn-li-paymentMethods" class="page-item disabled">
-                                                    <a class="page-link" href="#" aria-label="Previous">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                        </a>
                                                     </li>
                                                     <li id="next-btn-li-paymentMethods" class="page-item">
-                                                    <a class="page-link" href="#" aria-label="Next">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Next">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                        </a>
                                                     </li>
                                                 </ul>
-                                                </nav>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -566,26 +571,26 @@ $username = $_SESSION['Username'];
                                         <div class="card-body">
                                             <h2 class="widget-value" id="inventoryValue">$0.000</h2>
                                             <!-- <div class="d-flex align-items-center mt-2">
-                                                <span class="text-muted">Rotación</span>
-                                                <span class="ms-auto" id="inventoryTurnover">0x</span>
-                                            </div> -->
+                                                    <span class="text-muted">Rotación</span>
+                                                    <span class="ms-auto" id="inventoryTurnover">0x</span>
+                                                </div> -->
                                             <div class="chart-container">
                                                 <canvas id="inventoryValueChart1"></canvas>
                                             </div>
                                             <div class="list-container" id="inventory-sumary-list">
-                                                
+
                                             </div>
                                             <nav aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center mt-3">
                                                     <li id="prev-btn-li-inventory" class="page-item disabled">
-                                                    <a class="page-link" href="#" aria-label="Previous">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                        </a>
                                                     </li>
                                                     <li id="next-btn-li-inventory" class="page-item">
-                                                    <a class="page-link" href="#" aria-label="Next">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
+                                                        <a class="page-link" href="#" aria-label="Next">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -594,215 +599,244 @@ $username = $_SESSION['Username'];
                                 </div>
                             </div>
                             <div class="row" id="kpi-cards2">
-                                
-                                
+
+
                             </div>
-                            </div>
-                            <!--- Contenedor ESTADISTICAS-->
-                            <div id="contEstadisticas" class="col-md-4 col-lg-5" >
-                                <h4 class="mb-0"><i class="fas fa-chart-column me-2"></i> Estadisticas</h4>
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-6 mb-4 col">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                    <h5 class="card-title mb-0">Total de Transacciones</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                        </div>
-                                                        <div class="col">
-                                                            <strong><h3 class="text-end " style="color: #006ED3;" id="totalTransactions">0</h3></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        </div>
+                        <!--- Contenedor ESTADISTICAS-->
+                        <div id="contEstadisticas" class="col-md-4 col-lg-5">
+                            <h4 class="mb-0"><i class="fas fa-chart-column me-2"></i> Estadisticas</h4>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+
+                                            <h5 class="card-title mb-0">Total de Transacciones</h5>
                                         </div>
-                                        <div class="col-md-6 col-lg-6 mb-4 col">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                    <h5 class="card-title mb-0">Promedio de Venta Por Transacción</h5>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong>
+                                                        <h2 style="color: #006ED3;">|</h2>
+                                                    </strong>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                        </div>
-                                                        <div class="col ">
-                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="averageSalePerTransaction">$0.00</h3></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-6 mb-4 col">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                    <h5 class="card-title mb-0">Promedio de Productos por Venta</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                        </div>
-                                                        <div class="col">
-                                                            <strong><h3 class="text-end " style="color: #006ED3;" id="avgProductsPerSale">0</h3></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-6 mb-4 col">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                    <h5 class="card-title mb-0">Promedio de Venta Por Hora</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                        </div>
-                                                        <div class="col ">
-                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">$0.00</h3></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-6   test ">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                   
-                                                        <div class="card-icon ms-3">
-                                                            <i class="fas fa-dollar-sign fa-2x"></i>
-                                                        </div>
-                                                        <h5 class="card-title mb-0">Nomina</h5>
-                                                    
-                                                </div>
-                                                <div class="card-body ">
-                                                    
-                                                    <div class="row m-0">
-                                                        <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
-                                                    </div>
-                                                    <div class="row d-flex align-items-end mb-0">
-                                                        <p class="col text-end me-0 mb-0" id="numEmployees">0</p>
-                                                        <p class="col-6 text-start  mb-0" id="numEmployeesLabel">Empleados
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-6 mb-4 col">
-                                            <div class="card ">
-                                                <div class="card-header d-flex align-items-center ">
-                                                
-                                                    <h5 class="card-title mb-0">Ganancia Promedio por Factura</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <strong><h2 style="color: #006ED3;">|</h2></strong>
-                                                        </div>
-                                                        <div class="col ">
-                                                            <strong><h3 class="text-end" style="color: #006ED3;" id="avgProfitPerTransaction">$0</h3></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 mb-4">
-                                            <div class="card ">
-                                                <div class="card-header">
-                                                    <h5 class="card-title mb-0">Ventas por Hora del Día</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="chart-container">
-                                                        <canvas id="hourlyChart"></canvas>
-                                                        <div id="hourlyChartMessage" class="text-center p-2 text-muted"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 mb-4">
-                                            <div class="card ">
-                                                <div class="card-header">
-                                                    <div class="row">
-                                                        <h5 class="col-md-5 card-title mb-0">Ventas Por Semana</h5>
-                                                    <!-- <div class="col-md-6 d-flex justify-content-end btn-group me-2">
-                                                        <button type="button" class="btn btn-sm btn-outline-secondary active"
-                                                            id="dailySalesFilterDay">
-                                                            <i class="fas fa-calendar-day me-1"></i> DIA
-                                                        </button>
-                                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="dailySalesFilterWeek">
-                                                            <i class="fas fa-calendar-week me-1"></i> SEMANA
-                                                        </button>
-                                                    </div> -->
-                                                    </div>
-                                                    
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="chart-container">
-                                                        <canvas id="dailySalesChart"></canvas>
-                                                        
-                                                    </div>
-                                                    <p class="text-center">
-                                                            <span style="color: #369FFF; font-weight: bold;">■</span> Venta más alta
-                                                            <span style="color: #28a745; font-weight: bold; margin-left: 10px;">■</span>Venta de Hoy
-                                                        </p>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 mb-4">
-                                        <div class="card ">
-                                            <div class="card-header">
-                                                <h5 class="card-title mb-0" id="titleCurrentSalesTrendChart">Tendencia de Ventas Mensuales (Año Actual)</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="chart-container" style="height: 400px;">
-                                                    <canvas id="salesTrendChart"></canvas>
+                                                <div class="col">
+                                                    <strong>
+                                                        <h3 class="text-end " style="color: #006ED3;"
+                                                            id="totalTransactions">0</h3>
+                                                    </strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 mb-4">
-                                        <div class="card ">
-                                            <div class="card-header">
-                                                <h5 class="card-title mb-0" id="titlePreviousSalesTrendChart">Tendencia de Ventas Mensuales (Año Anterior)</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="chart-container" style="height: 400px;">
-                                                    <canvas id="salesTrendChartPrevious"></canvas>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+
+                                            <h5 class="card-title mb-0">Promedio de Venta Por Transacción</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong>
+                                                        <h2 style="color: #006ED3;">|</h2>
+                                                    </strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong>
+                                                        <h3 class="text-end" style="color: #006ED3;"
+                                                            id="averageSalePerTransaction">$0.00</h3>
+                                                    </strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
 
-                        
-                        </section>
+                                            <h5 class="card-title mb-0">Promedio de Productos por Venta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong>
+                                                        <h2 style="color: #006ED3;">|</h2>
+                                                    </strong>
+                                                </div>
+                                                <div class="col">
+                                                    <strong>
+                                                        <h3 class="text-end " style="color: #006ED3;"
+                                                            id="avgProductsPerSale">0</h3>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
 
-                    
-                    
+                                            <h5 class="card-title mb-0">Promedio de Venta Por Hora</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong>
+                                                        <h2 style="color: #006ED3;">|</h2>
+                                                    </strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong>
+                                                        <h3 class="text-end" style="color: #006ED3;" id="avgSalesPerHour">
+                                                            $0.00</h3>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6   test ">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+
+
+                                            <div class="card-icon ms-3">
+                                                <i class="fas fa-dollar-sign fa-2x"></i>
+                                            </div>
+                                            <h5 class="card-title mb-0">Nomina</h5>
+
+                                        </div>
+                                        <div class="card-body ">
+
+                                            <div class="row m-0">
+                                                <h2 class="widget-value text-center m-0" id="toltalNomina">$0.00</h2>
+                                            </div>
+                                            <div class="row d-flex align-items-end mb-0">
+                                                <p class="col text-end me-0 mb-0" id="numEmployees">0</p>
+                                                <p class="col-6 text-start  mb-0" id="numEmployeesLabel">Empleados
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-4 col">
+                                    <div class="card ">
+                                        <div class="card-header d-flex align-items-center ">
+
+                                            <h5 class="card-title mb-0">Ganancia Promedio por Factura</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <strong>
+                                                        <h2 style="color: #006ED3;">|</h2>
+                                                    </strong>
+                                                </div>
+                                                <div class="col ">
+                                                    <strong>
+                                                        <h3 class="text-end" style="color: #006ED3;"
+                                                            id="avgProfitPerTransaction">$0</h3>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 mb-4">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Ventas por Hora del Día</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="hourlyChart"></canvas>
+                                                <div id="hourlyChartMessage" class="text-center p-2 text-muted"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 mb-4">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <h5 class="col-md-5 card-title mb-0">Ventas Por Semana</h5>
+                                                <!-- <div class="col-md-6 d-flex justify-content-end btn-group me-2">
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary active"
+                                                                id="dailySalesFilterDay">
+                                                                <i class="fas fa-calendar-day me-1"></i> DIA
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary" id="dailySalesFilterWeek">
+                                                                <i class="fas fa-calendar-week me-1"></i> SEMANA
+                                                            </button>
+                                                        </div> -->
+                                            </div>
+
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="dailySalesChart"></canvas>
+
+                                            </div>
+                                            <p class="text-center">
+                                                <span style="color: #369FFF; font-weight: bold;">■</span> Venta más alta
+                                                <span
+                                                    style="color: #28a745; font-weight: bold; margin-left: 10px;">■</span>Venta
+                                                de Hoy
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-4">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0" id="titleCurrentSalesTrendChart">Tendencia de Ventas
+                                                Mensuales (Año Actual)</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 400px;">
+                                                <canvas id="salesTrendChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-4">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0" id="titlePreviousSalesTrendChart">Tendencia de
+                                                Ventas Mensuales (Año Anterior)</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 400px;">
+                                                <canvas id="salesTrendChartPrevious"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </section>
+
+
+
                 </div>
-                                      
+
 
 
 
@@ -842,7 +876,7 @@ $username = $_SESSION['Username'];
                                                     <th>Facturas</th>
                                                     <th>Unidades Vendidas</th>
                                                     <th>Precio Promedio</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -853,9 +887,9 @@ $username = $_SESSION['Username'];
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
-                     <div class="row">
+                    <div class="row">
                         <div class="col-md-12 mb-4">
                             <div class="card">
                                 <div class="card-header">
@@ -883,8 +917,8 @@ $username = $_SESSION['Username'];
                                     </div>
                                 </div>
                             </div>
-                        </div>                
-                     </div>                   
+                        </div>
+                    </div>
                     <!-- Payment Methods -->
                     <div class="row">
                         <div class="col-12 mb-4">
@@ -953,7 +987,7 @@ $username = $_SESSION['Username'];
                                                 <option value="">Todos los departamentos</option>
                                             </select>
                                         </div>
-                                        
+
                                         <div class="col-md-3 mb-2">
                                             <label class="form-label">&nbsp;</label>
                                             <button class="btn btn-primary w-100" id="applyProductFilters">
@@ -1168,29 +1202,29 @@ $username = $_SESSION['Username'];
                         </div>
                     </div>
                 </section>
-                
+
                 <!-- Horario Section -->
                 <section id="horario-section" class="dashboard-section d-none">
                     <!--
-                    <div
-                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                        <h2><i class="fas fa-boxes me-2"></i>Gestión de Horario</h2>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group me-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshInventory">
-                                    <i class="fas fa-sync-alt me-1"></i> Actualizar
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-file-export me-1"></i> Exportar
-                                </button>
+                        <div
+                            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <h2><i class="fas fa-boxes me-2"></i>Gestión de Horario</h2>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshInventory">
+                                        <i class="fas fa-sync-alt me-1"></i> Actualizar
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-file-export me-1"></i> Exportar
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </div>-->
+                        </div>-->
                     <!-- Aquí se carga el contenido de schedule.php -->
                     <?php include 'view/components/schedule/schedule.php'; ?>
-                   
+
                 </section>
-                
+
 
                 <!-- Añadir antes del footer en el main content -->
                 <section id="clients-section" class="dashboard-section d-none">
@@ -1256,8 +1290,7 @@ $username = $_SESSION['Username'];
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table id="clientsTable" class="table table-striped table-hover"
-                                            style="width:100%">
+                                        <table id="clientsTable" class="table table-striped table-hover" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -1367,7 +1400,8 @@ $username = $_SESSION['Username'];
                                             </div>
                                             <div class="col-md-4 d-none" id="clientLastPurchaseDateDiv">
                                                 <label for="clientLastPurchaseDate" class="form-label">Última Compra</label>
-                                                <input type="text" class="form-control" id="clientLastPurchaseDate" readonly>
+                                                <input type="text" class="form-control" id="clientLastPurchaseDate"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </form>
@@ -1443,25 +1477,25 @@ $username = $_SESSION['Username'];
                             </div>
                         </div>
                     </div>
-                                        <!-- El template (oculto por defecto) -->
-<template id="modalActualizarProducto">
-  <div class="modal-content" style="width: 200px;">
-    <input type="text" style="padding: 0; margin: 0; height: 35px; width: 200px; border: 1px solid #a59f9fff; border-radius: 4px; 
-                    box-sizing: border-box; font-size: 14px;"  id="datoInput" placeholder="">
-    <div class="actions" style="box-shadow: 0 4px 8px rgba(0, 0, 0,0.3); background: #fff;
-                border-radius: 4px; height: 30px; width: 200px; 
-                display: flex; justify-content: center; align-items: center; gap: 10px;">
-      <button class="close-btn"  style="border: none; background: transparent; 
-                     height: 25px; width: 25px; display: flex; 
-                     justify-content: center; align-items: center; cursor: pointer;">
-        <span style="color: red; font-size: 18px;">✖</span></button>
-      <button class="save-btn custom-icon-success" style=" padding-left: 10px; border: none; background: transparent; 
-                     height: 25px; width: 25px; display: flex; 
-                     justify-content: center; align-items: center; cursor: pointer;">
-        <span style="color: green; font-size: 18px;">✔</span></button>
-    </div>
-  </div>
-</template>
+                    <!-- El template (oculto por defecto) -->
+                    <template id="modalActualizarProducto">
+                        <div class="modal-content" style="width: 200px;">
+                            <input type="text" style="padding: 0; margin: 0; height: 35px; width: 200px; border: 1px solid #a59f9fff; border-radius: 4px; 
+                        box-sizing: border-box; font-size: 14px;" id="datoInput" placeholder="">
+                            <div class="actions" style="box-shadow: 0 4px 8px rgba(0, 0, 0,0.3); background: #fff;
+                    border-radius: 4px; height: 30px; width: 200px; 
+                    display: flex; justify-content: center; align-items: center; gap: 10px;">
+                                <button class="close-btn" style="border: none; background: transparent; 
+                        height: 25px; width: 25px; display: flex; 
+                        justify-content: center; align-items: center; cursor: pointer;">
+                                    <span style="color: red; font-size: 18px;">✖</span></button>
+                                <button class="save-btn custom-icon-success" style=" padding-left: 10px; border: none; background: transparent; 
+                        height: 25px; width: 25px; display: flex; 
+                        justify-content: center; align-items: center; cursor: pointer;">
+                                    <span style="color: green; font-size: 18px;">✔</span></button>
+                            </div>
+                        </div>
+                    </template>
 
                     <!-- Tabla de Productos -->
                     <div class="row">
@@ -1469,7 +1503,7 @@ $username = $_SESSION['Username'];
                             <div class="card dashboard-card">
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">Listado de Productos</h5>
-                                    
+
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -1499,7 +1533,7 @@ $username = $_SESSION['Username'];
                         </div>
                     </div>
 
-                    
+
                 </section>
 
 
@@ -1512,195 +1546,203 @@ $username = $_SESSION['Username'];
                     </div>
                 </footer>
             </main>
-
+            </div>
         </div>
     </div>
-<!-- Modal para Añadir/Editar Producto -->
-                    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="productModalLabel">Añadir Producto</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+    </di>
+    <!-- Modal para Añadir/Editar Producto -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Añadir Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productCode" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="productCode" name="productCode" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productBarcode" class="form-label">Código de Barras</label>
+                                <input type="text" class="form-control" id="productBarcode" name="productBarcode">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="productDescription" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="productDescription"
+                                    name="productDescription" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productCost" class="form-label">Costo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" id="productCost"
+                                        name="productCost" required>
                                 </div>
-                                <div class="modal-body">
-                                    <form id="productForm">
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="productCode" class="form-label">Código</label>
-                                                <input type="text" class="form-control" id="productCode" name="productCode" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="productBarcode" class="form-label">Código de Barras</label>
-                                                <input type="text" class="form-control" id="productBarcode" name="productBarcode">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-12">
-                                                <label for="productDescription" class="form-label">Descripción</label>
-                                                <input type="text" class="form-control" id="productDescription" name="productDescription"
-                                                    required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="productCost" class="form-label">Costo</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">$</span>
-                                                    <input type="number" step="0.01" class="form-control"
-                                                        id="productCost" name="productCost" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="productPrice" class="form-label">Precio</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text">$</span>
-                                                    <input type="number" step="0.01" class="form-control"
-                                                        id="productPrice" name="productPrice" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="productDepartment" class="form-label">Departamento</label>
-                                                <select class="form-select" id="productDepartment" name="productDepartment" required>
-                                                    <option value="">Seleccionar departamento</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="productCategory" class="form-label">Categoría</label>
-                                                <select class="form-select" id="productCategory" name="productCategory" required>
-                                                    <option value="">Seleccionar categoría</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="productSupplier" class="form-label">Proveedor</label>
-                                                <input type="text" class="form-control" id="productSupplier" name="productSupplier">
-                                            </div>
-                                            <div class="col-md-6 d-none">
-                                                <label for="productLocation" class="form-label">Ubicación</label>
-                                                <input type="text" class="form-control" id="productLocation" name="productLocation">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="productTax1" class="form-label">Tax 1</label>
-                                                <input type="text" class="form-control" id="productTax1" name="productTax1">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="productTax2" class="form-label">Tax 2</label>
-                                                <input type="text" class="form-control" id="productTax2" name="productTax2">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3 d-none">
-                                            <div class="col-md-4">
-                                                <label for="productReorderPoint" class="form-label">Punto de
-                                                    Reorden</label>
-                                                <input type="number" class="form-control" id="productReorderPoint" name="productReorderPoint">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="productReorderQty" class="form-label">Cantidad de
-                                                    Reorden</label>
-                                                <input type="number" class="form-control" id="productReorderQty" name="productReorderQty">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="productActive" class="form-label">Estado</label>
-                                                <select class="form-select" id="productActive" name="productActive">
-                                                    <option value="1">Activo</option>
-                                                    <option value="0">Inactivo</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3 d-none">
-                                            <div class="col-md-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsFood" name="productIsFood">
-                                                    <label class="form-check-label" for="productIsFood">
-                                                        Es Alimento
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsWic" name="productIsWic">
-                                                    <label class="form-check-label" for="productIsWic">
-                                                        Es WIC
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsTouch" name="productIsTouch">
-                                                    <label class="form-check-label" for="productIsTouch">
-                                                        Es Touch
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="productIsSerie" name="productIsSerie">
-                                                    <label class="form-check-label" for="productIsSerie">
-                                                        Es Serie
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="button" class="btn btn-primary" id="saveProductBtn">Guardar</button>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productPrice" class="form-label">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" id="productPrice"
+                                        name="productPrice" required>
                                 </div>
                             </div>
                         </div>
-                    </div>
-<!-- Modal editar backend config Bootstrap -->
-<div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="configModalLabel">Configuración Backend</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-
-        <div class="login-container">
-            <h2>Configuración de Backend</h2>
-            <div class="card card-config p-4">
-                <div class="form-group mb-3">
-                    <label for="backend-ip" class="form-label text-start d-block">IP del backend:</label>
-                    <input type="text" id="backend-ip" class="form-control" placeholder="192.168.0.10" 
-                           value="<?= htmlspecialchars($config['backend_ip'] ?? '') ?>">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productDepartment" class="form-label">Departamento</label>
+                                <select class="form-select" id="productDepartment" name="productDepartment" required>
+                                    <option value="">Seleccionar departamento</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productCategory" class="form-label">Categoría</label>
+                                <select class="form-select" id="productCategory" name="productCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productSupplier" class="form-label">Proveedor</label>
+                                <input type="text" class="form-control" id="productSupplier" name="productSupplier">
+                            </div>
+                            <div class="col-md-6 d-none">
+                                <label for="productLocation" class="form-label">Ubicación</label>
+                                <input type="text" class="form-control" id="productLocation" name="productLocation">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productTax1" class="form-label">Tax 1</label>
+                                <input type="text" class="form-control" id="productTax1" name="productTax1">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productTax2" class="form-label">Tax 2</label>
+                                <input type="text" class="form-control" id="productTax2" name="productTax2">
+                            </div>
+                        </div>
+                        <div class="row mb-3 d-none">
+                            <div class="col-md-4">
+                                <label for="productReorderPoint" class="form-label">Punto de
+                                    Reorden</label>
+                                <input type="number" class="form-control" id="productReorderPoint"
+                                    name="productReorderPoint">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productReorderQty" class="form-label">Cantidad de
+                                    Reorden</label>
+                                <input type="number" class="form-control" id="productReorderQty"
+                                    name="productReorderQty">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productActive" class="form-label">Estado</label>
+                                <select class="form-select" id="productActive" name="productActive">
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 d-none">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="productIsFood"
+                                        name="productIsFood">
+                                    <label class="form-check-label" for="productIsFood">
+                                        Es Alimento
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="productIsWic"
+                                        name="productIsWic">
+                                    <label class="form-check-label" for="productIsWic">
+                                        Es WIC
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="productIsTouch"
+                                        name="productIsTouch">
+                                    <label class="form-check-label" for="productIsTouch">
+                                        Es Touch
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="productIsSerie"
+                                        name="productIsSerie">
+                                    <label class="form-check-label" for="productIsSerie">
+                                        Es Serie
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="backend-port" class="form-label text-start d-block">Puerto del backend:</label>
-                    <input type="text" id="backend-port" class="form-control" placeholder="3000" 
-                           value="<?= htmlspecialchars($config['backend_port'] ?? '') ?>">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveProductBtn">Guardar</button>
                 </div>
-                <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
-            </div>
-            <h2>Configuración de Inventario</h2>
-            <div class="card card-config p-4">
-                <div class="form-group mb-3">
-                    <label for="inventoryMonthsOfCover" class="form-label text-start d-block">Meses de cobertura Orden Sugerida:</label>
-                    <input type="number" step="0.1" id="inventoryMonthsOfCover" class="form-control" placeholder="1.35" value="<?= htmlspecialchars($config['inventoryMonthsOfCover'] ?? '') ?>">
-                </div>
-                
-                <button id="save-config-inventario" class="btn btn-primary w-100 mt-3">Guardar</button>
             </div>
         </div>
-
-      </div>
     </div>
-  </div>
-</div> 
-<div id="receiveInventoryContainer"></div>
-                              
+    <!-- Modal editar backend config Bootstrap -->
+    <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="configModalLabel">Configuración Backend</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="login-container">
+                        <h2>Configuración de Backend</h2>
+                        <div class="card card-config p-4">
+                            <div class="form-group mb-3">
+                                <label for="backend-ip" class="form-label text-start d-block">IP del backend:</label>
+                                <input type="text" id="backend-ip" class="form-control" placeholder="192.168.0.10"
+                                    value="<?= htmlspecialchars($config['backend_ip'] ?? '') ?>">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="backend-port" class="form-label text-start d-block">Puerto del
+                                    backend:</label>
+                                <input type="text" id="backend-port" class="form-control" placeholder="3000"
+                                    value="<?= htmlspecialchars($config['backend_port'] ?? '') ?>">
+                            </div>
+                            <button id="save-config" class="btn btn-primary w-100 mt-3">Guardar</button>
+                        </div>
+                        <h2>Configuración de Inventario</h2>
+                        <div class="card card-config p-4">
+                            <div class="form-group mb-3">
+                                <label for="inventoryMonthsOfCover" class="form-label text-start d-block">Meses de
+                                    cobertura Orden Sugerida:</label>
+                                <input type="number" step="0.1" id="inventoryMonthsOfCover" class="form-control"
+                                    placeholder="1.35"
+                                    value="<?= htmlspecialchars($config['inventoryMonthsOfCover'] ?? '') ?>">
+                            </div>
+
+                            <button id="save-config-inventario" class="btn btn-primary w-100 mt-3">Guardar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="receiveInventoryContainer"></div>
+
     <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -1727,8 +1769,8 @@ $username = $_SESSION['Username'];
     <!-- Custom JavaScript -->
     <script type="module">
         import { loadCalendarSection } from "./js/scheduleCalendar.js";
-        import { initClientMaintenance,loadClients } from "./js/clients.js";
-        import { initializeProductMaintenance} from "./js/maintenance.js";
+        import { initClientMaintenance, loadClients } from "./js/clients.js";
+        import { initializeProductMaintenance } from "./js/maintenance.js";
 
         // Global variables
         let currentDateFrom = moment().format('YYYY-MM-DD');
@@ -1751,48 +1793,48 @@ $username = $_SESSION['Username'];
         let currentPage = 1;
         let currentDataDepartments = [];
         // Constantes para los elementos del DOM de la lista de métodos de pago
-const paymentMethodsList = document.getElementById('payment-methods-list');
-const prevBtnLiPaymentMethods = document.getElementById('prev-btn-li-paymentMethods');
-const nextBtnLiPaymentMethods = document.getElementById('next-btn-li-paymentMethods');
-const prevBtnPaymentMethods = prevBtnLiPaymentMethods.querySelector('.page-link');
-const nextBtnPaymentMethods = nextBtnLiPaymentMethods.querySelector('.page-link');
-// Variables de estado para la paginación
-const itemsPerPagePaymentMethods = 5;
-let currentPagePaymentMethods = 1;
-let currentPaymentMethodsData = [];
-// Constantes para los elementos del DOM del resumen de Inventario
-const inventoryList = document.getElementById('inventory-sumary-list');
-const prevBtnLiInventory = document.getElementById('prev-btn-li-inventory');
-const nextBtnLiInventory = document.getElementById('next-btn-li-inventory');
-const prevBtnInventory = prevBtnLiInventory.querySelector('.page-link');
-const nextBtnInventory = nextBtnLiInventory.querySelector('.page-link');
-// Variables de estado para la paginación
-const itemsPerPageInventory = 5;
-let currentPageInventory = 1;
-let currentInventoryData = [];
-         const _backgroundColor = [
-    '#0057b8', // Azul
-    '#00a651', // Verde
-    '#ffc107', // Amarillo
-    '#dc3545', // Rojo
-    '#6f42c1', // Morado
-    '#fd7e14', // Naranja
-    '#20c997', // Verde agua
-    '#6c757d', // Gris
+        const paymentMethodsList = document.getElementById('payment-methods-list');
+        const prevBtnLiPaymentMethods = document.getElementById('prev-btn-li-paymentMethods');
+        const nextBtnLiPaymentMethods = document.getElementById('next-btn-li-paymentMethods');
+        const prevBtnPaymentMethods = prevBtnLiPaymentMethods.querySelector('.page-link');
+        const nextBtnPaymentMethods = nextBtnLiPaymentMethods.querySelector('.page-link');
+        // Variables de estado para la paginación
+        const itemsPerPagePaymentMethods = 5;
+        let currentPagePaymentMethods = 1;
+        let currentPaymentMethodsData = [];
+        // Constantes para los elementos del DOM del resumen de Inventario
+        const inventoryList = document.getElementById('inventory-sumary-list');
+        const prevBtnLiInventory = document.getElementById('prev-btn-li-inventory');
+        const nextBtnLiInventory = document.getElementById('next-btn-li-inventory');
+        const prevBtnInventory = prevBtnLiInventory.querySelector('.page-link');
+        const nextBtnInventory = nextBtnLiInventory.querySelector('.page-link');
+        // Variables de estado para la paginación
+        const itemsPerPageInventory = 5;
+        let currentPageInventory = 1;
+        let currentInventoryData = [];
+        const _backgroundColor = [
+            '#0057b8', // Azul
+            '#00a651', // Verde
+            '#ffc107', // Amarillo
+            '#dc3545', // Rojo
+            '#6f42c1', // Morado
+            '#fd7e14', // Naranja
+            '#20c997', // Verde agua
+            '#6c757d', // Gris
 
-    '#ff66b2', // Rosa fuerte
-    '#17a2b8', // Azul turquesa
-    '#8bc34a', // Verde lima
-    '#ff5722', // Naranja rojizo
-    '#4caf50', // Verde estándar
-    '#673ab7', // Púrpura oscuro
-    '#3f51b5', // Azul índigo
-    '#e91e63', // Rosa intenso
-    '#795548', // Marrón
-    '#9e9e9e', // Gris claro
-    '#607d8b', // Azul grisáceo
-    '#cddc39'  // Amarillo verdoso
-];
+            '#ff66b2', // Rosa fuerte
+            '#17a2b8', // Azul turquesa
+            '#8bc34a', // Verde lima
+            '#ff5722', // Naranja rojizo
+            '#4caf50', // Verde estándar
+            '#673ab7', // Púrpura oscuro
+            '#3f51b5', // Azul índigo
+            '#e91e63', // Rosa intenso
+            '#795548', // Marrón
+            '#9e9e9e', // Gris claro
+            '#607d8b', // Azul grisáceo
+            '#cddc39'  // Amarillo verdoso
+        ];
 
 
 
@@ -1800,19 +1842,19 @@ let currentInventoryData = [];
  * Renderiza los ítems de la lista para la página actual.
  * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
  */
-function renderListItems(dataToRender) {
-    departmentList.innerHTML = '';
+        function renderListItems(dataToRender) {
+            departmentList.innerHTML = '';
 
-    dataToRender.forEach((item, index) => {
-        const listItem = document.createElement('div');
-        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
-        
-        const indexToData = currentDataDepartments.findIndex(department => department.DepartmentID === item.DepartmentID);
-       
-        // Usa el índice y el operador módulo para ciclar a través de los colores sin eliminarlos
-        const color = _backgroundColor[indexToData % _backgroundColor.length];
-        
-        listItem.innerHTML = `
+            dataToRender.forEach((item, index) => {
+                const listItem = document.createElement('div');
+                listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
+
+                const indexToData = currentDataDepartments.findIndex(department => department.DepartmentID === item.DepartmentID);
+
+                // Usa el índice y el operador módulo para ciclar a través de los colores sin eliminarlos
+                const color = _backgroundColor[indexToData % _backgroundColor.length];
+
+                listItem.innerHTML = `
             <div class="d-flex align-items-center">
                 <div class="color-box me-2" style="background-color: ${color};width: 16px;
     height: 16px;
@@ -1822,86 +1864,86 @@ function renderListItems(dataToRender) {
             </div>
             <span class="value">${formatCurrencyP(item.TotalSales || 0)}</span>
         `;
-        departmentList.appendChild(listItem);
-    });
-}
+                departmentList.appendChild(listItem);
+            });
+        }
         /**
  * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación.
  * @param {number} totalPages - El número total de páginas.
  */
-function updateNavigationControls(totalPages) {
-    if (currentPage === 1) {
-        prevBtnLi.classList.add('disabled');
-    } else {
-        prevBtnLi.classList.remove('disabled');
-    }
+        function updateNavigationControls(totalPages) {
+            if (currentPage === 1) {
+                prevBtnLi.classList.add('disabled');
+            } else {
+                prevBtnLi.classList.remove('disabled');
+            }
 
-    if (currentPage === totalPages) {
-        nextBtnLi.classList.add('disabled');
-    } else {
-        nextBtnLi.classList.remove('disabled');
-    }
-}
+            if (currentPage === totalPages) {
+                nextBtnLi.classList.add('disabled');
+            } else {
+                nextBtnLi.classList.remove('disabled');
+            }
+        }
 
-/**
- * Maneja la paginación para los ítems de venta.
- * @param {Array} newData - El conjunto completo de datos a paginar.
- */
-function setupPagination(newData) {
-    currentDataDepartments = newData;
-    currentPage = 1; // Reinicia la página a 1 cuando los datos cambian
-    
-    const totalPages = Math.ceil(currentDataDepartments.length / itemsPerPage);
+        /**
+         * Maneja la paginación para los ítems de venta.
+         * @param {Array} newData - El conjunto completo de datos a paginar.
+         */
+        function setupPagination(newData) {
+            currentDataDepartments = newData;
+            currentPage = 1; // Reinicia la página a 1 cuando los datos cambian
 
-    function displayCurrentPage() {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const itemsToDisplay = currentDataDepartments.slice(start, end);
-        renderListItems(itemsToDisplay);
-        updateNavigationControls(totalPages);
-    }
-    
-    // Limpia los listeners para evitar duplicados
-    prevBtn.removeEventListener('click', handlePrevClick);
-    nextBtn.removeEventListener('click', handleNextClick);
+            const totalPages = Math.ceil(currentDataDepartments.length / itemsPerPage);
 
-    function handlePrevClick(e) {
-        e.preventDefault();
-        if (currentPage > 1) {
-            currentPage--;
+            function displayCurrentPage() {
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const itemsToDisplay = currentDataDepartments.slice(start, end);
+                renderListItems(itemsToDisplay);
+                updateNavigationControls(totalPages);
+            }
+
+            // Limpia los listeners para evitar duplicados
+            prevBtn.removeEventListener('click', handlePrevClick);
+            nextBtn.removeEventListener('click', handleNextClick);
+
+            function handlePrevClick(e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayCurrentPage();
+                }
+            }
+
+            function handleNextClick(e) {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayCurrentPage();
+                }
+            }
+
+            prevBtn.addEventListener('click', handlePrevClick);
+            nextBtn.addEventListener('click', handleNextClick);
+
+            // Muestra la primera página al inicializar
             displayCurrentPage();
         }
-    }
+        /**
+         * Renderiza los ítems de la lista de métodos de pago para la página actual.
+         * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
+         */
+        function renderPaymentMethodItems(dataToRender) {
+            paymentMethodsList.innerHTML = '';
 
-    function handleNextClick(e) {
-        e.preventDefault();
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayCurrentPage();
-        }
-    }
+            dataToRender.forEach((item, index) => {
+                const listItem = document.createElement('div');
+                listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
 
-    prevBtn.addEventListener('click', handlePrevClick);
-    nextBtn.addEventListener('click', handleNextClick);
+                // Usa el índice y el operador módulo para ciclar a través de los colores
 
-    // Muestra la primera página al inicializar
-    displayCurrentPage();
-}
-/**
- * Renderiza los ítems de la lista de métodos de pago para la página actual.
- * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
- */
-function renderPaymentMethodItems(dataToRender) {
-    paymentMethodsList.innerHTML = '';
-    
-    dataToRender.forEach((item, index) => {
-        const listItem = document.createElement('div');
-        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
-        
-        // Usa el índice y el operador módulo para ciclar a través de los colores
-        
-        
-        listItem.innerHTML = `
+
+                listItem.innerHTML = `
             <div class="d-flex align-items-center">
                 <div class="color-box me-2" style="background-color: ${item.color};width: 16px;
     height: 16px;
@@ -1911,87 +1953,87 @@ function renderPaymentMethodItems(dataToRender) {
             </div>
             <span class="value">${formatCurrencyP(item.value || 0)}</span>
         `;
-        paymentMethodsList.appendChild(listItem);
-    });
-}
-/**
- * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
- * @param {number} totalPages - El número total de páginas.
- */
-function updatePaymentMethodNavigation(totalPages) {
-    if (currentPagePaymentMethods === 1) {
-        prevBtnLiPaymentMethods.classList.add('disabled');
-    } else {
-        prevBtnLiPaymentMethods.classList.remove('disabled');
-    }
+                paymentMethodsList.appendChild(listItem);
+            });
+        }
+        /**
+         * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
+         * @param {number} totalPages - El número total de páginas.
+         */
+        function updatePaymentMethodNavigation(totalPages) {
+            if (currentPagePaymentMethods === 1) {
+                prevBtnLiPaymentMethods.classList.add('disabled');
+            } else {
+                prevBtnLiPaymentMethods.classList.remove('disabled');
+            }
 
-    if (currentPagePaymentMethods === totalPages) {
-        nextBtnLiPaymentMethods.classList.add('disabled');
-    } else {
-        nextBtnLiPaymentMethods.classList.remove('disabled');
-    }
-}
+            if (currentPagePaymentMethods === totalPages) {
+                nextBtnLiPaymentMethods.classList.add('disabled');
+            } else {
+                nextBtnLiPaymentMethods.classList.remove('disabled');
+            }
+        }
 
-/**
- * Configura y gestiona la paginación para la lista de métodos de pago.
- * @param {Array} newData - El conjunto completo de datos a paginar.
- */
-function setupPaymentMethodPagination(newData) {
-    currentPaymentMethodsData = newData;
-    currentPagePaymentMethods = 1; // Reinicia la página a 1 cuando los datos cambian
-    
-    const totalPages = Math.ceil(currentPaymentMethodsData.length / itemsPerPagePaymentMethods);
+        /**
+         * Configura y gestiona la paginación para la lista de métodos de pago.
+         * @param {Array} newData - El conjunto completo de datos a paginar.
+         */
+        function setupPaymentMethodPagination(newData) {
+            currentPaymentMethodsData = newData;
+            currentPagePaymentMethods = 1; // Reinicia la página a 1 cuando los datos cambian
 
-    function displayCurrentPaymentMethodPage() {
-        const start = (currentPagePaymentMethods - 1) * itemsPerPagePaymentMethods;
-        const end = start + itemsPerPagePaymentMethods;
-        const itemsToDisplay = currentPaymentMethodsData.slice(start, end);
-        renderPaymentMethodItems(itemsToDisplay);
-        updatePaymentMethodNavigation(totalPages);
-    }
-    
-    // Limpia los listeners antiguos para evitar duplicados
-    prevBtnPaymentMethods.removeEventListener('click', handlePrevClickPaymentMethods);
-    nextBtnPaymentMethods.removeEventListener('click', handleNextClickPaymentMethods);
+            const totalPages = Math.ceil(currentPaymentMethodsData.length / itemsPerPagePaymentMethods);
 
-    function handlePrevClickPaymentMethods(e) {
-        e.preventDefault();
-        if (currentPagePaymentMethods > 1) {
-            currentPagePaymentMethods--;
+            function displayCurrentPaymentMethodPage() {
+                const start = (currentPagePaymentMethods - 1) * itemsPerPagePaymentMethods;
+                const end = start + itemsPerPagePaymentMethods;
+                const itemsToDisplay = currentPaymentMethodsData.slice(start, end);
+                renderPaymentMethodItems(itemsToDisplay);
+                updatePaymentMethodNavigation(totalPages);
+            }
+
+            // Limpia los listeners antiguos para evitar duplicados
+            prevBtnPaymentMethods.removeEventListener('click', handlePrevClickPaymentMethods);
+            nextBtnPaymentMethods.removeEventListener('click', handleNextClickPaymentMethods);
+
+            function handlePrevClickPaymentMethods(e) {
+                e.preventDefault();
+                if (currentPagePaymentMethods > 1) {
+                    currentPagePaymentMethods--;
+                    displayCurrentPaymentMethodPage();
+                }
+            }
+
+            function handleNextClickPaymentMethods(e) {
+                e.preventDefault();
+                if (currentPagePaymentMethods < totalPages) {
+                    currentPagePaymentMethods++;
+                    displayCurrentPaymentMethodPage();
+                }
+            }
+
+            // Agrega los nuevos listeners
+            prevBtnPaymentMethods.addEventListener('click', handlePrevClickPaymentMethods);
+            nextBtnPaymentMethods.addEventListener('click', handleNextClickPaymentMethods);
+
+            // Muestra la primera página al inicializar
             displayCurrentPaymentMethodPage();
         }
-    }
+        /**
+         * Renderiza los ítems de la lista de métodos de pago para la página actual.
+         * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
+         */
+        function renderInventoryItems(dataToRender) {
+            inventoryList.innerHTML = '';
 
-    function handleNextClickPaymentMethods(e) {
-        e.preventDefault();
-        if (currentPagePaymentMethods < totalPages) {
-            currentPagePaymentMethods++;
-            displayCurrentPaymentMethodPage();
-        }
-    }
+            dataToRender.forEach((item, index) => {
+                const listItem = document.createElement('div');
+                listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
 
-    // Agrega los nuevos listeners
-    prevBtnPaymentMethods.addEventListener('click', handlePrevClickPaymentMethods);
-    nextBtnPaymentMethods.addEventListener('click', handleNextClickPaymentMethods);
+                // Usa el índice y el operador módulo para ciclar a través de los colores
 
-    // Muestra la primera página al inicializar
-    displayCurrentPaymentMethodPage();
-}
-/**
- * Renderiza los ítems de la lista de métodos de pago para la página actual.
- * @param {Array} dataToRender - El subconjunto de datos a mostrar en la página.
- */
-function renderInventoryItems(dataToRender) {
-   inventoryList.innerHTML = '';
 
-    dataToRender.forEach((item, index) => {
-        const listItem = document.createElement('div');
-        listItem.className = 'list-item d-flex justify-content-between align-items-center mb-2';
-        
-        // Usa el índice y el operador módulo para ciclar a través de los colores
-        
-        
-        listItem.innerHTML = `
+                listItem.innerHTML = `
             <div class="d-flex align-items-center">
                 <div class="color-box me-2" style="background-color: ${item[5]};width: 16px;
     height: 16px;
@@ -2001,239 +2043,239 @@ function renderInventoryItems(dataToRender) {
             </div>
             <span class="value">${item[1] || 0}</span>
         `;
-        inventoryList.appendChild(listItem);
-    });
-}
-/**
- * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
- * @param {number} totalPages - El número total de páginas.
- */
-function updateInventoryNavigation(totalPages) {
-    if (currentPageInventory === 1) {
-        prevBtnLiInventory.classList.add('disabled');
-    } else {
-        prevBtnLiInventory.classList.remove('disabled');
-    }
+                inventoryList.appendChild(listItem);
+            });
+        }
+        /**
+         * Actualiza el estado (habilitado/deshabilitado) de los controles de paginación para los métodos de pago.
+         * @param {number} totalPages - El número total de páginas.
+         */
+        function updateInventoryNavigation(totalPages) {
+            if (currentPageInventory === 1) {
+                prevBtnLiInventory.classList.add('disabled');
+            } else {
+                prevBtnLiInventory.classList.remove('disabled');
+            }
 
-    if (currentPageInventory === totalPages) {
-        nextBtnLiInventory.classList.add('disabled');
-    } else {
-        nextBtnLiInventory.classList.remove('disabled');
-    }
-}
+            if (currentPageInventory === totalPages) {
+                nextBtnLiInventory.classList.add('disabled');
+            } else {
+                nextBtnLiInventory.classList.remove('disabled');
+            }
+        }
 
-/**
- * Configura y gestiona la paginación para la lista de métodos de pago.
- * @param {Array} newData - El conjunto completo de datos a paginar.
- */
-function setupInventoryPagination(newData) {
-    currentInventoryData = newData;
-    currentPageInventory = 1; // Reinicia la página a 1 cuando los datos cambian
+        /**
+         * Configura y gestiona la paginación para la lista de métodos de pago.
+         * @param {Array} newData - El conjunto completo de datos a paginar.
+         */
+        function setupInventoryPagination(newData) {
+            currentInventoryData = newData;
+            currentPageInventory = 1; // Reinicia la página a 1 cuando los datos cambian
 
-    const totalPages = Math.ceil(currentInventoryData.length / itemsPerPageInventory);
+            const totalPages = Math.ceil(currentInventoryData.length / itemsPerPageInventory);
 
-    function displayCurrentInventoryPage() {
-        const start = (currentPageInventory - 1) * itemsPerPageInventory;
-        const end = start + itemsPerPageInventory;
-        const itemsToDisplay = currentInventoryData.slice(start, end);
-        renderInventoryItems(itemsToDisplay);
-        updateInventoryNavigation(totalPages);
-    }
-    
-    // Limpia los listeners antiguos para evitar duplicados
-    prevBtnInventory.removeEventListener('click', handlePrevClickInventory);
-    nextBtnInventory.removeEventListener('click', handleNextClickInventory);
+            function displayCurrentInventoryPage() {
+                const start = (currentPageInventory - 1) * itemsPerPageInventory;
+                const end = start + itemsPerPageInventory;
+                const itemsToDisplay = currentInventoryData.slice(start, end);
+                renderInventoryItems(itemsToDisplay);
+                updateInventoryNavigation(totalPages);
+            }
 
-    function handlePrevClickInventory(e) {
-        e.preventDefault();
-        if (currentPageInventory > 1) {
-            currentPageInventory--;
+            // Limpia los listeners antiguos para evitar duplicados
+            prevBtnInventory.removeEventListener('click', handlePrevClickInventory);
+            nextBtnInventory.removeEventListener('click', handleNextClickInventory);
+
+            function handlePrevClickInventory(e) {
+                e.preventDefault();
+                if (currentPageInventory > 1) {
+                    currentPageInventory--;
+                    displayCurrentInventoryPage();
+                }
+            }
+
+            function handleNextClickInventory(e) {
+                e.preventDefault();
+                if (currentPageInventory < totalPages) {
+                    currentPageInventory++;
+                    displayCurrentInventoryPage();
+                }
+            }
+
+            // Agrega los nuevos listeners
+            prevBtnInventory.addEventListener('click', handlePrevClickInventory);
+            nextBtnInventory.addEventListener('click', handleNextClickInventory);
+
+            // Muestra la primera página al inicializar
             displayCurrentInventoryPage();
         }
-    }
+        document.addEventListener("DOMContentLoaded", () => {
+            // Seleccionamos todos los enlaces del menú
+            const menuLinks = document.querySelectorAll(".nav-link");
 
-    function handleNextClickInventory(e) {
-        e.preventDefault();
-        if (currentPageInventory < totalPages) {
-            currentPageInventory++;
-            displayCurrentInventoryPage();
+            // Añadimos evento de clic a cada uno
+            menuLinks.forEach(link => {
+                link.addEventListener("click", async (event) => {
+                    event.preventDefault();
+
+                    // 1️⃣ Obtenemos el id de la sección del atributo data-section
+                    const sectionId = link.getAttribute("data-section");
+
+                    /* // 2️⃣ Ocultamos todas las secciones
+                    document.querySelectorAll(".dashboard-section").forEach(sec => {
+                      sec.classList.add("d-none");
+                      sec.classList.remove("active");
+                    }); */
+
+                    // 3️⃣ Mostramos la sección correspondiente
+                    /*  const sectionToShow = document.getElementById(sectionId);
+                     if (sectionToShow) {
+                       sectionToShow.classList.remove("d-none");
+                       sectionToShow.classList.add("active");
+                     } */
+
+                    // 4️⃣ Opcional: marcar el botón activo visualmente
+                    if (sectionId) {
+                        menuLinks.forEach(item => item.classList.remove("active"));
+                        link.classList.add("active");
+                        lastClickedLink = sectionId;
+                        // 5️⃣ Aquí puedes cargar los datos específicos según la sección
+                        await cargarDatosSeccion(sectionId);
+                    }
+
+                });
+            });
+        });
+
+        // Función que decide qué cargar según la sección
+        async function cargarDatosSeccion(sectionId) {
+            switch (sectionId) {
+                case "overview-section":
+                    console.log("🛍 Cargando datos de Panel General");
+                    document.getElementById("refreshOverview").classList.remove("d-none");
+                    await loadOverviewData();
+                    break;
+                case "sales-section":
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    console.log("📦 Cargando datos de Ventas");
+                    toggleLoading(true);
+                    await Promise.all([loadSalesByCategory(),
+                    loadSalesByDepartmentForSaleSection()
+                    ])
+                    toggleLoading(false);
+                    break;
+                case "products-section":
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    toggleLoading(true);
+                    console.log("💰 Cargando datos de productos...");
+                    await loadTopProducts();
+                    toggleLoading(false);
+                    break;
+                case "inventory-section":
+                    toggleLoading(true);
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    console.log("🏷 Cargando datos de inventario...");
+                    await Promise.all([loadInventoryValue(),
+                    loadLowLevelItems()
+                    ])
+                    toggleLoading(false);
+                    break;
+                case "horario-section":
+                    toggleLoading(true);
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    console.log("📅 Cargando datos de horario...");
+                    loadCalendarSection();
+                    toggleLoading(false);
+                    break;
+                case "clients-section":
+                    console.log("👥 Cargando datos de clientes...");
+                    toggleLoading(true);
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    await initClientMaintenance();
+                    toggleLoading(false);
+                    break;
+                case "products-maintenance-section":
+                    console.log("🛠 Cargando datos de mantenimiento de productos...");
+                    toggleLoading(true);
+                    document.getElementById("refreshOverview").classList.add("d-none");
+                    await initializeProductMaintenance();
+                    console.log("Productos cargados para mantenimiento.");
+                    toggleLoading(false);
+                    break;
+                default:
+                    console.log("📊 Mostrando vista general...");
+                    break;
+            }
         }
-    }
+        document.getElementById("save-config").addEventListener("click", function () {
+            const backend_ip = document.getElementById("backend-ip").value.trim();
+            const backend_port = document.getElementById("backend-port").value.trim();
 
-    // Agrega los nuevos listeners
-    prevBtnInventory.addEventListener('click', handlePrevClickInventory);
-    nextBtnInventory.addEventListener('click', handleNextClickInventory);
+            if (backend_ip && backend_port) {
+                const config = { backend_ip, backend_port };
 
-    // Muestra la primera página al inicializar
-    displayCurrentInventoryPage();
-}
-document.addEventListener("DOMContentLoaded", () => {
-  // Seleccionamos todos los enlaces del menú
-  const menuLinks = document.querySelectorAll(".nav-link");
-
-  // Añadimos evento de clic a cada uno
-  menuLinks.forEach(link => {
-    link.addEventListener("click", async  (event) => {
-      event.preventDefault();
-
-      // 1️⃣ Obtenemos el id de la sección del atributo data-section
-      const sectionId = link.getAttribute("data-section");
-
-      /* // 2️⃣ Ocultamos todas las secciones
-      document.querySelectorAll(".dashboard-section").forEach(sec => {
-        sec.classList.add("d-none");
-        sec.classList.remove("active");
-      }); */
-
-      // 3️⃣ Mostramos la sección correspondiente
-     /*  const sectionToShow = document.getElementById(sectionId);
-      if (sectionToShow) {
-        sectionToShow.classList.remove("d-none");
-        sectionToShow.classList.add("active");
-      } */
-
-      // 4️⃣ Opcional: marcar el botón activo visualmente
-      if(sectionId){
-        menuLinks.forEach(item => item.classList.remove("active"));
-        link.classList.add("active");
-        lastClickedLink = sectionId;  
-        // 5️⃣ Aquí puedes cargar los datos específicos según la sección
-        await cargarDatosSeccion(sectionId);
-      }
-      
-    });
-  });
-});
-
-// Función que decide qué cargar según la sección
-async function cargarDatosSeccion(sectionId) {
-  switch (sectionId) {
-    case "overview-section":
-      console.log("🛍 Cargando datos de Panel General");
-      document.getElementById("refreshOverview").classList.remove("d-none");
-      await loadOverviewData();
-      break;
-    case "sales-section":
-        document.getElementById("refreshOverview").classList.add("d-none");
-      console.log("📦 Cargando datos de Ventas");
-      toggleLoading(true);
-      await Promise.all([ loadSalesByCategory(),
-            loadSalesByDepartmentForSaleSection()
-      ])
-        toggleLoading(false);
-      break;
-    case "products-section":
-        document.getElementById("refreshOverview").classList.add("d-none");
-        toggleLoading(true);
-      console.log("💰 Cargando datos de productos...");
-      await loadTopProducts();
-      toggleLoading(false);
-      break;
-    case "inventory-section":
-        toggleLoading(true);
-        document.getElementById("refreshOverview").classList.add("d-none");
-      console.log("🏷 Cargando datos de inventario...");
-      await Promise.all([ loadInventoryValue(),
-                 loadLowLevelItems()
-      ])
-      toggleLoading(false);
-      break;
-    case "horario-section":
-        toggleLoading(true);
-        document.getElementById("refreshOverview").classList.add("d-none");
-      console.log("📅 Cargando datos de horario...");
-       loadCalendarSection();
-      toggleLoading(false);
-      break;
-    case "clients-section":
-      console.log("👥 Cargando datos de clientes...");
-      toggleLoading(true);
-      document.getElementById("refreshOverview").classList.add("d-none");
-      await initClientMaintenance();
-      toggleLoading(false);
-      break;
-    case "products-maintenance-section":
-      console.log("🛠 Cargando datos de mantenimiento de productos...");
-      toggleLoading(true);
-      document.getElementById("refreshOverview").classList.add("d-none");
-        await initializeProductMaintenance();
-        console.log("Productos cargados para mantenimiento.");
-      toggleLoading(false);
-      break;
-    default:
-      console.log("📊 Mostrando vista general...");
-      break;
-  }
-}
-document.getElementById("save-config").addEventListener("click", function () {
-    const backend_ip = document.getElementById("backend-ip").value.trim();
-    const backend_port = document.getElementById("backend-port").value.trim();
-
-    if (backend_ip && backend_port) {
-        const config = { backend_ip, backend_port };
-
-        fetch("setup/save_config.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(config)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "ok") {
-                alert("Configuración guardada correctamente.");
-                bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
-                window.location.href='authentication/logout.php'; // Recarga la página para aplicar cambios
+                fetch("setup/save_config.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(config)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === "ok") {
+                            alert("Configuración guardada correctamente.");
+                            bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+                            window.location.href = 'authentication/logout.php'; // Recarga la página para aplicar cambios
+                        } else {
+                            alert("Error al guardar la configuración en el servidor.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Ocurrió un error de red al intentar guardar la configuración.");
+                    });
             } else {
-                alert("Error al guardar la configuración en el servidor.");
+                alert("Por favor ingresa IP y puerto.");
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Ocurrió un error de red al intentar guardar la configuración.");
         });
-    } else {
-        alert("Por favor ingresa IP y puerto.");
-    }
-});
-document.getElementById("save-config-inventario").addEventListener("click", function () {
-    const monthsOfCover = document.getElementById("inventoryMonthsOfCover").value.trim();
+        document.getElementById("save-config-inventario").addEventListener("click", function () {
+            const monthsOfCover = document.getElementById("inventoryMonthsOfCover").value.trim();
 
-    if (monthsOfCover) {
-        const config = { inventoryMonthsOfCover: monthsOfCover };
+            if (monthsOfCover) {
+                const config = { inventoryMonthsOfCover: monthsOfCover };
 
-        fetch("setup/save_config.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(config)
-        })
-        .then(res => {
-            console.log("Raw response:", res); // Depuración
-            return res.json();
-        })
-        .then(data => {
-            console.log("Response data:", data); // Depuración
-            if (data.status === "ok") {
-                alert("Configuración guardada correctamente.");
-                bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+                fetch("setup/save_config.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(config)
+                })
+                    .then(res => {
+                        console.log("Raw response:", res); // Depuración
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log("Response data:", data); // Depuración
+                        if (data.status === "ok") {
+                            alert("Configuración guardada correctamente.");
+                            bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
+                        } else {
+                            alert("Error al guardar la configuración en el servidor.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Ocurrió un error de red al intentar guardar la configuración.");
+                    });
             } else {
-                alert("Error al guardar la configuración en el servidor.");
+                alert("Por favor ingresa meses de cobertura.");
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Ocurrió un error de red al intentar guardar la configuración.");
         });
-    } else {
-        alert("Por favor ingresa meses de cobertura.");
-    }
-});
-document.getElementById("btn-configuracion").addEventListener("click", function (e) {
-    e.preventDefault(); // Evita recargar la página
+        document.getElementById("btn-configuracion").addEventListener("click", function (e) {
+            e.preventDefault(); // Evita recargar la página
 
-    // Usar la API de Bootstrap para abrir el modal
-    var configModal = new bootstrap.Modal(document.getElementById('configModal'));
-    configModal.show();
-});
+            // Usar la API de Bootstrap para abrir el modal
+            var configModal = new bootstrap.Modal(document.getElementById('configModal'));
+            configModal.show();
+        });
 
 
         // Show/Hide loading overlay
@@ -2249,12 +2291,12 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
 
         // Format currency
         function formatCurrencyP(value) {
-           const n = Number(value) || 0;
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    });
-    return formatter.format(n);
+            const n = Number(value) || 0;
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
+            return formatter.format(n);
         }
 
         // Format percentage
@@ -2275,7 +2317,7 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
             }
             return formatNumber(value);
         }
-        
+
         // Switch between dashboard sections
         function switchSection(sectionId) {
             document.querySelectorAll('.dashboard-section').forEach(section => {
@@ -2301,10 +2343,10 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
             link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const sectionId = this.getAttribute('data-section');
-                if(sectionId){
+                if (sectionId) {
                     switchSection(sectionId);
                 }
-                
+
             });
         });
 
@@ -2334,7 +2376,7 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
 
         // **NUEVA FUNCIÓN:** Actualiza los campos de input de fecha en el HTML
         function updateDateInputs() {
-            
+
             const fromInput = document.getElementById('dateFrom');
             const toInput = document.getElementById('dateTo');
 
@@ -2352,16 +2394,16 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
          */
         function formatDateToInput(dateObj) {
             if (!(dateObj instanceof Date) || isNaN(dateObj)) {
-                return dateObj.toString().substring(0,10);
+                return dateObj.toString().substring(0, 10);
             }
 
             // 1. Obtiene el año (yyyy)
             const year = dateObj.getFullYear();
-            
+
             // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
             // getMonth() devuelve 0 para Enero, por eso se suma 1.
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            
+
             // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
             const day = String(dateObj.getDate()).padStart(2, '0');
 
@@ -2375,16 +2417,16 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
          */
         function formatDateToAPI(dateObj) {
             if (!(dateObj instanceof Date) || isNaN(dateObj)) {
-                return dateObj.toString().substring(0,10);
+                return dateObj.toString().substring(0, 10);
             }
 
             // 1. Obtiene el año (yyyy)
             const year = dateObj.getFullYear();
-            
+
             // 2. Obtiene el mes (MM) y añade un cero inicial si es necesario
             // getMonth() devuelve 0 para Enero, por eso se suma 1.
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            
+
             // 3. Obtiene el día (dd) y añade un cero inicial si es necesario
             const day = String(dateObj.getDate()).padStart(2, '0');
 
@@ -2917,7 +2959,7 @@ document.getElementById("btn-configuracion").addEventListener("click", function 
                         });
                     }
                 });
-return dataTableInstance;
+                return dataTableInstance;
 
             } catch (error) {
                 console.error(`Error al crear DataTable para '${tableId}':`, error);
@@ -2971,9 +3013,9 @@ return dataTableInstance;
         // Load company information
         async function loadCompanyInfo() {
             try {
-                
+
                 //const response = await fetch('api_proxy.php?endpoint=InfoCompany');
-                const response = await  fetchData('InfoCompany');
+                const response = await fetchData('InfoCompany');
                 const data = response;
 
                 if (data && data.Name) {
@@ -2983,7 +3025,7 @@ return dataTableInstance;
                 console.error('Error loading company info:', error);
             }
         }
-        
+
         function fillMissingMonths(yearData, year) {
             // 1. Definir la secuencia completa (Enero a Diciembre)
             // Nota: JavaScript usa 0 para Enero y 11 para Diciembre.
@@ -3010,12 +3052,12 @@ return dataTableInstance;
 
             // 3. Construir el array completo
             MONTH_NAMES.forEach(month => {
-                
-                
+
+
 
                 // Buscar el dato en el mapa
                 const item = dataMap[month];
-                
+
                 if (item) {
                     // Si el mes existe, usa los valores reales
                     filledLabels.push(item.monthYear);
@@ -3025,7 +3067,7 @@ return dataTableInstance;
                     // Si el mes NO existe, rellena con 0
                     filledSales.push(0);
                     filledProfit.push(0);
-                    filledLabels.push(MONTH_LABELS[month-1]+' '+year);
+                    filledLabels.push(MONTH_LABELS[month - 1] + ' ' + year);
                 }
             });
 
@@ -3040,7 +3082,7 @@ return dataTableInstance;
             try {
                 toggleLoading(true);
 
-                
+
                 const data = await fetchData('SalesTotals', { DateFrom: currentDateFrom, DateTo: currentDateTo });
                 // Crear un objeto moment para "hoy" al inicio del día
                 const todayMoment = moment().startOf('day');
@@ -3051,7 +3093,7 @@ return dataTableInstance;
                     const yesterdayMoment = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
                     const yesterdayData = await fetchData('SalesTotals', { DateFrom: yesterdayMoment, DateTo: yesterdayMoment });
-                    
+
                     if (yesterdayData && yesterdayData[0] && data && data[0]) {
                         // Asegurarse de que el elemento existe antes de actualizarlo
                         const trendElement = document.getElementById('salesTrend');
@@ -3111,7 +3153,7 @@ return dataTableInstance;
                     salesData.TotalSales = salesData.TotalSales - salesData.TotalStateTax - salesData.TotalCityTax;
                     // Update KPI cards
                     const totalProfit = salesData.TotalSales - salesData.TotalCost;
-                   
+
                     document.getElementById('totalProfit').textContent = formatCurrencyP(totalProfit);
                     // Update KPI cards with sales data
                     document.getElementById('totalCost').textContent = formatCurrencyP(salesData.TotalCost);
@@ -3119,20 +3161,20 @@ return dataTableInstance;
                     document.getElementById('municipalTax').textContent = formatCurrencyP(salesData.TotalCityTax);
                     document.getElementById('totalTax').textContent = formatCurrencyP(salesData.TotalStateTax + salesData.TotalCityTax);
                     document.getElementById('totalSales').textContent = formatCurrencyP(salesData.TotalSales);
-                    
+
                     document.getElementById('totalCost').textContent = formatCurrencyP(salesData.TotalCost);
                     //TODO: document.getElementById('soldItemsLabel').textContent = formatCurrencyP(salesData.);
 
-             
 
-                    
+
+
                     // Calculate and display profit margin
                     const profitMargin = (salesData.TotalSales > 0) ? ((totalProfit / salesData.TotalSales) * 100) : 0;
                     document.getElementById('profitMargin').textContent = numeral(profitMargin / 100).format('0.0%');
-                    
+
                     //DATOS PARA LA SECCION DE ESTADISTICAS
                     document.getElementById('totalTransactions').textContent = formatNumber(salesData.TransactionCount);
-                    
+
                     document.getElementById('averageSalePerTransaction').textContent = formatCurrencyP(salesData.AverageTicketAmount);
                     document.getElementById('avgProfitPerTransaction').textContent = formatCurrencyP(salesData.AverageProfitPerTransaction);
 
@@ -3153,8 +3195,8 @@ return dataTableInstance;
                 // Solicitar datos de los últimos 2 años para asegurar que tenemos suficientes datos
                 const twoYearsAgo = moment().subtract(2, 'years').format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
-                
-                const data = await  fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
+
+                const data = await fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
 
                 if (data && data.length > 0) {
                     // Ordenar los datos por fecha para asegurar que están en orden cronológico
@@ -3173,7 +3215,7 @@ return dataTableInstance;
                             const totalProfit = parseFloat(item.TotalProfit) || 0;
 
                             // CORRECCIÓN: Calcular la ganancia real restando el costo de las ventas
-                            
+
 
 
                             return {
@@ -3193,17 +3235,17 @@ return dataTableInstance;
                     const lastYear = currentYear - 1;
                     document.getElementById('titleCurrentSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Actual ${currentYear})`;
                     document.getElementById('titlePreviousSalesTrendChart').textContent = `Tendencia de Ventas Mensuales (Año Pasado ${lastYear})`;
-                    
+
                     // ----------------------------------------------------
                     // BLOQUE 1: Datos del Año Actual (Current Year)
                     // ----------------------------------------------------
 
                     // 2. Filtrar los datos solo para el año actual (usando el atributo 'Year')
                     const currentYearData = formattedData.filter(item => item.Year === currentYear);
-                    const dataCurrentYear =fillMissingMonths(currentYearData, currentYear);  
+                    const dataCurrentYear = fillMissingMonths(currentYearData, currentYear);
                     const currentYearLabels = dataCurrentYear.labels;
                     const currentYearSales = dataCurrentYear.sales;
-                    const currentYearProfit=dataCurrentYear.profit;
+                    const currentYearProfit = dataCurrentYear.profit;
 
                     // ----------------------------------------------------
                     // BLOQUE 2: Datos del Año Pasado (Last Year)
@@ -3223,14 +3265,14 @@ return dataTableInstance;
                         console.warn('ADVERTENCIA: Los datos de ventas y ganancia son idénticos. Es posible que los costos no estén siendo reportados correctamente por la API.');
                     }
 
-                    
+
                     console.log("Charts:", charts);
                     // También actualizar el gráfico de tendencia de ventas en la sección de ventas
                     if (charts.salesTrendChart) {
                         console.log("Destroying existing salesTrendChart instance");
                         charts.salesTrendChart.destroy();
                     }
-                    if(charts.salesTrendChartPrevious){
+                    if (charts.salesTrendChartPrevious) {
                         console.log("Destroying existing salesTrendChartPrevious instance");
                         charts.salesTrendChartPrevious.destroy();
                     }
@@ -3368,7 +3410,7 @@ return dataTableInstance;
                 } else {
                     console.warn('No se recibieron datos para la tendencia de ventas mensuales');
                     // Mostrar mensaje de error en los contenedores de gráficos
-                    ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
+                    ['monthlySalesChart', 'salesTrendChart', 'salesTrendChartPrevious'].forEach(chartId => {
                         const chartElement = document.getElementById(chartId);
                         if (chartElement && chartElement.parentNode) {
                             chartElement.parentNode.innerHTML = '<div class="text-center p-5 text-muted">No hay datos de ventas disponibles para mostrar la tendencia</div>';
@@ -3378,14 +3420,14 @@ return dataTableInstance;
             } catch (error) {
                 console.error('Error loading monthly sales trend:', error);
                 // Mostrar mensaje de error en los contenedores de gráficos
-                ['monthlySalesChart', 'salesTrendChart','salesTrendChartPrevious'].forEach(chartId => {
+                ['monthlySalesChart', 'salesTrendChart', 'salesTrendChartPrevious'].forEach(chartId => {
                     const chartElement = document.getElementById(chartId);
                     if (chartElement && chartElement.parentNode) {
                         chartElement.parentNode.innerHTML = `<div class="text-center p-5 text-danger">Error al cargar datos de tendencia: ${error.message}</div>`;
                     }
                 });
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -3400,28 +3442,28 @@ return dataTableInstance;
             const data = fetchData('SaleTrendByMonth', { DateFrom: twoYearsAgo, DateTo: today });
             if (data && data.length > 0) {
                 // Verificar la estructura del primer elemento
-                        const firstItem = data[0];
+                const firstItem = data[0];
 
 
-                        // Verificar si hay otros campos que puedan contener información de costos
-                        for (const key in firstItem) {
-                            if (key.toLowerCase().includes('cost') || key.toLowerCase().includes('costo')) {
-                               
-                            }
-                        }
+                // Verificar si hay otros campos que puedan contener información de costos
+                for (const key in firstItem) {
+                    if (key.toLowerCase().includes('cost') || key.toLowerCase().includes('costo')) {
 
-                        // Verificar si en todos los elementos los valores de ventas y costos son iguales
-                        const allEqual = data.every(item =>
-                            parseFloat(item.TotalSales) === parseFloat(item.TotalCost || 0)
-                        );
-
-
-                        // Si todos son iguales, puede ser un problema con la API
-                        if (allEqual) {
-                            console.warn('ADVERTENCIA: La API parece no estar devolviendo valores de costo correctos');
-                        }
                     }
                 }
+
+                // Verificar si en todos los elementos los valores de ventas y costos son iguales
+                const allEqual = data.every(item =>
+                    parseFloat(item.TotalSales) === parseFloat(item.TotalCost || 0)
+                );
+
+
+                // Si todos son iguales, puede ser un problema con la API
+                if (allEqual) {
+                    console.warn('ADVERTENCIA: La API parece no estar devolviendo valores de costo correctos');
+                }
+            }
+        }
 
         async function loadSalesPerDayDataForChart() {
             const today = new Date();
@@ -3450,14 +3492,14 @@ return dataTableInstance;
             sabado.setDate(lunes.getDate() + 5);
             const dataLunes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(lunes), DateTo: formatDateToInput(lunes) });
 
-            const dataMartes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
-            const dataMiercoles = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(miercoles), DateTo: formatDateToInput(miercoles) });
-            const dataJueves = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(jueves), DateTo: formatDateToInput(jueves) });
-            const dataViernes = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
-            const dataSabado = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
-            const dataDomingo = await  fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
-            
-            if(charts.dailySalesChart) {
+            const dataMartes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(martes), DateTo: formatDateToInput(martes) });
+            const dataMiercoles = await fetchData('SalesTotals', { DateFrom: formatDateToInput(miercoles), DateTo: formatDateToInput(miercoles) });
+            const dataJueves = await fetchData('SalesTotals', { DateFrom: formatDateToInput(jueves), DateTo: formatDateToInput(jueves) });
+            const dataViernes = await fetchData('SalesTotals', { DateFrom: formatDateToInput(viernes), DateTo: formatDateToInput(viernes) });
+            const dataSabado = await fetchData('SalesTotals', { DateFrom: formatDateToInput(sabado), DateTo: formatDateToInput(sabado) });
+            const dataDomingo = await fetchData('SalesTotals', { DateFrom: formatDateToInput(domingo), DateTo: formatDateToInput(domingo) });
+
+            if (charts.dailySalesChart) {
                 charts.dailySalesChart.destroy();
             }
             const salesDataForChart = [
@@ -3472,31 +3514,31 @@ return dataTableInstance;
 
             console.log("Sales Data for Chart:", salesDataForChart);
 
-        const maxSales = Math.max(...salesDataForChart);
+            const maxSales = Math.max(...salesDataForChart);
             console.log("Max Sales Value:", maxSales);
-        // 2. Encontrar el índice (posición) de ese valor máximo
-        const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
-        // Ajustar el índice del día actual para que Lunes sea 0 y Domingo sea 6
-        const indexOfToday = dayOfWeek
-        // 3. Definir tus colores base y el color para el valor máximo
-        const baseColor = '#D7ECFF'; // Color para la mayoría de las barras
-        const highlightColor = '#369FFF'; // Color para la barra más alta (ej. un rojo-naranja)
-        const highlightTodayColor = '#28a745'; // Color para la barra de hoy
-        // Puedes tener más opciones de colores si quieres:
-        // const highlightColor = '#28a745'; // Un verde vibrante
-        // const highlightColor = '#dc3545'; // Un rojo de peligro
+            // 2. Encontrar el índice (posición) de ese valor máximo
+            const indexOfMaxSales = salesDataForChart.indexOf(maxSales);
+            // Ajustar el índice del día actual para que Lunes sea 0 y Domingo sea 6
+            const indexOfToday = dayOfWeek
+            // 3. Definir tus colores base y el color para el valor máximo
+            const baseColor = '#D7ECFF'; // Color para la mayoría de las barras
+            const highlightColor = '#369FFF'; // Color para la barra más alta (ej. un rojo-naranja)
+            const highlightTodayColor = '#28a745'; // Color para la barra de hoy
+            // Puedes tener más opciones de colores si quieres:
+            // const highlightColor = '#28a745'; // Un verde vibrante
+            // const highlightColor = '#dc3545'; // Un rojo de peligro
 
 
-        // 4. Crear el array de backgroundColors dinámicamente
-        const backgroundColors = salesDataForChart.map((sales, index) => {
-            if (index === indexOfMaxSales) {
-                return highlightColor;
-            }
-            if (index === indexOfToday) {
-                return highlightTodayColor;
-            }
-            return baseColor;
-        });
+            // 4. Crear el array de backgroundColors dinámicamente
+            const backgroundColors = salesDataForChart.map((sales, index) => {
+                if (index === indexOfMaxSales) {
+                    return highlightColor;
+                }
+                if (index === indexOfToday) {
+                    return highlightTodayColor;
+                }
+                return baseColor;
+            });
             //llenar el grafico de ventas por dia dailySalesChart
             const dailySalesData = {
                 labels: [
@@ -3515,8 +3557,8 @@ return dataTableInstance;
                 type: 'bar',
                 data: dailySalesData,
                 options: {
-                    responsive:true,
-                     maintainAspectRatio: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -3528,152 +3570,152 @@ return dataTableInstance;
         async function calculateAvgSalesEstisticsPerHour() {
             toggleLoading(true);
             const dataArray = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-            
+
             console.log("Data Array:", dataArray);
-    if (dataArray && dataArray.length !== 0) {
-         // Sumar todos los 'TotalSales'
-        const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
+            if (dataArray && dataArray.length !== 0) {
+                // Sumar todos los 'TotalSales'
+                const totalSalesSum = dataArray.reduce((sum, item) => sum + item.TotalSales, 0);
 
-        // Contar el número de ítems
-        const numberOfItems = dataArray.length;
+                // Contar el número de ítems
+                const numberOfItems = dataArray.length;
 
-        // Calcular el promedio
-        const averageSalesPerHour = totalSalesSum / numberOfItems;
+                // Calcular el promedio
+                const averageSalesPerHour = totalSalesSum / numberOfItems;
 
 
-        document.getElementById('avgSalesPerHour').textContent = formatCurrencyP(averageSalesPerHour);
-            // Sumar todos los 'TotalSales'
-        const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
-        const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
+                document.getElementById('avgSalesPerHour').textContent = formatCurrencyP(averageSalesPerHour);
+                // Sumar todos los 'TotalSales'
+                const totalItemsSold = dataArray.reduce((sum, item) => sum + item.TotalItemsSold, 0);
+                const totalTransactios = dataArray.reduce((sum, item) => sum + item.TransactionCount, 0);
 
-        // Calcular el promedio
-        const avgProductsPerSale = totalItemsSold / totalTransactios;
+                // Calcular el promedio
+                const avgProductsPerSale = totalItemsSold / totalTransactios;
 
-        document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerSale);
-        document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
-    }
-    const dataArray1 = await fetchData('GetEmployees');
-    
-    if (dataArray1 && dataArray1.length !== 0) {
-        document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
-    }
-}
+                document.getElementById('avgProductsPerSale').textContent = formatNumber(avgProductsPerSale);
+                document.getElementById('soldItems').textContent = formatNumber(totalItemsSold);
+            }
+            const dataArray1 = await fetchData('GetEmployees');
+
+            if (dataArray1 && dataArray1.length !== 0) {
+                document.getElementById('numEmployees').textContent = formatNumber(dataArray1.length);
+            }
+        }
 
         async function loadTopCategory() {
             toggleLoading(true);
-    const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-    
-    
-    if (data && data.length > 0) {
-        // Obtenemos la instancia de DataTables si ya existe
-        // o la inicializamos por primera vez.
-        let table = $('#salesByCategoryTable').DataTable();
+            const data = await fetchData('SalesByCategory', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
-        // 2. Destruir la instancia existente si ya fue inicializada
-        // (La opción "destroy: true" en la inicialización lo haría si volvieras a llamar a .DataTable())
-        // Pero para ser más explícito y controlar la actualización de datos:
-        if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
-             table.destroy(); // Destruye la instancia anterior
-        }
-        
-        // 3. Reinicializar DataTables con los NUEVOS datos
-        $('#salesByCategoryTable').DataTable({
-            "data": data, // <-- Pasa tus datos directamente aquí
-            "pageLength": 5,
-            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
-            "searching": false,
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
-            },
-            "dom": '<"row"<"col-sm-12"tr>>' +
-                   '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
-                   '<"row"<"col-sm-12"p>>',
-            "destroy": true, // Importante: Destruye la instancia anterior si existe
-            "columns": [ // <-- ¡Esto es crucial! Define tus columnas y sus fuentes de datos
-                { "data": "CategoryName", "defaultContent": "Sin Categoría" },
-                { "data": "TotalSales", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
-                { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
-            ]
-        });
-        
-    } else {
-        // Manejar el caso donde no hay datos
-        if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
-            $('#salesByCategoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
-        } else {
-            // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
-            $('#salesByCategoryTable').DataTable({
-                "data": [], // Inicializa con un array vacío
-                "pageLength": 5,
-                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
-                "searching": false,
-                "language": {
-                    "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
-                },
-                "dom": '<"row"<"col-sm-12"tr>>' +
-                       '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
-                       '<"row"<"col-sm-12"p>>',
-                "destroy": true,
-                 "columns": [
-                    { "data": "CategoryName", "defaultContent": "Sin Categoría" },
-                    { "data": "TotalSales", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
-                    { "data": "TotalProfit", "render": function(data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
-                ]
-            });
-        }
-    }
-}
-async function loadLowInventory() {
-    toggleLoading(true);
-    const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
 
-    if (data && data.length > 0) {
-        // Reinicializar DataTables con los NUEVOS datos
-        $('#lowInventoryTable').DataTable({
-            "data": data, // <-- Pasa tus datos directamente aquí
-            "pageLength": 5, // Mostrar 5 elementos por página
-            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]], // Opciones de cuántos elementos mostrar
-            "searching": false, // Puedes cambiar a true si quieres habilitar la búsqueda
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json" // Idioma español
-            },
-            "dom": '<"row"<"col-sm-12"tr>>' +       // La tabla misma
-                   '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' + // Selector e información
-                   '<"row"<"col-sm-12"p>>',          // Paginación
-            "destroy": true, // Importante: Destruye la instancia anterior si existe
-            "columns": [ // <-- Define tus columnas y sus fuentes de datos
-                { "data": "ProductCode", "defaultContent": "" },
-                { "data": "ProductName", "defaultContent": "" },
-                { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" } // Asegura que la cantidad se alinee a la derecha
-            ]
-        });
-    } else {
-        // Manejar el caso donde no hay datos
-        if ($.fn.DataTable.isDataTable('#lowInventoryTable')) {
-            $('#lowInventoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
-        } else {
-            // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
-            $('#lowInventoryTable').DataTable({
-                "data": [], // Inicializa con un array vacío
-                "pageLength": 5,
-                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
-                "searching": false,
-                "language": {
-                    "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
-                },
-                "dom": '<"row"<"col-sm-12"tr>>' +
-                       '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
-                       '<"row"<"col-sm-12"p>>',
-                "destroy": true,
-                "columns": [
-                    { "data": "ProductCode", "defaultContent": "" },
-                    { "data": "ProductName", "defaultContent": "" },
-                    { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" }
-                ]
-            });
+            if (data && data.length > 0) {
+                // Obtenemos la instancia de DataTables si ya existe
+                // o la inicializamos por primera vez.
+                let table = $('#salesByCategoryTable').DataTable();
+
+                // 2. Destruir la instancia existente si ya fue inicializada
+                // (La opción "destroy: true" en la inicialización lo haría si volvieras a llamar a .DataTable())
+                // Pero para ser más explícito y controlar la actualización de datos:
+                if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
+                    table.destroy(); // Destruye la instancia anterior
+                }
+
+                // 3. Reinicializar DataTables con los NUEVOS datos
+                $('#salesByCategoryTable').DataTable({
+                    "data": data, // <-- Pasa tus datos directamente aquí
+                    "pageLength": 5,
+                    "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
+                    "searching": false,
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
+                    },
+                    "dom": '<"row"<"col-sm-12"tr>>' +
+                        '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                        '<"row"<"col-sm-12"p>>',
+                    "destroy": true, // Importante: Destruye la instancia anterior si existe
+                    "columns": [ // <-- ¡Esto es crucial! Define tus columnas y sus fuentes de datos
+                        { "data": "CategoryName", "defaultContent": "Sin Categoría" },
+                        { "data": "TotalSales", "render": function (data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
+                        { "data": "TotalProfit", "render": function (data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
+                    ]
+                });
+
+            } else {
+                // Manejar el caso donde no hay datos
+                if ($.fn.DataTable.isDataTable('#salesByCategoryTable')) {
+                    $('#salesByCategoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
+                } else {
+                    // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
+                    $('#salesByCategoryTable').DataTable({
+                        "data": [], // Inicializa con un array vacío
+                        "pageLength": 5,
+                        "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
+                        "searching": false,
+                        "language": {
+                            "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
+                        },
+                        "dom": '<"row"<"col-sm-12"tr>>' +
+                            '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                            '<"row"<"col-sm-12"p>>',
+                        "destroy": true,
+                        "columns": [
+                            { "data": "CategoryName", "defaultContent": "Sin Categoría" },
+                            { "data": "TotalSales", "render": function (data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" },
+                            { "data": "TotalProfit", "render": function (data, type, row) { return formatCurrencyP(data || 0); }, "className": "text-end" }
+                        ]
+                    });
+                }
+            }
         }
-    }
-}
+        async function loadLowInventory() {
+            toggleLoading(true);
+            const data = await fetchData('LowLevelItems'); // 'data' es el array de objetos con tus ítems de bajo inventario
+
+            if (data && data.length > 0) {
+                // Reinicializar DataTables con los NUEVOS datos
+                $('#lowInventoryTable').DataTable({
+                    "data": data, // <-- Pasa tus datos directamente aquí
+                    "pageLength": 5, // Mostrar 5 elementos por página
+                    "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]], // Opciones de cuántos elementos mostrar
+                    "searching": false, // Puedes cambiar a true si quieres habilitar la búsqueda
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json" // Idioma español
+                    },
+                    "dom": '<"row"<"col-sm-12"tr>>' +       // La tabla misma
+                        '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' + // Selector e información
+                        '<"row"<"col-sm-12"p>>',          // Paginación
+                    "destroy": true, // Importante: Destruye la instancia anterior si existe
+                    "columns": [ // <-- Define tus columnas y sus fuentes de datos
+                        { "data": "ProductCode", "defaultContent": "" },
+                        { "data": "ProductName", "defaultContent": "" },
+                        { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" } // Asegura que la cantidad se alinee a la derecha
+                    ]
+                });
+            } else {
+                // Manejar el caso donde no hay datos
+                if ($.fn.DataTable.isDataTable('#lowInventoryTable')) {
+                    $('#lowInventoryTable').DataTable().clear().draw(); // Limpiar la tabla si no hay datos
+                } else {
+                    // Si no hay datos y la tabla no ha sido inicializada, puedes inicializarla vacía
+                    $('#lowInventoryTable').DataTable({
+                        "data": [], // Inicializa con un array vacío
+                        "pageLength": 5,
+                        "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
+                        "searching": false,
+                        "language": {
+                            "url": "https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json"
+                        },
+                        "dom": '<"row"<"col-sm-12"tr>>' +
+                            '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"i>>' +
+                            '<"row"<"col-sm-12"p>>',
+                        "destroy": true,
+                        "columns": [
+                            { "data": "ProductCode", "defaultContent": "" },
+                            { "data": "ProductName", "defaultContent": "" },
+                            { "data": "CurrentStock", "className": "text-end", "defaultContent": "0" }
+                        ]
+                    });
+                }
+            }
+        }
         // Load all data
         async function loadAllData() {
             toggleLoading(true);
@@ -3693,10 +3735,10 @@ async function loadLowInventory() {
                     loadSalesByDepartment(),
                     loadSalesByHour(),
                     loadSalesByMethod()
-                    ]);
+                ]);
                 toggleLoading(false);
 
-                
+
             } catch (error) {
                 console.error('Error loading all data:', error);
             } finally {
@@ -3709,9 +3751,9 @@ async function loadLowInventory() {
             toggleLoading(true);
 
             try {
-                 const lastUpdateTime = document.getElementById('last-update-time');
+                const lastUpdateTime = document.getElementById('last-update-time');
                 lastUpdateTime.textContent = `Hoy ${new Date().toLocaleTimeString()}`;
-                 await Promise.all([ loadSalesTotals(),
+                await Promise.all([loadSalesTotals(),
                 await loadTopCategory(),
                 await loadLowInventory(),
                 await calculateAvgSalesEstisticsPerHour(),
@@ -3721,7 +3763,7 @@ async function loadLowInventory() {
                 await loadSalesByHour(),
                 await loadSalesByMethod()
                 ]);
-                
+
             } catch (error) {
                 console.error('Error loading overview data:', error);
             } finally {
@@ -3771,17 +3813,17 @@ async function loadLowInventory() {
                 toggleLoading(false);
             }
         }
-       
+
         // Initialize the dashboard - ¡ESTA FUNCIÓN SE MODIFICÓ!
         async function initDashboard() {
-            try{
-                
+            try {
+
                 const sidebarTest = document.getElementById('sidebarTest');
                 sidebarTest.style.position = 'static';
-            }catch(error){
+            } catch (error) {
                 console.error('Error al fijar la posición de la barra lateral:', error);
             }
-            
+
             try {
 
                 // Cargar todos los datos
@@ -3800,15 +3842,15 @@ async function loadLowInventory() {
                     loadOverviewData();
                 });
 
-                document.getElementById('refreshSales').addEventListener('click', async  function () {
+                document.getElementById('refreshSales').addEventListener('click', async function () {
                     toggleLoading(true);
-                    await Promise.all([ loadSalesByCategory(),
-                            loadSalesByDepartmentForSaleSection()
+                    await Promise.all([loadSalesByCategory(),
+                    loadSalesByDepartmentForSaleSection()
                     ])
-                        toggleLoading(false);
+                    toggleLoading(false);
                 });
                 document.getElementById('refreshClients').addEventListener('click', async function () {
-                    
+
                     toggleLoading(true);
                     await new Promise(resolve => requestAnimationFrame(resolve));
                     await new Promise(requestAnimationFrame);
@@ -3823,12 +3865,12 @@ async function loadLowInventory() {
                 document.getElementById('refreshProductsMaintenance').addEventListener('click', async function () {
                     toggleLoading(true);
                     await initializeProductMaintenance();
-                   toggleLoading(false);
+                    toggleLoading(false);
                 });
                 document.getElementById('refreshInventory').addEventListener('click', async function () {
                     toggleLoading(true);
-                    await Promise.all([ loadInventoryValue(),
-                                loadLowLevelItems()
+                    await Promise.all([loadInventoryValue(),
+                    loadLowLevelItems()
                     ])
                     toggleLoading(false);
                 });
@@ -3847,7 +3889,7 @@ async function loadLowInventory() {
         // Initialize the dashboard when the page loads
         document.addEventListener('DOMContentLoaded', initDashboard);
         async function loadSalesByDepartmentForSaleSection() {
-             try {
+            try {
                 toggleLoading(true);
                 const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
 
@@ -3855,8 +3897,8 @@ async function loadLowInventory() {
                     // Prepare data for the chart
                     const labels = data.map(item => item.Department || 'Sin Departamento');
                     const salesData = data.map(item => item.TotalSales || 0);
-                    
-                    
+
+
                     // Update the department sales table
                     const tableData = data.map(item => [
                         item.Department || 'Sin Departamento',
@@ -3881,13 +3923,13 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error in loadSalesByDepartmentForSaleSection() loading sales by department for sale section:', error);
-            }finally {
-                
+            } finally {
+
             }
         }
         // Load sales by department
         async function loadSalesByDepartment() {
-           
+
             try {
                 toggleLoading(true);
                 const data = await fetchData('SalesByDepartment', { DateFrom: currentDateFrom, DateTo: currentDateTo });
@@ -3896,7 +3938,7 @@ async function loadLowInventory() {
                     // Prepare data for the chart
                     const labels = data.map(item => item.Department || 'Sin Departamento');
                     const salesData = data.map(item => item.TotalSales || 0);
-                    
+
                     // Destroy existing chart if it exists
                     if (charts.departmentSalesChart) {
                         charts.departmentSalesChart.destroy();
@@ -3938,11 +3980,11 @@ async function loadLowInventory() {
                     });
                     currentDataDepartments = data;
                     setupPagination(data);
-                    }
+                }
             } catch (error) {
                 console.error('Error in loadSalesByDepartment() loading sales by department:', error);
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -3951,7 +3993,7 @@ async function loadLowInventory() {
             try {
                 toggleLoading(true);
                 const data = await fetchData('SalesByHour', { DateFrom: currentDateFrom, DateTo: currentDateTo });
-                
+
                 if (data && data.length > 0) {
                     // Preparar arrays para todas las horas (0-23)
                     const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
@@ -4070,8 +4112,8 @@ async function loadLowInventory() {
                 if (msgElement) {
                     msgElement.textContent = 'No hay datos de ventas por hora disponibles';
                 }
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -4176,8 +4218,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by payment method:', error);
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -4205,10 +4247,10 @@ async function loadLowInventory() {
                         // Skip "GRAND TOTAL" entries for the chart (case insensitive check)
                         if (item.Department && !item.Department.toUpperCase().includes('GRAND TOTAL')) {
                             const value = Math.abs(parseFloat(item.TotalInventoryValue) || 0);
-                            
+
                             departmentNames.push(item.Department);
                             // Use absolute value to handle negative values
-                            
+
                             departmentValues.push(value);
                         }
 
@@ -4239,7 +4281,7 @@ async function loadLowInventory() {
                     const inventoryValueElement = document.getElementById('inventoryValue');
                     if (inventoryValueElement) {
                         inventoryValueElement.textContent = formatCurrencyP(totalCostValue);
-                        
+
                     } else {
                         console.warn("Elemento inventoryValue no encontrado");
                     }
@@ -4247,13 +4289,13 @@ async function loadLowInventory() {
                     // Calculate inventory turnover (this would typically come from API)
                     // For demo, we'll use a random value between 4 and 12
                     //Elemento de Rotacion del Inventario
-                   /*  const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
-                    if (inventoryTurnoverElement) {
-                        const inventoryTurnover = (4 + Math.random() * 8).toFixed(1);
-                        inventoryTurnoverElement.textContent = `${inventoryTurnover}x`;
-                    } else {
-                        console.warn("Elemento inventoryTurnover no encontrado");
-                    } */
+                    /*  const inventoryTurnoverElement = document.getElementById('inventoryTurnover');
+                     if (inventoryTurnoverElement) {
+                         const inventoryTurnover = (4 + Math.random() * 8).toFixed(1);
+                         inventoryTurnoverElement.textContent = `${inventoryTurnover}x`;
+                     } else {
+                         console.warn("Elemento inventoryTurnover no encontrado");
+                     } */
                     // Calculate percentages of total
                     tableData.forEach(row => {
                         // Skip percentage calculation for Grand Total (case insensitive check)
@@ -4324,7 +4366,7 @@ async function loadLowInventory() {
                         let InventoryNamesTemp = [];
                         let InventoryValuesTemp = [];
                         departmentValues.forEach((value, index) => {
-                            if(value > 0){
+                            if (value > 0) {
                                 InventoryNamesTemp.push(departmentNames[index]);
                                 InventoryValuesTemp.push(value);
                             }
@@ -4375,15 +4417,15 @@ async function loadLowInventory() {
                     } else {
                         console.warn("Elemento inventoryValueChart no encontrado");
                     }
-                    
+
                     currentInventoryData = [];
                     tableData.forEach(row => {
-                        if(row[1]!=="$0.00"){
+                        if (row[1] !== "$0.00") {
                             currentInventoryData.push(row);
                         }
                     })
                     setupInventoryPagination(currentInventoryData);
-                    
+
                     // Update inventory value table
                     const inventoryValueColumns = [
                         { title: "Departamento", data: 0 },
@@ -4399,7 +4441,7 @@ async function loadLowInventory() {
                     const totalPriceValueElement = document.getElementById('totalPriceValue');
                     const totalPotentialProfitElement = document.getElementById('totalPotentialProfit');
 
-                    
+
 
                     if (totalPriceValueElement) {
                         totalPriceValueElement.textContent = formatCurrencyP(totalPriceValue);
@@ -4413,12 +4455,12 @@ async function loadLowInventory() {
                         console.warn("Elemento totalPotentialProfit no encontrado");
                     }
 
-                    
+
                 }
             } catch (error) {
                 console.error('Error loading inventory value:', error);
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -4454,8 +4496,8 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading sales by category:', error);
-            }finally {
-                
+            } finally {
+
             }
         }
 
@@ -4511,36 +4553,36 @@ async function loadLowInventory() {
                 }
             } catch (error) {
                 console.error('Error loading low level items:', error);
-            }finally{
-                
+            } finally {
+
             }
         }
         // Función para llenar los filtros dinámicamente
-function llenarFiltros(productos) {
-    const categoryFilterObj = document.getElementById('categoryFilter');
-const departmentFilterObj = document.getElementById('departmentFilter');
-  const categorias = [...new Set(productos.map(p => p.Category))];
-  const departamentos = [...new Set(productos.map(p => p.Department))];
-  const proveedores = [...new Set(productos.map(p => p.ProviderName))];
+        function llenarFiltros(productos) {
+            const categoryFilterObj = document.getElementById('categoryFilter');
+            const departmentFilterObj = document.getElementById('departmentFilter');
+            const categorias = [...new Set(productos.map(p => p.Category))];
+            const departamentos = [...new Set(productos.map(p => p.Department))];
+            const proveedores = [...new Set(productos.map(p => p.ProviderName))];
 
-  // Llenar categorías
-  categorias.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat;
-    option.textContent = cat;
-    categoryFilterObj.appendChild(option);
-  });
+            // Llenar categorías
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categoryFilterObj.appendChild(option);
+            });
 
-  // Llenar departamentos
-  departamentos.forEach(dep => {
-    const option = document.createElement('option');
-    option.value = dep;
-    option.textContent = dep;
-    departmentFilterObj.appendChild(option);
-  });
+            // Llenar departamentos
+            departamentos.forEach(dep => {
+                const option = document.createElement('option');
+                option.value = dep;
+                option.textContent = dep;
+                departmentFilterObj.appendChild(option);
+            });
 
-  
-}
+
+        }
         // Load top selling products
         async function loadTopProducts() {
             try {
@@ -4557,7 +4599,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                 if (category) queryParams.Category = category;
                 if (department) queryParams.Department = department;
 
-                
+
                 const data = await fetchData('TopSellProducts', queryParams);
                 console.log('Top Selling Products:', data);
                 const dataLeast = await fetchData('LowSellProducts', queryParams);
@@ -4728,7 +4770,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                             console.error("Elemento 'topProductsChart' no encontrado en el DOM");
                         }
                         ////para least productos 
-                        
+
 
                         // Update profit chart - check if element exists first
                         const profitChartElement = document.getElementById('topProfitChart');
@@ -4923,14 +4965,14 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                             });
                         }
                     }
-                }else {
+                } else {
                     console.warn('No product data returned from API');
                     // Clear existing charts if no data
                     if (charts.leastProductsTable) {
                         charts.leastProductsTable.destroy();
                         charts.leastProductsTable = null;
                     }
-                    
+
                     // Clear the table
                     if ($.fn.DataTable.isDataTable('#leastProductsTable')) {
                         $('#leastProductsTable').DataTable().clear().draw();
@@ -4986,6 +5028,8 @@ const departmentFilterObj = document.getElementById('departmentFilter');
 
             // 1. Redimensionar todos los gráficos de Chart.js
             function resizeCharts() {
+                console.log('Redimensionando gráficos...');
+                console.log(typeof charts);
                 if (typeof charts === 'undefined') return;
 
                 Object.values(charts).forEach(chart => {
@@ -5122,18 +5166,22 @@ const departmentFilterObj = document.getElementById('departmentFilter');
 
                 // Forzar redimensionamiento de los charts después de la transición
                 setTimeout(function () {
+                    if(typeof charts !== 'undefined'){ 
                     for (const chartId in charts) {
                         if (charts[chartId] && typeof charts[chartId].update === 'function') {
                             charts[chartId].update();
                         }
                     }
-
-                    // Ajustar tablas DataTables
-                    for (const tableId in tables) {
-                        if (tables[tableId] && tables[tableId].columns) {
-                            tables[tableId].columns.adjust().draw(false);
+                    }
+                    if(typeof tables !== 'undefined'){
+                        // Ajustar tablas DataTables
+                        for (const tableId in tables) {
+                            if (tables[tableId] && tables[tableId].columns) {
+                                tables[tableId].columns.adjust().draw(false);
+                            }
                         }
                     }
+                    
                 }, 350);
             });
         });
@@ -5210,18 +5258,23 @@ const departmentFilterObj = document.getElementById('departmentFilter');
 
                 // Redimensionar elementos después de la transición
                 setTimeout(function () {
-                    for (const chartId in charts) {
+                    if( typeof charts !== 'undefined'){
+                        for (const chartId in charts) {
                         if (charts[chartId] && typeof charts[chartId].update === 'function') {
                             charts[chartId].update();
                         }
+                        }
                     }
-
-                    // Ajustar tablas DataTables
+                    
+                    if(typeof tables !== 'undefined'){
+                        // Ajustar tablas DataTables
                     for (const tableId in tables) {
                         if (tables[tableId] && tables[tableId].columns) {
                             tables[tableId].columns.adjust().draw(false);
                         }
                     }
+                    }
+                    
                 }, 350);
             }
 
@@ -5294,7 +5347,7 @@ const departmentFilterObj = document.getElementById('departmentFilter');
                 });
             });
         });
-        
+
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -5310,10 +5363,10 @@ const departmentFilterObj = document.getElementById('departmentFilter');
     <!--<script src="js/maintenance.js"></script>-->
     <script src="../js/sidebar.js"></script>
     <?php include 'scripts.php'; ?>
-    
-    
-     
-    
+
+
+
+
 </body>
 
 </html>

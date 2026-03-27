@@ -117,13 +117,7 @@ body {
     font-size: 1.5rem;
 }
 
-.sidebar {
-    background: linear-gradient(135deg, var(--primary-color), #083f7d);
-    color: white;
-    min-height: calc(100vh - 56px);
-    transition: all 0.3s;
-    
-}
+
 
 .sidebar .nav-link {
     color: rgba(255, 255, 255, 0.8);
@@ -368,25 +362,7 @@ body {
     width: 100%;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .sidebar {
-        margin-left: -250px;
-    }
 
-    .sidebar.active {
-        margin-left: 0;
-    }
-
-    .content {
-        width: 100%;
-    }
-
-    .content.active {
-        margin-left: 250px;
-        width: calc(100% - 250px);
-    }
-}
 
 /* DataTables customization */
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
