@@ -39,7 +39,7 @@ $username = $_SESSION['Username'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard CEO - Supermercados</title>
+    <title>Portal de Ventas RM</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -81,7 +81,7 @@ $username = $_SESSION['Username'];
 
             <a class="navbar-brand" href="#">
                 <i class="fas fa-shopping-cart me-2"></i>
-                RM Dashboard
+                Portal de Ventas RM
             </a>
             <a class="message"> </a>
             <div class="col-md-6">
@@ -1507,7 +1507,7 @@ $username = $_SESSION['Username'];
                 <footer class="pt-4 my-md-5 pt-md-5 border-top">
                     <div class="row">
                         <div class="col-12 col-md text-center">
-                            <small class="d-block mb-3 text-muted">© SuperDashboard 2025</small>
+                            <small class="d-block mb-3 text-muted">© Portal de Ventas RM 2026</small>
                         </div>
                     </div>
                 </footer>
