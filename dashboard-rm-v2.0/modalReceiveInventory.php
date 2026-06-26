@@ -11,7 +11,9 @@
 
       <div class="modal-body">
         <div id="movementContainer">
-          <canvas class="mb-0" id="ProdMovementChart"></canvas>
+          <div id="ProdMovementChartWrap" style="height:260px; max-height:260px; position:relative; overflow:hidden;">
+            <canvas class="mb-0" id="ProdMovementChart" style="display:block; width:100%; height:260px; max-height:260px;"></canvas>
+          </div>
           <div id="monthButtonsContainer" class="d-flex justify-content-around my-3">
           </div>
           <table class="table table-bordered text-center">

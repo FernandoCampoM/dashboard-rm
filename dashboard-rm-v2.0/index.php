@@ -500,8 +500,11 @@ $userInitials = strtoupper(substr($employeeName, 0, 1));
             <div class="card rm-card">
               <div class="rm-card-header"><i class="fas fa-wave-square me-2 text-primary"></i>Movimiento de Producto</div>
               <div class="card-body">
-                <div class="d-flex gap-2 mb-3">
-                  <input type="text" id="prod-movement-code" class="form-control" placeholder="Código, barcode o nombre" style="max-width:320px;">
+                <div class="d-flex gap-2 mb-3 position-relative">
+                  <div class="position-relative" style="max-width:420px; width:100%;">
+                    <input type="text" id="prod-movement-code" class="form-control" placeholder="Código, barcode o nombre" autocomplete="off">
+                    <div id="prod-movement-suggestions" class="list-group position-absolute w-100 shadow-sm d-none" style="z-index:1050; max-height:260px; overflow:auto;"></div>
+                  </div>
                   <button class="btn btn-primary" id="prod-movement-btn"><i class="fas fa-chart-bar me-1"></i>Ver Movimiento</button>
                 </div>
                 <div id="prod-movement-wrap" class="d-none">
@@ -599,9 +602,12 @@ $userInitials = strtoupper(substr($employeeName, 0, 1));
       <div class="tab-pane fade" id="prod-tab-search">
         <div class="card rm-card">
           <div class="card-body">
-            <p class="text-muted small mb-3">Busca por código de barras o código de producto para ver todos sus detalles.</p>
-            <div class="d-flex gap-2 mb-4" style="max-width:500px;">
-              <input type="text" id="prod-search-input" class="form-control" placeholder="Barcode o código de producto...">
+            <p class="text-muted small mb-3">Busca por código, barcode o nombre para ver todos sus detalles.</p>
+            <div class="d-flex gap-2 mb-4 position-relative" style="max-width:560px;">
+              <div class="position-relative flex-grow-1">
+                <input type="text" id="prod-search-input" class="form-control" placeholder="Código, barcode o nombre..." autocomplete="off">
+                <div id="prod-search-suggestions" class="list-group position-absolute w-100 shadow-sm d-none" style="z-index:1050; max-height:260px; overflow:auto;"></div>
+              </div>
               <button class="btn btn-primary" id="prod-search-btn"><i class="fas fa-search me-1"></i>Buscar</button>
             </div>
             <div id="prod-search-result" class="d-none"></div>
