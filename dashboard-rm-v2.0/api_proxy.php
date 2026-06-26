@@ -10,7 +10,8 @@
 require_once 'config.php';
 require_once 'setup/config_functions.php';
 session_start();
-$configBackend = get_configBackend();
+$backendConfig = get_configBackend();
+$configBackend = get_selected_proxy_backend($backendConfig);
 
 // 2. Si el usuario ha iniciado sesión, el script continúa
 // A partir de aquí, puedes acceder a los datos de la sesión:
@@ -164,9 +165,9 @@ try {
         // Log de la respuesta para depuración
         $responseLogMessage = date('Y-m-d H:i:s') . " - Success: {$endpoint}";
         file_put_contents(__DIR__ . '/logs/api_requests.log', $responseLogMessage . PHP_EOL, FILE_APPEND);
-        if ($response && isset($response['status']) && $response['status'] === 403) {
-            // Si la licencia falló, enviamos el código 403 y el JSON de respuesta.
-            http_response_code(403);
+        if ($response && isset($response['status']) && (int)$response['status'] >= 400) {
+            // Si la licencia o la conexión falló, enviamos el código y el JSON de respuesta.
+            http_response_code((int)$response['status']);
             header('Content-Type: application/json');
             echo json_encode($response);
             exit;
@@ -252,6 +253,24 @@ try {
 } catch (Exception $e) {
     logError("Exception in API proxy: " . $e->getMessage());
     sendErrorResponse("Error del servidor: " . $e->getMessage(), 500);
+}
+
+function get_selected_proxy_backend($backendConfig) {
+    if (!is_array($backendConfig)) {
+        return [];
+    }
+
+    if (isset($backendConfig['backends']) && is_array($backendConfig['backends'])) {
+        foreach ($backendConfig['backends'] as $backend) {
+            if (!empty($backend['isSelected'])) {
+                return $backend;
+            }
+        }
+
+        return $backendConfig['backends'][0] ?? [];
+    }
+
+    return $backendConfig;
 }
 
 /**

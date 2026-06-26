@@ -5,8 +5,9 @@ $config = get_configBackend();
 if ($config) {
     echo json_encode([
         "status" => "ok",
-        "config" => $config
-    ]);
+        "config" => get_selectedBackend(),
+        "backends" => $config["backends"]
+    ], JSON_UNESCAPED_UNICODE);
 } else {
     echo json_encode([
         "status" => "error",

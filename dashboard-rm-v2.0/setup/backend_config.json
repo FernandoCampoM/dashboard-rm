@@ -1,5 +1,18 @@
 {
-    "backend_ip": "",
-    "backend_port": "8180",
-    "inventoryMonthsOfCover": "1.35"
+    "backends": [
+        {
+            "backend_ip": "192.168.100.175",
+            "backend_port": "8180",
+            "inventoryMonthsOfCover": "1.35",
+            "name": "Test Backend Reail",
+            "isSelected": true
+        },
+        {
+            "backend_ip": "localhost",
+            "backend_port": "8180",
+            "inventoryMonthsOfCover": "1.35",
+            "name": "LOCAL BACKEND",
+            "isSelected": false
+        }
+    ]
 }

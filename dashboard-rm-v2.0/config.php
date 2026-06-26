@@ -9,8 +9,10 @@
 // Configuración básica
 require_once 'setup/config_functions.php';
 //validar si existe una configuracion del backend guardada
-$config = get_configBackend();
-if (!$config) {
+$backendConfig = get_configBackend();
+$config = get_selected_config_backend($backendConfig);
+
+if (!$config || empty($config['backend_ip']) || empty($config['backend_port'])) {
     header("Location: /dashboard-rm/setup/setup-backend.php");
     exit;
 }
@@ -20,10 +22,33 @@ define('API_USERNAME', 'testserver'); // Cambiar por tu usuario real
 define('API_PASSWORD', 'testserver'); // Cambiar por tu contraseña real
 define('DEBUG_MODE', true); // Activar para ver errores en pantalla
 
+function get_selected_config_backend($backendConfig) {
+    if (!is_array($backendConfig)) {
+        return null;
+    }
+
+    if (isset($backendConfig['backends']) && is_array($backendConfig['backends'])) {
+        foreach ($backendConfig['backends'] as $backend) {
+            if (!empty($backend['isSelected'])) {
+                return $backend;
+            }
+        }
+
+        return $backendConfig['backends'][0] ?? null;
+    }
+
+    return $backendConfig;
+}
+
 function get_licence_validity() {
     $response= callAPI('validez', []);
     $licenceDays = 0;
-    if($response['success'] == true) {
+
+    if (is_backend_connection_error($response)) {
+        return null;
+    }
+
+    if(is_array($response) && isset($response['success']) && $response['success'] == true) {
         $licenceDays = (int)$response['message'];
         //$licenceDays = 10;
     }
@@ -32,16 +57,36 @@ function get_licence_validity() {
 // Función para hacer peticiones a la API
 function callAPI($endpoint, $params = []) {
 
-    if( $endpoint != 'validez' && get_licence_validity() <= 0) {
-        // Si hay un error de conexión o la respuesta no es válida, usar datos mock
+    if ($endpoint != 'validez') {
+        $licenceValidity = get_licence_validity();
+
+        if ($licenceValidity === null) {
+            return get_backend_connection_error_response();
+        }
+
+        if ($licenceValidity <= 0) {
+            // El backend respondió, pero la licencia no está válida.
+            $rta = [
+                "success" => false,
+                "message" => "Gracias por usar los servicios de RetailManager. Notamos un inconveniente con su licencia. Por favor, llámenos al 787-466-2091 o escribanos al correo info@retailmanagerpr.com para resolverlo.",
+                "status" => 403,
+                "errorType" => "license"
+            ];
+            return $rta;
+        }
+    }
+
+    $url = API_BASE_URL . $endpoint;
+
+    if (empty(parse_url($url, PHP_URL_HOST))) {
         $rta = [
             "success" => false,
-            "message" => "Gracias por usar los servicios de RetailManager. Notamos un inconveniente con su licencia. Por favor, llámenos al 787-466-2091 o escribanos al correo info@retailmanagerpr.com para resolverlo.",
-            "status" => 403
+            "message" => "No se pudo establecer comunicación con el backend activo. Verifica la IP, el puerto y que el servicio esté encendido.",
+            "status" => 503,
+            "errorType" => "connection"
         ];
         return $rta;
     }
-    $url = API_BASE_URL . $endpoint;
     
     // Agregar parámetros a la URL
     if (!empty($params)) {
@@ -66,7 +111,7 @@ function callAPI($endpoint, $params = []) {
         CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
         CURLOPT_USERPWD => API_USERNAME . ":" . API_PASSWORD,
         // Opciones adicionales para depuración
-        CURLOPT_VERBOSE => DEBUG_MODE,
+        CURLOPT_VERBOSE => false,
         CURLOPT_SSL_VERIFYPEER => false, // Desactivar verificación SSL para desarrollo
     ]);
     
@@ -93,28 +138,26 @@ function callAPI($endpoint, $params = []) {
     
     // Verificar errores
     if ($err) {
-        if (DEBUG_MODE) {
-            echo "<div style='background-color:#f8d7da; color:#721c24; padding:10px; margin:10px; border:1px solid #f5c6cb; border-radius:5px;'>";
-            echo "<h3>Error de cURL</h3>";
-            echo "<p>" . htmlspecialchars($err) . "</p>";
-            echo "<p>URL: " . htmlspecialchars($url) . "</p>";
-            echo "</div>";
-        }
         error_log("cURL Error en $endpoint: " . $err);
-        return false;
+        return get_backend_connection_error_response();
     }
     
     // Verificar código HTTP
     if ($httpCode >= 400) {
-        if (DEBUG_MODE) {
-            echo "<div style='background-color:#f8d7da; color:#721c24; padding:10px; margin:10px; border:1px solid #f5c6cb; border-radius:5px;'>";
-            echo "<h3>Error HTTP: $httpCode</h3>";
-            echo "<p>URL: " . htmlspecialchars($url) . "</p>";
-            echo "<p>Respuesta: " . htmlspecialchars($response) . "</p>";
-            echo "</div>";
-        }
         error_log("HTTP Error $httpCode en $endpoint: " . $response);
-        return false;
+        $decodedError = json_decode($response, true);
+
+        if (is_array($decodedError)) {
+            $decodedError['status'] = $decodedError['status'] ?? $httpCode;
+            return $decodedError;
+        }
+
+        return [
+            "success" => false,
+            "message" => "El backend respondió con un error HTTP {$httpCode}. Verifica la configuración del backend activo.",
+            "status" => $httpCode,
+            "errorType" => "backend_http"
+        ];
     }
     
     // Decodificar respuesta JSON
@@ -122,13 +165,6 @@ function callAPI($endpoint, $params = []) {
     
     // Verificar si la respuesta es válida
     if (json_last_error() !== JSON_ERROR_NONE) {
-        if (DEBUG_MODE) {
-            echo "<div style='background-color:#f8d7da; color:#721c24; padding:10px; margin:10px; border:1px solid #f5c6cb; border-radius:5px;'>";
-            echo "<h3>Error de JSON</h3>";
-            echo "<p>" . json_last_error_msg() . "</p>";
-            echo "<p>Respuesta: " . htmlspecialchars($response) . "</p>";
-            echo "</div>";
-        }
         error_log("JSON Error en $endpoint: " . json_last_error_msg() . " - Respuesta: " . $response);
         
         // Si la respuesta no es JSON válido pero no hubo errores HTTP o cURL,
@@ -141,6 +177,21 @@ function callAPI($endpoint, $params = []) {
     }
     
     return $decodedResponse;
+}
+
+function is_backend_connection_error($response) {
+    return is_array($response)
+        && isset($response['errorType'])
+        && $response['errorType'] === 'connection';
+}
+
+function get_backend_connection_error_response() {
+    return [
+        "success" => false,
+        "message" => "No se pudo establecer comunicación con el backend activo. Verifica que la tienda esté encendida, que la IP y el puerto sean correctos, y vuelve a intentarlo.",
+        "status" => 503,
+        "errorType" => "connection"
+    ];
 }
 
 /**
